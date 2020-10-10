@@ -20,6 +20,11 @@ function  Hnlx = h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,Veff,X,S,kptv
 %Hnlx = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,X,S)) + Veff * X;
 Hnlx = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,X,S)) + bsxfun(@times,Veff,X);
 
+if S.PBE0 == 1
+    Vexx = evaluateExactExchangePotential(S,X);
+    Hnlx = Hnlx + 0.125*Vexx;
+end
+
 % Vnl * X
 if (kptvec(1) == 0 && kptvec(2) == 0 && kptvec(3) == 0)
 	fac = 1.0;
