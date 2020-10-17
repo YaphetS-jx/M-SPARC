@@ -1,5 +1,5 @@
 function Vexx = evaluateExactExchangePotential(S,X)
-t1 = tic;
+% t1 = tic;
 Vexx = zeros(S.N,size(X,2));
 % V_guess = rand(S.N,1);
 for i = 1:size(X,2)
@@ -13,6 +13,6 @@ for i = 1:size(X,2)
         Vexx(:,i) = Vexx(:,i) - S.occ(j)*(V_ji.*S.psi_outer(:,j));
     end
 end
-fprintf('Time taken by exact exchange matrix vector calculations is %.2f\n',toc(t1));
+% fprintf('Time taken by exact exchange matrix vector calculations is %.2f\n',toc(t1));
 
 end

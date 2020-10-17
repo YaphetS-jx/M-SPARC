@@ -106,10 +106,15 @@ lambda_cutoff = zeros(S.tnkpt*S.nspin,1);
 
 % time for one scf
 t_SCF = 0; 
+if S.Exx == 1
+    scf_tol_init = 1e-3;
+else
+    scf_tol_init = S.SCF_tol;
+end
 
 S.PBE0 = 0;
 % start scf loop
-while (err > S.SCF_tol && count_SCF <= max_scf_iter || count_SCF <= min_scf_iter)
+while (err > scf_tol_init && count_SCF <= max_scf_iter || count_SCF <= min_scf_iter)
 	tic_cheb = tic;
 	if(count_SCF > 1)
 		fprintf(' ========================= \n');
@@ -327,7 +332,11 @@ fclose(fileID);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Exact exchange potential 
-S.PBE0 = 1;
+if S.Exx == 1
+    S.PBE0 = 1;
+else
+    return;
+end
 
 % Exchange-correlation potential
 S = exchangeCorrelationPotential(S);
@@ -336,14 +345,14 @@ S = exchangeCorrelationPotential(S);
 S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
 
 % Exact exchange potential parameters
-S.lambda_f = 0.0;
 max_outer_iter = 20;
 S.psi_outer = S.psi;
 Eband_prev = S.Eband;
 err_Exx = 10;
 count_xx = 1;
-        
+
 if S.PBE0 == 1
+    S.lambda_f = 0.0;
     while(err_Exx > 1e-6 && count_xx <= max_outer_iter)
         % SCF LOOP 
         count = 1;

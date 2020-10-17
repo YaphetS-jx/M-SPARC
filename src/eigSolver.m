@@ -44,7 +44,7 @@ if S.parallel ~= 1
 			opts.isreal = false;
 		end
 
-		if(count == 1 && S.PBE0 == 0)
+		if(count == 1)
 			% Upper bound estimator
 			opts.maxit = 300; % WARNING: might need more accuracy
 			if(S.ForceCount == 1)
@@ -85,7 +85,7 @@ if S.parallel ~= 1
 			%lambda_cutoff(ks) = max(S.EigVal(:,ks)) + 0.10; 
 		end
 
-		if count == 1 && S.ForceCount == 1 && S.PBE0 == 0
+		if count == 1 && S.ForceCount == 1
 			lambda_cutoff(ks) = 0.5 * (bup(ks) + a0(ks));
 		else
 			% Set the filter cut off
@@ -142,7 +142,7 @@ else
 			opts.isreal = false;
 		end
 
-		if (count == 1 && S.PBE0 == 0)
+		if (count == 1)
 			% Upper bound estimator
 			opts.maxit = 300; % WARNING: might need more accuracy
 			if(S.ForceCount == 1)
@@ -183,7 +183,7 @@ else
 			%lambda_cutoff(ks) = max(S.EigVal(:,ks)) + 0.10; 
 		end
 		
-		if count == 1 && S.ForceCount == 1 && S.PBE0 == 0
+		if count == 1 && S.ForceCount == 1
 			lambda_cutoff(ks) = 0.5 * (bup(ks) + a0(ks));
 		else
 			% Set the filter cut off
