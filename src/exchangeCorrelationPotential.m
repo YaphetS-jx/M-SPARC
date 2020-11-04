@@ -167,7 +167,6 @@ function [S] = GGA_PBE(S,XC)
 	%                                         Direct computation
 	%                                         (taken from ABINIT)
 	% --------------------------------------------------------------------------------------------------------------------------
-   
 	
 	% Arrays
 	rho_updn = rho/2.0;
@@ -207,6 +206,12 @@ function [S] = GGA_PBE(S,XC)
 
 	exc = exc * 2.0;
 	S.e_xc = exc .* rhotot_inv;
+
+    if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
+        S.e_xc = 0.75 * S.e_xc;
+        v_xc = 0.75 * v_xc;
+        dvxcdgrho1 = 0.75 * dvxcdgrho1;
+    end
 
 	%        -----------------------------------------------------------------------------
 	%        Then takes care of the LSD correlation part of the functional

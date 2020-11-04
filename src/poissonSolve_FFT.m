@@ -22,12 +22,13 @@ else
     error("not implemented.");
 end
 
-%[S.phi,conv_flag, relres, iter] = gmres(S.Lap_std,f,50,poisson_tol,50,S.LapPreconL,S.LapPreconU,phi_guess);
+[V1] = gmres(S.Lap_std,f,50,1e-8,50,S.LapPreconL,S.LapPreconU);
 % S.phi = aar(S.Lap_std,f,phi_guess,poisson_tol,S.MAXIT_POISSON,0.6,0.6,7,6,S.LapPreconL,S.LapPreconU);
 
 V = Pois_FFT_Periodic(f,S.w2,S.FDn,S.Nx,S.Ny,S.Nz,S.dx,S.dy,S.dz);
 
-% assert(norm(S.Lap_new(V)-f)<1e-8);
+% norm(V1 - V)/norm(V)
+% assert(std(S.Lap_std * V - f)<1e-8);
 % fprintf(' Poisson problem solved by FFT took %fs\n',toc(t1));
 
 end

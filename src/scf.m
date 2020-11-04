@@ -85,13 +85,12 @@ if(S.ForceCount == 1)
 end
 % S.EigVal = zeros(S.Nev,S.tnkpt*S.nspin);
 
-if S.Exx == 1
+if S.ExxFlag == 1
     scf_tol_init = 1e-3;
 else
     scf_tol_init = S.SCF_tol;
 end
 
-S.PBE0 = 0;
 S.lambda_f = 0.0;
 S = scf_loop(S,scf_tol_init);
 
@@ -100,8 +99,8 @@ S = scf_loop(S,scf_tol_init);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Exact exchange potential 
-if S.Exx == 1
-    S.PBE0 = 1;
+if S.ExxFlag == 1
+    S.ExxFlag = S.ExxFlag+1;
 else
     return;
 end
@@ -119,24 +118,23 @@ Eband_prev = S.Eband;
 err_Exx = 10;
 count_xx = 1;
 
-if S.PBE0 == 1
-    S.lambda_f = 0.0;
-    while(err_Exx > 1e-6 && count_xx <= max_outer_iter)
-        S = scf_loop(S,S.SCF_tol,count_xx);
-        
-        S.psi_outer = S.psi;
-        err_Exx = abs(S.Eband - Eband_prev);
-        fprintf(' Error in outer loop iteration: %.4e \n',err_Exx) ;
-        Eband_prev = S.Eband;
-        count_xx = count_xx + 1;
-    
-    end % end of Vxx loop
-    
-    fprintf('\n Finished outer loop in %d steps!\n', (count_xx - 1));
-    fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
-end % end of if PBE0 == 1
+S.lambda_f = 0.0;
+while(err_Exx > S.SCF_tol && count_xx <= max_outer_iter)
+    S = scf_loop(S,S.SCF_tol,count_xx);
 
+    S.psi_outer = S.psi;
+    err_Exx = abs(S.Eband - Eband_prev);
+    fprintf(' Error in outer loop iteration: %.4e \n',err_Exx) ;
+    Eband_prev = S.Eband;
+    count_xx = count_xx + 1;
 
+end % end of Vxx loop
+
+fprintf('\n Finished outer loop in %d steps!\n', (count_xx - 1));
+fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
+
+% make sure next scf starts with normal scf
+S.ExxFlag = S.ExxFlag+1;
 end
 
 
@@ -147,7 +145,7 @@ scf_tol = varargin{2};
 
 if nargin == 3
 	count_xx = varargin{3};
-elseif nargin > 3
+elseif nargin > 3 || nargin < 2
 	error('Too many input arguments.');
 end
 
@@ -190,14 +188,14 @@ while (err > scf_tol && count_SCF <= max_scf_iter || count_SCF <= min_scf_iter)
 	tic_cheb = tic;
 	if(count_SCF > 1)
 		fprintf(' ========================= \n');
-        if S.PBE0 == 1
+        if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
             fprintf(' Outer loop iteration number: %2d\n', count_xx);
         end
 		fprintf(' Relaxation iteration: %2d \n SCF iteration number: %2d \n',S.Relax_iter,count_SCF);
 		fprintf(' ========================= \n');
 	else
 		fprintf(' ============================================= \n');
-        if S.PBE0 == 1
+        if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
             fprintf(' Outer loop iteration number: %2d\n', count_xx);
         end
 		fprintf(' Relaxation iteration: %2d\n SCF iteration number:  1, Chebyshev cycle: %d \n',S.Relax_iter,count);

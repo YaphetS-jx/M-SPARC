@@ -92,15 +92,15 @@ end
 % Total free energy
 Etot = Eband + Exc - Exc_dc + Eelec_dc - S.Eself + S.E_corr + Eent;
 
-%fprintf(2,' ------------------\n');
-% fprintf(' Eband = %.8f\n', Eband);
-% fprintf(' Exc = %.8f\n', Exc);
-% fprintf(' Exc_dc = %.8f\n', Exc_dc);
-% fprintf(' Eelec_dc = %.8f\n', Eelec_dc);
-% fprintf(' Eent = %.8f\n', Eent);
-% fprintf(' E_corr = %.8f\n', S.E_corr);
-% fprintf(' Eself = %.8f\n', S.Eself);
-% fprintf(' Etot = %.8f\n', Etot);
-%fprintf(2,' ------------------\n');
+fprintf(2,' ------------------\n');
+fprintf(' Eband = %.8f\n', Eband);
+fprintf(' Exc = %.8f\n', Exc);
+fprintf(' Exc_dc = %.8f\n', Exc_dc);
+fprintf(' Eelec_dc = %.8f\n', Eelec_dc);
+fprintf(' Eent = %.8f\n', Eent);
+fprintf(' E_corr = %.8f\n', S.E_corr);
+fprintf(' Eself = %.8f\n', S.Eself);
+fprintf(' Etot = %.8f\n', Etot);
+fprintf(2,' ------------------\n');
 
 end

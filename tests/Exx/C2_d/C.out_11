@@ -1,0 +1,63 @@
+***************************************************************************
+*                      M-SPARC v1.0.0 (Oct 07, 2020)                      *
+*   Copyright (c) 2019 Material Physics & Mechanics Group, Georgia Tech   *
+*           Distributed under GNU General Public License 3 (GPL)          *
+*                Date: 04-Nov-2020  Start time: 11:05:07                  *
+***************************************************************************
+                           Input parameters                                
+***************************************************************************
+CELL: 20.000000 20.000000 20.000000 
+FD_GRID: 11 11 11
+FD_ORDER: 12
+BC: D D D
+ELEC_TEMP_TYPE: fermi-dirac
+SMEARING: 0.003675000
+CHEB_DEGREE: 14
+NSTATES: 6
+EXCHANGE_CORRELATION: GGA_PBE
+CALC_STRESS: 0
+CALC_PRES: 0
+MAXIT_SCF: 100
+TOL_SCF: 1.00E-04
+TOL_POISSON: 1.00E-06
+TOL_LANCZOS: 1.00E-02
+TOL_PSEUDOCHARGE: 1.00E-06
+MIXING_VARIABLE: potential
+MIXING_PRECOND: none
+MIXING_PARAMETER: 0.30
+MIXING_HISTORY: 7
+PULAY_FREQUENCY: 1
+PULAY_RESTART_FREQ: 0
+REFERENCE_CUTOFF: 0.50
+RHO_TRIGGER: 4
+FIX_RAND: 0
+PRINT_FORCES: 1
+PRINT_ATOMS: 1
+PRINT_EIGEN: 0
+PRINT_DENSITY: 0
+OUTPUT_FILE: ../tests/Exx/C2_d/C.out_11
+***************************************************************************
+                             Initialization                                
+***************************************************************************
+Mesh spacing                       :  1.818182 (Bohr)
+Output printed to                  :  ../tests/Exx/C2_d/C.out_11
+Total number of atom types         :  1
+Total number of atoms              :  2
+Total number of electrons          :  8
+Atom type 1  (valence electrons)   :  C 4
+Pseudopotential                    :  C.pot
+lloc                               :  4
+Pseudocharge radii of atom type 1  :  10.91 10.91 10.91
+Number of atoms of type 1          :  2
+Estimated total memory usage       :  11.15 MB
+=====================================================================
+                    Self Consistent Field (SCF#1)                     
+=====================================================================
+Iteration     Free Energy (Ha/atom)   SCF Error        Timing (sec)
+1            -5.4082536019E+00        1.394E-01        0.044
+2            -5.4121329998E+00        8.411E-02        0.019
+3            -5.4132721786E+00        2.713E-02        0.021
+4            -5.4133486488E+00        3.740E-03        0.024
+5            -5.4133559333E+00        1.579E-03        0.035
+6            -5.4133568508E+00        2.100E-04        0.030
+Total number of SCF: 6     
