@@ -5,9 +5,14 @@ V_guess = rand(S.N,1);
 for i = 1:size(X,2)
     for j = 1:S.Nev
         rhs = conj(S.psi_outer(:,j)).*X(:,i);
+        % for dirichlet case
         f = Poisson_RHS(rhs,S);
-        [V_ji, flag]= gmres(S.Lap_std,f,50,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
-        assert(flag == 0);
+        [V_ji, flag] = pcg(-S.Lap_std,-f,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
+        assert(flag==0);
+
+        % For periodic case
+%         [V_ji] = poissonSolve_FFT(S,rhs);
+
         V_guess = V_ji;
         Vexx(:,i) = Vexx(:,i) - S.occ(j)*(V_ji.*S.psi_outer(:,j));
     end

@@ -102,5 +102,4 @@ fprintf(' E_corr = %.8f\n', S.E_corr);
 fprintf(' Eself = %.8f\n', S.Eself);
 fprintf(' Etot = %.8f\n', Etot);
 fprintf(2,' ------------------\n');
-
 end

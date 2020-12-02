@@ -60,4 +60,8 @@ if(S.BC == 1)
     d = reshape(d,[],1);
     
     f = f + d;
+else
+    f = f - sum(f)/length(f);
+end
+
 end
