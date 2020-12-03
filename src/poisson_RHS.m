@@ -1,10 +1,10 @@
-function f = poisson_RHS(S)
+function f = poisson_RHS(rhs,S)
 % @brief	Poisson_RHS evaluates the right hand side of the poisson equation, 
 %           including the boundary condtions, i.e. f = -4 * pi * ( rho + b - d) 
 %           for cluster system, while for periodic system it's just 
 %           f = -4 * pi * (rho + b).
 rho = S.rho(:,1);
-f = -4 * pi * (rho + S.b);
+f = -4 * pi * (rhs);
 
 % for charged systems, add a uniform background charge so that total charge
 % is 0
@@ -18,7 +18,7 @@ if(S.BC == 1)
 	% For cluster systems, we need to include boundary conditions d
 	% RR = S.RR_AUG(S.isIn);
 	for l = 0:S.l_cut
-		multipole_moment(l+1).Qlm = sum(repmat(S.RR.^l .* (rho + S.b) .* S.W,1,2*l+1).* S.SH(l+1).Ylm )';
+		multipole_moment(l+1).Qlm = sum(repmat(S.RR.^l .* (rhs) .* S.W,1,2*l+1).* S.SH(l+1).Ylm )';
 	end
 
 	% Calculate phi using multipole expansion
