@@ -114,6 +114,7 @@ S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
 % Exact exchange potential parameters
 max_outer_iter = 20;
 S.psi_outer = S.psi;
+S.occ_outer = S.occ;
 Eband_prev = S.Eband;
 err_Exx = 10;
 count_xx = 1;
@@ -123,6 +124,7 @@ while(err_Exx > S.SCF_tol && count_xx <= max_outer_iter)
     S = scf_loop(S,S.SCF_tol,count_xx);
 
     S.psi_outer = S.psi;
+    S.occ_outer = S.occ;
     err_Exx = abs(S.Eband - Eband_prev);
     fprintf(' Error in outer loop iteration: %.4e \n',err_Exx) ;
     Eband_prev = S.Eband;
@@ -133,7 +135,7 @@ end % end of Vxx loop
 fprintf('\n Finished outer loop in %d steps!\n', (count_xx - 1));
 fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
  
-% save('S.mat',S);
+save('S.mat',S);
 [S] = evaluateExactExchangeEnergy(S);
 
 % make sure next scf starts with normal scf

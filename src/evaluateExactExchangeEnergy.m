@@ -1,16 +1,14 @@
 function [S] = evaluateExactExchangeEnergy(S)
-
 S.Eex = 0;
-psi = S.psi;
 V_guess = rand(S.N,1);
 for i = 1:S.Nev
     for j = 1:S.Nev
-        rhs = psi(:,i).*psi(:,j);
+        rhs = S.psi(:,i).*S.psi(:,j);
         % For periodic case
 %         gij = poissonSolve_FFT(S,rhs);
 
         % for dirichlet case
-        f = Poisson_RHS(rhs,S);
+        f = poisson_RHS(rhs,S);
         [gij, flag] = pcg(-S.Lap_std,-f,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
         assert(flag==0);
         V_guess = gij;
