@@ -135,7 +135,7 @@ end % end of Vxx loop
 fprintf('\n Finished outer loop in %d steps!\n', (count_xx - 1));
 fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
  
-save('S.mat',S);
+save(S.inputfile_path+"/S.mat","S");
 [S] = evaluateExactExchangeEnergy(S);
 
 % make sure next scf starts with normal scf
