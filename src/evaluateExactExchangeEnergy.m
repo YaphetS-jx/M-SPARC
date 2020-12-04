@@ -3,7 +3,7 @@ S.Eex = 0;
 V_guess = rand(S.N,1);
 for i = 1:S.Nev
     for j = 1:S.Nev
-        rhs = S.psi(:,i).*S.psi(:,j);
+        rhs = S.psi_outer(:,i).*S.psi_outer(:,j);
         % For periodic case
 %         gij = poissonSolve_FFT(S,rhs);
 
@@ -12,7 +12,7 @@ for i = 1:S.Nev
         [gij, flag] = pcg(-S.Lap_std,-f,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
         assert(flag==0);
         V_guess = gij;
-        S.Eex = S.Eex + S.occ(i)*S.occ(j)*sum(rhs.*gij.*S.W);
+        S.Eex = S.Eex + S.occ_outer(i)*S.occ_outer(j)*sum(rhs.*gij.*S.W);
     end
 end
 
