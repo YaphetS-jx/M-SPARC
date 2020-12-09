@@ -29,51 +29,6 @@ else
 end
 fclose(fileID);
 
-% Electrostatic potential
-S = poissonSolve(S, S.poisson_tol, 0);
-
-% Exchange-correlation potential
-S = exchangeCorrelationPotential(S);
-
-% Effective potential
-S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
-
-% Initialize the mixing history vectors
-S.X = zeros(S.N*S.nspin,S.MixingHistory);
-S.F = zeros(S.N*S.nspin,S.MixingHistory);
-S.mixing_hist_fkm1 = zeros(S.N*S.nspin,1);
-
-if S.nspin == 1
-	if S.MixingVariable == 0
-		S.mixing_hist_xkm1 = S.rho;
-% 		rho_temp = S.rho;
-	else
-		% for potential mixing, we store the mean-0 part only
-		if S.BC == 2
-			Veff_mean = mean(S.Veff);
-		else
-			Veff_mean = 0.0;
-		end
-		S.mixing_hist_xkm1 = S.Veff - Veff_mean;
-% 		Veff_temp = S.Veff;
-	end
-else
-	if S.MixingVariable == 0
-		RHO_temp = vertcat(S.rho(:,2),S.rho(:,3));
-		S.mixing_hist_xkm1 = RHO_temp;
-% 		rho_temp = S.rho;
-	else
-		VEFF_temp = vertcat(S.Veff(:,1),S.Veff(:,2));
-		% for potential mixing, we store the mean-0 part only
-		VEFF_temp_mean = mean(VEFF_temp);
-		S.mixing_hist_xkm1 = VEFF_temp - VEFF_temp_mean;
-% 		Veff_temp = S.Veff;
-	end
-end
-
-% update charges
-% S.PosCharge = abs(dot(S.W, S.b));
-% S.NegCharge = -S.PosCharge + S.NetCharge;
 
 % Generate guess psi WARNING: psi is an internal matlab function
 if(S.ForceCount == 1)
@@ -91,7 +46,6 @@ else
     scf_tol_init = S.SCF_tol;
 end
 
-S.lambda_f = 0.0;
 S = scf_loop(S,scf_tol_init);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,12 +59,6 @@ else
     return;
 end
 
-% Exchange-correlation potential
-S = exchangeCorrelationPotential(S);
-
-% Effective potential
-S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
-
 % Exact exchange potential parameters
 max_outer_iter = 20;
 Eband_prev = S.Eband;
@@ -123,18 +71,17 @@ while(err_Exx > S.SCF_tol && count_xx <= max_outer_iter)
     S.occ_outer = S.occ;
     
     S = scf_loop(S,S.SCF_tol,count_xx);
+    S = evaluateExactExchangeEnergy(S);
     err_Exx = abs(S.Eband - Eband_prev);
     fprintf(' Error in outer loop iteration: %.4e \n',err_Exx) ;
     Eband_prev = S.Eband;
     count_xx = count_xx + 1;
-
 end % end of Vxx loop
 
 fprintf('\n Finished outer loop in %d steps!\n', (count_xx - 1));
 fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
  
 save(S.inputfile_path+"/S.mat","S");
-[S] = evaluateExactExchangeEnergy(S);
 
 % make sure next scf starts with normal scf
 S.ExxFlag = S.ExxFlag+1;
@@ -152,6 +99,52 @@ elseif nargin > 3 || nargin < 2
 	error('Too many input arguments.');
 end
 
+% Electrostatic potential
+if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
+    S = poissonSolve(S, S.poisson_tol, 1);
+else
+    S = poissonSolve(S, S.poisson_tol, 0);
+end
+
+% Exchange-correlation potential
+S = exchangeCorrelationPotential(S);
+
+% Effective potential
+S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
+
+% Initialize the mixing history vectors
+S.X = zeros(S.N*S.nspin,S.MixingHistory);
+S.F = zeros(S.N*S.nspin,S.MixingHistory);
+S.mixing_hist_fkm1 = zeros(S.N*S.nspin,1);
+
+if S.nspin == 1
+	if S.MixingVariable == 0
+		S.mixing_hist_xkm1 = S.rho;
+		rho_temp = S.rho;
+	else
+		% for potential mixing, we store the mean-0 part only
+		if S.BC == 2
+			Veff_mean = mean(S.Veff);
+		else
+			Veff_mean = 0.0;
+		end
+		S.mixing_hist_xkm1 = S.Veff - Veff_mean;
+		Veff_temp = S.Veff;
+	end
+else
+	if S.MixingVariable == 0
+		RHO_temp = vertcat(S.rho(:,2),S.rho(:,3));
+		S.mixing_hist_xkm1 = RHO_temp;
+		rho_temp = S.rho;
+	else
+		VEFF_temp = vertcat(S.Veff(:,1),S.Veff(:,2));
+		% for potential mixing, we store the mean-0 part only
+		VEFF_temp_mean = mean(VEFF_temp);
+		S.mixing_hist_xkm1 = VEFF_temp - VEFF_temp_mean;
+		Veff_temp = S.Veff;
+	end
+end
+
 % SCF LOOP 
 count = 1;
 count_SCF = 1;
@@ -163,6 +156,7 @@ min_scf_iter = S.MINIT_SCF;
 if max_scf_iter < min_scf_iter
 	min_scf_iter = max_scf_iter;
 end
+S.lambda_f = 0.0;
 
 % Spectrum bounds and filter cutoff for Chebyshev filtering
 bup = zeros(S.tnkpt*S.nspin,1);
@@ -171,20 +165,6 @@ lambda_cutoff = zeros(S.tnkpt*S.nspin,1);
 
 % time for one scf
 t_SCF = 0; 
-if S.nspin == 1
-	if S.MixingVariable == 0
-		rho_temp = S.rho;
-    else
-		Veff_temp = S.Veff;
-	end
-else
-	if S.MixingVariable == 0
-		rho_temp = S.rho;
-    else
-		Veff_temp = S.Veff;
-	end
-end
-
 
 % start scf loop
 while (err > scf_tol && count_SCF <= max_scf_iter || count_SCF <= min_scf_iter)

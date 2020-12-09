@@ -16,7 +16,6 @@ for i = 1:S.Nev
     end
 end
 
-% S.Eex = (-1)*S.Eex;
 S.Etotal = S.Etotal + 0.25*S.Eex;
 fprintf(' Eex = %.8f\n', S.Eex);
 fprintf(' Etot = %.8f\n', S.Etotal);

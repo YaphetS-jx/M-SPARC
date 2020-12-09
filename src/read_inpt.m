@@ -40,6 +40,7 @@ Flag_accuracy = 0;
 Flag_ionT = 0;
 Flag_eqT = 0;
 %Flag_ionT_end = 0;
+S.ExxFlag = 0;
 
 while(~feof(fid1))
 	C_inpt = textscan(fid1,'%s',1,'delimiter',' ','MultipleDelimsAsOne',1);
