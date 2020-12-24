@@ -29,6 +29,51 @@ else
 end
 fclose(fileID);
 
+% Electrostatic potential
+S = poissonSolve(S, S.poisson_tol, 0);
+
+% Exchange-correlation potential
+S = exchangeCorrelationPotential(S);
+
+% Effective potential
+S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
+
+% Initialize the mixing history vectors
+S.X = zeros(S.N*S.nspin,S.MixingHistory);
+S.F = zeros(S.N*S.nspin,S.MixingHistory);
+S.mixing_hist_fkm1 = zeros(S.N*S.nspin,1);
+
+if S.nspin == 1
+	if S.MixingVariable == 0
+		S.mixing_hist_xkm1 = S.rho;
+% 		rho_temp = S.rho;
+	else
+		% for potential mixing, we store the mean-0 part only
+		if S.BC == 2
+			Veff_mean = mean(S.Veff);
+		else
+			Veff_mean = 0.0;
+		end
+		S.mixing_hist_xkm1 = S.Veff - Veff_mean;
+% 		Veff_temp = S.Veff;
+	end
+else
+	if S.MixingVariable == 0
+		RHO_temp = vertcat(S.rho(:,2),S.rho(:,3));
+		S.mixing_hist_xkm1 = RHO_temp;
+% 		rho_temp = S.rho;
+	else
+		VEFF_temp = vertcat(S.Veff(:,1),S.Veff(:,2));
+		% for potential mixing, we store the mean-0 part only
+		VEFF_temp_mean = mean(VEFF_temp);
+		S.mixing_hist_xkm1 = VEFF_temp - VEFF_temp_mean;
+% 		Veff_temp = S.Veff;
+	end
+end
+
+% update charges
+% S.PosCharge = abs(dot(S.W, S.b));
+% S.NegCharge = -S.PosCharge + S.NetCharge;
 
 % Generate guess psi WARNING: psi is an internal matlab function
 if(S.ForceCount == 1)
@@ -41,11 +86,12 @@ end
 % S.EigVal = zeros(S.Nev,S.tnkpt*S.nspin);
 
 if S.ExxFlag == 1
-    scf_tol_init = 1e-3;
+    scf_tol_init = 1e-6;
 else
     scf_tol_init = S.SCF_tol;
 end
 
+S.lambda_f = 0.0;
 S = scf_loop(S,scf_tol_init);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,12 +101,19 @@ S = scf_loop(S,scf_tol_init);
 % Exact exchange potential 
 if S.ExxFlag == 1
     S.ExxFlag = S.ExxFlag+1;
+    S = const_for_FFT(S);
 else
     return;
 end
 
+% Exchange-correlation potential
+S = exchangeCorrelationPotential(S);
+
+% Effective potential
+S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
+
 % Exact exchange potential parameters
-max_outer_iter = 20;
+max_outer_iter = 50;
 Eband_prev = S.Eband;
 err_Exx = 10;
 count_xx = 1;
@@ -71,18 +124,32 @@ while(err_Exx > S.SCF_tol && count_xx <= max_outer_iter)
     S.occ_outer = S.occ;
     
     S = scf_loop(S,S.SCF_tol,count_xx);
-    S = evaluateExactExchangeEnergy(S);
+    
+    [S] = evaluateExactExchangeEnergy(S);
+    
     err_Exx = abs(S.Eband - Eband_prev);
     fprintf(' Error in outer loop iteration: %.4e \n',err_Exx) ;
     Eband_prev = S.Eband;
     count_xx = count_xx + 1;
+   
 end % end of Vxx loop
 
 fprintf('\n Finished outer loop in %d steps!\n', (count_xx - 1));
 fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
  
-save(S.inputfile_path+"/S.mat","S");
+% save(S.inputfile_path+"/S.mat","S");
 
+staticfname = S.staticfname;
+fileID = fopen(staticfname,'a');
+if (fileID == -1) 
+    error('\n Cannot open file "%s"\n',staticfname);
+end
+fprintf(fileID, 'Eigenvalues:\n');
+fprintf(fileID, '%f\n', S.EigVal);
+fprintf(fileID, 'Occupations:\n');
+fprintf(fileID, '%f\n', S.occ);
+fclose(fileID);
+    
 % make sure next scf starts with normal scf
 S.ExxFlag = S.ExxFlag+1;
 end
@@ -99,52 +166,6 @@ elseif nargin > 3 || nargin < 2
 	error('Too many input arguments.');
 end
 
-% Electrostatic potential
-if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
-    S = poissonSolve(S, S.poisson_tol, 1);
-else
-    S = poissonSolve(S, S.poisson_tol, 0);
-end
-
-% Exchange-correlation potential
-S = exchangeCorrelationPotential(S);
-
-% Effective potential
-S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
-
-% Initialize the mixing history vectors
-S.X = zeros(S.N*S.nspin,S.MixingHistory);
-S.F = zeros(S.N*S.nspin,S.MixingHistory);
-S.mixing_hist_fkm1 = zeros(S.N*S.nspin,1);
-
-if S.nspin == 1
-	if S.MixingVariable == 0
-		S.mixing_hist_xkm1 = S.rho;
-		rho_temp = S.rho;
-	else
-		% for potential mixing, we store the mean-0 part only
-		if S.BC == 2
-			Veff_mean = mean(S.Veff);
-		else
-			Veff_mean = 0.0;
-		end
-		S.mixing_hist_xkm1 = S.Veff - Veff_mean;
-		Veff_temp = S.Veff;
-	end
-else
-	if S.MixingVariable == 0
-		RHO_temp = vertcat(S.rho(:,2),S.rho(:,3));
-		S.mixing_hist_xkm1 = RHO_temp;
-		rho_temp = S.rho;
-	else
-		VEFF_temp = vertcat(S.Veff(:,1),S.Veff(:,2));
-		% for potential mixing, we store the mean-0 part only
-		VEFF_temp_mean = mean(VEFF_temp);
-		S.mixing_hist_xkm1 = VEFF_temp - VEFF_temp_mean;
-		Veff_temp = S.Veff;
-	end
-end
-
 % SCF LOOP 
 count = 1;
 count_SCF = 1;
@@ -156,7 +177,6 @@ min_scf_iter = S.MINIT_SCF;
 if max_scf_iter < min_scf_iter
 	min_scf_iter = max_scf_iter;
 end
-S.lambda_f = 0.0;
 
 % Spectrum bounds and filter cutoff for Chebyshev filtering
 bup = zeros(S.tnkpt*S.nspin,1);
@@ -165,6 +185,20 @@ lambda_cutoff = zeros(S.tnkpt*S.nspin,1);
 
 % time for one scf
 t_SCF = 0; 
+if S.nspin == 1
+	if S.MixingVariable == 0
+		rho_temp = S.rho;
+    else
+		Veff_temp = S.Veff;
+	end
+else
+	if S.MixingVariable == 0
+		rho_temp = S.rho;
+    else
+		Veff_temp = S.Veff;
+	end
+end
+
 
 % start scf loop
 while (err > scf_tol && count_SCF <= max_scf_iter || count_SCF <= min_scf_iter)
@@ -387,3 +421,38 @@ fprintf(fileID,'Total number of SCF: %-6d\n',count_SCF-1);
 fclose(fileID);
 
 end
+
+
+
+function S = const_for_FFT(S)
+w2 = S.w2;
+FDn = S.FDn;
+N1 = S.Nx;
+N2 = S.Ny;
+N3 = S.Nz;
+dx = S.dx;
+dy = S.dy;
+dz = S.dz;
+
+[I,J,K] = meshgrid(0:(N1-1),0:(N2-1),0:(N3-1));
+
+dx2 = dx*dx; dy2 = dy*dy; dz2 = dz*dz;
+
+% alpha follows conjugate even space
+alpha = w2(1)*(1/dx2+1/dy2+1/dz2).*ones(N1,N2,N3);
+for k=1:FDn
+    alpha = alpha + w2(k+1)*2.*(cos(2*pi*I*k/N1)./dx2 + cos(2*pi*J*k/N2)./dy2 + cos(2*pi*K*k/N3)./dz2);
+end
+
+V = S.L1*S.L2*S.L3;
+R_c = (3*V/(4*pi))^(1/3);
+alpha(1,1,1) = -2/R_c^2;
+
+const = 1 - cos(R_c*sqrt(-1*alpha));
+const(1,1,1) = 1;
+
+S.const_by_alpha = const./alpha;
+% S.const_by_alpha = 1./alpha;
+
+end
+
