@@ -19,7 +19,6 @@ for i = 1:size(X,2)
         end
         
         Vexx(:,i) = Vexx(:,i) - S.occ_outer(j)*V_ji.*S.psi_outer(:,j);
-%         Vexx(:,i) = Vexx(:,i) - S.occ_outer(j)*real(V_ji.*S.psi_outer(:,j));
     end
 end
 % fprintf('Time taken by exact exchange matrix vector calculations is %.2f\n',toc(t1));

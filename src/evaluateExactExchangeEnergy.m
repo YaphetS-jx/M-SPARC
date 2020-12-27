@@ -1,47 +1,16 @@
 function [S] = evaluateExactExchangeEnergy(S)
 S.Eex = 0;
-% 
-% w2 = S.w2;
-N1 = S.Nx;
-N2 = S.Ny;
-N3 = S.Nz;
-% V = S.L1*S.L2*S.L3;
-% R_c = (3*V/(4*pi))^(1/3);
-% 
-% [I,J,K] = meshgrid(0:(N1-1),0:(N2-1),0:(N3-1));
-% dx2 = S.dx*S.dx; dy2 = S.dy*S.dy; dz2 = S.dz*S.dz;
-% 
-% % alpha follows conjugate even space
-% alpha = w2(1)*(1/dx2+1/dy2+1/dz2).*ones(N1,N2,N3);
-% for k=1:S.FDn
-%     alpha = alpha + w2(k+1)*2.*(cos(2*pi*I*k/N1)./dx2 + cos(2*pi*J*k/N2)./dy2 + cos(2*pi*K*k/N3)./dz2);
-% end
-% 
-% alpha(1,1,1) = -2/R_c^2;
-% 
-% const = 1 - cos(R_c*sqrt(-1*alpha));
-% const(1,1,1) = 1;
-        
+
 % V_guess = rand(S.N,1);
 for i = 1:S.Nev
     for j = 1:S.Nev
         rhs = conj(S.psi_outer(:,i)).*S.psi_outer(:,j);
-%         rhs = S.psi(:,i).*S.psi(:,j);
-        
-        
-        % For periodic case
-%         gij = poissonSolve_FFT(S,rhs);
-        if S.BC == 2
-            rhs = reshape(rhs,N1,N2,N3);
-            ghat = fftn(rhs);
-            
-%             f = real(ifftn(-1*(ghat.*S.const_by_alpha)));
-            f = ifftn(-1*(ghat.*S.const_by_alpha));
 
-            f = f(:);
-            rhs = rhs(:);
+        % For periodic case
+        if S.BC == 2
+            gij = poissonSolve_FFT(S,rhs);
             
-            S.Eex = S.Eex + 4*pi*S.occ_outer(i)*S.occ_outer(j)*sum(conj(rhs).*f.*S.W);
+            S.Eex = S.Eex + S.occ_outer(i)*S.occ_outer(j)*sum(conj(rhs).*gij.*S.W);
         end
         
         % for dirichlet case

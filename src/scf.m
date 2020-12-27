@@ -125,22 +125,22 @@ count_xx = 1;
 S.lambda_f = 0.0;
 while(err_Exx > S.SCF_tol && count_xx <= max_outer_iter)
     if count_xx == 1
-        rng(11)
+        rng(15)
 %         S.psi_outer = real(S.psi) + 1i* rand(size(S.psi));
-        S.psi_outer = rand(size(S.psi)) + 1i* rand(size(S.psi));
+        S.psi_outer = (rand(size(S.psi)) - 0.5) + 1i* (rand(size(S.psi)) - 0.5);
         % Normalize psi, s.t. integral(psi_new' * psi_new) = 1
         scfac = 1 ./ sqrt(sum(repmat(S.W,1,S.Nev) .* (S.psi_outer .* conj(S.psi_outer)),1));
         S.psi_outer = bsxfun(@times, S.psi_outer, scfac);
     else
-        S.psi_outer = (S.psi + 1i*S.psi)/sqrt(2);
+%         S.psi_outer = (S.psi + 1i*S.psi)/sqrt(2);
+        S.psi_outer = S.psi;
     end
         
-%     S.psi_outer = S.psi;
     S.occ_outer = S.occ;
     
     S = scf_loop(S,S.SCF_tol,count_xx);
     
-    [S] = evaluateExactExchangeEnergy(S);
+    S = evaluateExactExchangeEnergy(S);
     
     err_Exx = abs(S.Eband - Eband_prev);
     fprintf(' Error in outer loop iteration: %.4e \n',err_Exx) ;
@@ -152,7 +152,7 @@ end % end of Vxx loop
 fprintf('\n Finished outer loop in %d steps!\n', (count_xx - 1));
 fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
  
-save(S.inputfile_path+"/S.mat","S");
+% save(S.inputfile_path+"/S.mat","S");
 
 staticfname = S.staticfname;
 fileID = fopen(staticfname,'a');
@@ -458,15 +458,29 @@ alpha = w2(1)*(1/dx2+1/dy2+1/dz2).*ones(N1,N2,N3);
 for k=1:FDn
     alpha = alpha + w2(k+1)*2.*(cos(2*pi*I*k/N1)./dx2 + cos(2*pi*J*k/N2)./dy2 + cos(2*pi*K*k/N3)./dz2);
 end
-
+ 
 V = S.L1*S.L2*S.L3;
 R_c = (3*V/(4*pi))^(1/3);
 alpha(1,1,1) = -2/R_c^2;
 
+% G2 = zeros(N1,N2,N3);
+% count = 1;
+% for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
+%     for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
+%         for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
+% 			G2(count) = ((k1-1)*2*pi/S.L1)^2 + ((k2-1)*2*pi/S.L2)^2 + ((k3-1)*2*pi/S.L3)^2;
+%             count = count + 1;
+%         end
+%     end
+% end
+
 const = 1 - cos(R_c*sqrt(-1*alpha));
 const(1,1,1) = 1;
 
+% G2(1,1,1) = 2/R_c^2;
+% S.const_by_alpha = -1*const./G2;
 S.const_by_alpha = const./alpha;
+
 % S.const_by_alpha = 1./alpha;
 
 end
