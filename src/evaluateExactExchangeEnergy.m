@@ -25,7 +25,7 @@ N3 = S.Nz;
 % V_guess = rand(S.N,1);
 for i = 1:S.Nev
     for j = 1:S.Nev
-        rhs = S.psi_outer(:,i).*S.psi_outer(:,j);
+        rhs = conj(S.psi_outer(:,i)).*S.psi_outer(:,j);
 %         rhs = S.psi(:,i).*S.psi(:,j);
         
         
@@ -34,14 +34,14 @@ for i = 1:S.Nev
         if S.BC == 2
             rhs = reshape(rhs,N1,N2,N3);
             ghat = fftn(rhs);
-
-    %         f = real(ifftn(-1*(ghat./alpha.*const)));
-            f = real(ifftn(-1*(ghat.*S.const_by_alpha)));
+            
+%             f = real(ifftn(-1*(ghat.*S.const_by_alpha)));
+            f = ifftn(-1*(ghat.*S.const_by_alpha));
 
             f = f(:);
             rhs = rhs(:);
-
-            S.Eex = S.Eex + 4*pi*S.occ_outer(i)*S.occ_outer(j)*sum(rhs.*f.*S.W);
+            
+            S.Eex = S.Eex + 4*pi*S.occ_outer(i)*S.occ_outer(j)*sum(conj(rhs).*f.*S.W);
         end
         
         % for dirichlet case

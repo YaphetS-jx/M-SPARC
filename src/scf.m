@@ -80,6 +80,7 @@ if(S.ForceCount == 1)
 	rng('default'); % Initialize random number generator
 	rng(1); % Specify the seed to be 1
 	S.psi = rand(S.N,S.Nev,S.tnkpt*S.nspin)-0.5;
+%     S.psi = S.psi+1i*(rand(S.N,S.Nev,S.tnkpt*S.nspin)-0.5);
 	S.upper_bound_guess_vecs = zeros(S.N,S.tnkpt*S.nspin);
 	S.EigVal = zeros(S.Nev,S.tnkpt*S.nspin);
 end
@@ -106,6 +107,9 @@ else
     return;
 end
 
+% update compolex nonlocal projectors
+S.Atom = calculate_nloc_projector(S);
+
 % Exchange-correlation potential
 S = exchangeCorrelationPotential(S);
 
@@ -120,7 +124,18 @@ count_xx = 1;
 
 S.lambda_f = 0.0;
 while(err_Exx > S.SCF_tol && count_xx <= max_outer_iter)
-    S.psi_outer = S.psi;
+    if count_xx == 1
+        rng(11)
+%         S.psi_outer = real(S.psi) + 1i* rand(size(S.psi));
+        S.psi_outer = rand(size(S.psi)) + 1i* rand(size(S.psi));
+        % Normalize psi, s.t. integral(psi_new' * psi_new) = 1
+        scfac = 1 ./ sqrt(sum(repmat(S.W,1,S.Nev) .* (S.psi_outer .* conj(S.psi_outer)),1));
+        S.psi_outer = bsxfun(@times, S.psi_outer, scfac);
+    else
+        S.psi_outer = (S.psi + 1i*S.psi)/sqrt(2);
+    end
+        
+%     S.psi_outer = S.psi;
     S.occ_outer = S.occ;
     
     S = scf_loop(S,S.SCF_tol,count_xx);
@@ -137,7 +152,7 @@ end % end of Vxx loop
 fprintf('\n Finished outer loop in %d steps!\n', (count_xx - 1));
 fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
  
-% save(S.inputfile_path+"/S.mat","S");
+save(S.inputfile_path+"/S.mat","S");
 
 staticfname = S.staticfname;
 fileID = fopen(staticfname,'a');

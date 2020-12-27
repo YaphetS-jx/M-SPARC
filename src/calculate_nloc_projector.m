@@ -200,7 +200,11 @@ for JJ_a = 1:S.n_atm % loop over all the atoms
 							% Evaluating UdV_Jl = U_Jl * (V_Jl - V_J)
 							UdV_Jl = interp1(S.Atm(count_typ).r_grid_vloc, S.Atm(count_typ).UdV(:,l+1),rc_dd_nl,'spline');
 							for m=-l:l
-								Ylm = sphericalHarmonics(rc_XX,rc_YY,rc_ZZ,l,m,'real');
+                                if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
+                                    Ylm = sphericalHarmonics(rc_XX,rc_YY,rc_ZZ,l,m,'complex');
+                                else
+                                    Ylm = sphericalHarmonics(rc_XX,rc_YY,rc_ZZ,l,m,'real');
+                                end
 								Atom(JJ_a).rcImage(imgRcCount).Chi_mat(:,count_pp) = Atom(JJ_a).rcImage(imgRcCount).Chi_mat(:,count_pp) + UdV_Jl .* Ylm;
 								count_pp = count_pp + 1;
 							end
@@ -225,7 +229,11 @@ for JJ_a = 1:S.n_atm % loop over all the atoms
 							for pp = 1:S.Atm(count_typ).nproj(l+1)
 								UdV_Jl= interp1(S.Atm(count_typ).r_grid_vloc, S.Atm(count_typ).Pot(l+1).proj(:,pp),rc_dd_nl,'spline');
 								for m=-l:l
-									Ylm = sphericalHarmonics(rc_XX,rc_YY,rc_ZZ,l,m,'real');
+                                    if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
+                                        Ylm = sphericalHarmonics(rc_XX,rc_YY,rc_ZZ,l,m,'complex');
+                                    else
+                                        Ylm = sphericalHarmonics(rc_XX,rc_YY,rc_ZZ,l,m,'real');
+                                    end
 									Atom(JJ_a).rcImage(imgRcCount).Chi_mat(:,count_pp) = Atom(JJ_a).rcImage(imgRcCount).Chi_mat(:,count_pp) + UdV_Jl .* Ylm;
 									count_pp = count_pp + 1;
 								end

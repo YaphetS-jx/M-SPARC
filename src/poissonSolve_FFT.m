@@ -66,6 +66,7 @@ g_hat = fftn(rhs);
 % const(1,1,1) = 1;
 % S.const_by_alpha = const./alpha;
 
-f = real(ifftn(g_hat.*S.const_by_alpha));
+% f = real(ifftn(g_hat.*S.const_by_alpha));
+f = ifftn(g_hat.*S.const_by_alpha);
 f = f(:);
 end
