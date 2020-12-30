@@ -22,7 +22,8 @@ Hnlx = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,X,S)) + bsxfun(@times,Veff,X);
 
 if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
     Vexx = evaluateExactExchangePotential(S,X);
-    Hnlx = Hnlx + 0.25*Vexx;
+%     Hnlx = Hnlx + 0.25*Vexx;
+    Hnlx = Hnlx + Vexx;
 end
 
 % Vnl * X

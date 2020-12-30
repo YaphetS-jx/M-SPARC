@@ -7,7 +7,7 @@ for i = 1:size(X,2)
         rhs = conj(S.psi_outer(:,j)).*X(:,i);
         % For periodic case
         if S.BC == 2
-            [V_ji] = poissonSolve_FFT(S,rhs);
+            V_ji = poissonSolve_FFT(S,rhs);
         end
 
         % for dirichlet case
@@ -25,7 +25,19 @@ end
 end
 
 
+function [V] = poissonSolve_FFT(S,rhs)
+if(S.BC ~= 2)
+    error("Must use Periodic BC\n");
+end
 
+% t1 = tic;
+f = -4 * pi * rhs;
+f = reshape(f,S.Nx,S.Ny,S.Nz);
+g_hat = fftn(f);
+V = ifftn(g_hat.*S.const_by_alpha);
+V = V(:);
+% fprintf(' Poisson problem solved by FFT took %fs\n',toc(t1));
+end
 
 function f = poisson_RHS(S,rhs)
 if S.BC ~= 1

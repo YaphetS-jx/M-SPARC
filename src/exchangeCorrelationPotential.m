@@ -135,7 +135,15 @@ function [S] = GGA_PBE(S,XC)
 	drho_1 = S.grad_1 * rho;
 	drho_2 = S.grad_2 * rho;
 	drho_3 = S.grad_3 * rho;
-
+    
+%     For HF
+    if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
+        S.e_xc = 0.0*S.e_xc;
+        S.dvxcdgrho = 0.0.*S.dvxcdgrho;
+        S.Vxc = 0.0*S.Vxc;
+        return;
+    end
+    
 	if S.cell_typ ~= 2
 		sigma = drho_1.*drho_1 + drho_2.*drho_2 + drho_3.*drho_3;
 	else

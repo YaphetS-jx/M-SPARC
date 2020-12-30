@@ -1,16 +1,14 @@
 function [S] = evaluateExactExchangeEnergy(S)
 S.Eex = 0;
 
-% V_guess = rand(S.N,1);
+V_guess = rand(S.N,1);
 for i = 1:S.Nev
     for j = 1:S.Nev
-        rhs = conj(S.psi_outer(:,i)).*S.psi_outer(:,j);
+        rhs = conj(S.psi_outer(:,i)).*S.psi(:,j);
 
         % For periodic case
         if S.BC == 2
             gij = poissonSolve_FFT(S,rhs);
-            
-            S.Eex = S.Eex + S.occ_outer(i)*S.occ_outer(j)*sum(conj(rhs).*gij.*S.W);
         end
         
         % for dirichlet case
@@ -18,14 +16,15 @@ for i = 1:S.Nev
             f = poisson_RHS(S,rhs);
             [gij, flag] = pcg(-S.Lap_std,-f,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
             assert(flag==0);
-            V_guess = gij;
-
-            S.Eex = S.Eex + S.occ_outer(i)*S.occ_outer(j)*sum(rhs.*gij.*S.W);
+            V_guess = gij;    
         end
+        
+        S.Eex = S.Eex + S.occ_outer(i)*S.occ_outer(j)*sum(conj(rhs).*gij.*S.W);
     end
 end
 
-S.Etotal = S.Etotal + 0.25*S.Eex;
+% S.Etotal = S.Etotal + 0.25*S.Eex;
+S.Etotal = S.Etotal + S.Eex;
 fprintf(' Eex = %.8f\n', S.Eex);
 fprintf(' Etot = %.8f\n', S.Etotal);
 fprintf(2,' ------------------\n');
@@ -37,7 +36,19 @@ fclose(fileID);
 
 end
 
+function [V] = poissonSolve_FFT(S,rhs)
+if(S.BC ~= 2)
+    error("Must use Periodic BC\n");
+end
 
+% t1 = tic;
+f = -4 * pi * rhs;
+f = reshape(f,S.Nx,S.Ny,S.Nz);
+g_hat = fftn(f);
+V = ifftn(g_hat.*S.const_by_alpha);
+V = V(:);
+% fprintf(' Poisson problem solved by FFT took %fs\n',toc(t1));
+end
 
 function f = poisson_RHS(S,rhs)
 if S.BC ~= 1
