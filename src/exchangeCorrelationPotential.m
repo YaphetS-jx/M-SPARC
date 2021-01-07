@@ -57,9 +57,19 @@ if S.nspin == 1
 		S = LDA_PW(S);
 	elseif S.xc == 1
 		S = LDA_PZ(S);
-	elseif S.xc == 2
+	elseif S.xc == 2 || S.xc == 41  % For PBE_GGA and PBE0
 		S = GGA_PBE(S,XC);
-	end
+    end
+    if S.xc == 40                   % For Hartree Fock
+        if mod(S.usefock,2) == 1    % For the first SCF without fock
+            S = GGA_PBE(S,XC);
+        else
+            S.e_xc = 0.0*S.e_xc;
+            S.dvxcdgrho = 0.0.*S.dvxcdgrho;
+            S.Vxc = 0.0*S.Vxc;
+            return;
+        end
+    end
 else
 	if S.xc == 0
 		S = LSDA_PW(S,XC);
@@ -136,14 +146,6 @@ function [S] = GGA_PBE(S,XC)
 	drho_2 = S.grad_2 * rho;
 	drho_3 = S.grad_3 * rho;
     
-%     For HF
-    if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
-        S.e_xc = 0.0*S.e_xc;
-        S.dvxcdgrho = 0.0.*S.dvxcdgrho;
-        S.Vxc = 0.0*S.Vxc;
-        return;
-    end
-    
 	if S.cell_typ ~= 2
 		sigma = drho_1.*drho_1 + drho_2.*drho_2 + drho_3.*drho_3;
 	else
@@ -215,10 +217,11 @@ function [S] = GGA_PBE(S,XC)
 	exc = exc * 2.0;
 	S.e_xc = exc .* rhotot_inv;
 
-    if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
-        S.e_xc = 0.75 * S.e_xc;
-        v_xc = 0.75 * v_xc;
-        dvxcdgrho1 = 0.75 * dvxcdgrho1;
+    % For hybrid functionals
+    if (mod(S.usefock,2) == 0 && S.usefock > 1)
+        S.e_xc = (1-S.hyb_mixing) * S.e_xc;
+        v_xc = (1-S.hyb_mixing) * v_xc;
+        dvxcdgrho1 = (1-S.hyb_mixing) * dvxcdgrho1;
     end
 
 	%        -----------------------------------------------------------------------------

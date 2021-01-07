@@ -20,10 +20,9 @@ function  Hnlx = h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,Veff,X,S,kptv
 %Hnlx = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,X,S)) + Veff * X;
 Hnlx = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,X,S)) + bsxfun(@times,Veff,X);
 
-if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
+if (mod(S.usefock,2) == 0 && S.usefock > 1)
     Vexx = evaluateExactExchangePotential(S,X);
-%     Hnlx = Hnlx + 0.25*Vexx;
-    Hnlx = Hnlx + Vexx;
+    Hnlx = Hnlx + S.hyb_mixing*Vexx;
 end
 
 % Vnl * X
@@ -39,7 +38,7 @@ for J = 1:S.n_atm
 		% Chi_X_mult = Chi_X_mult + (S.Atom(J).rcImage(img).Chi_mat .* S.W(S.Atom(J).rcImage(img).rc_pos))' * X(S.Atom(J).rcImage(img).rc_pos,:)* ...
 		Chi_X_mult = Chi_X_mult + ( bsxfun(@times, S.Atom(J).rcImage(img).Chi_mat, S.W(S.Atom(J).rcImage(img).rc_pos)) )' * X(S.Atom(J).rcImage(img).rc_pos,:) * ...
 					(exp(dot(kptvec,(S.Atoms(J,:)-S.Atom(J).rcImage(img).coordinates)*fac)));
-	end
+    end
 	% Chi_X_mult = Chi_X_mult .* S.Atom(J).gamma_Jl;
 	Chi_X_mult = bsxfun(@times,Chi_X_mult, S.Atom(J).gamma_Jl);
 	for img = 1:S.Atom(J).n_image_rc

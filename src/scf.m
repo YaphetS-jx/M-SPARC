@@ -85,7 +85,7 @@ if(S.ForceCount == 1)
 end
 % S.EigVal = zeros(S.Nev,S.tnkpt*S.nspin);
 
-if S.ExxFlag == 1
+if S.usefock == 1
     scf_tol_init = 1e-6;
 else
     scf_tol_init = S.SCF_tol;
@@ -95,19 +95,16 @@ S.lambda_f = 0.0;
 S = scf_loop(S,scf_tol_init);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%               SCF LOOP FULL PBE0            %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%          SCF LOOP Exact Exchange            %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Exact exchange potential 
-if S.ExxFlag == 1
-    S.ExxFlag = S.ExxFlag+1;
+if S.usefock == 1
+    S.usefock = S.usefock+1;
     S = const_for_FFT(S);
 else
     return;
 end
-
-% update compolex nonlocal projectors
-S.Atom = calculate_nloc_projector(S);
 
 % Exchange-correlation potential
 S = exchangeCorrelationPotential(S);
@@ -116,41 +113,44 @@ S = exchangeCorrelationPotential(S);
 S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
 
 % Exact exchange potential parameters
-max_outer_iter = 50;
 Eband_prev = S.Eband;
 err_Exx = 10;
-count_xx = 1;
+count_Exx = 1;
 
 S.lambda_f = 0.0;
-while(err_Exx > S.SCF_tol && count_xx <= max_outer_iter)
-    if count_xx == 1
-        rng(15)
-%         S.psi_outer = real(S.psi) + 1i* rand(size(S.psi));
-        S.psi_outer = (rand(size(S.psi)) - 0.5) + 1i* (rand(size(S.psi)) - 0.5);
-        % Normalize psi, s.t. integral(psi_new' * psi_new) = 1
-        scfac = 1 ./ sqrt(sum(repmat(S.W,1,S.Nev) .* (S.psi_outer .* conj(S.psi_outer)),1));
-        S.psi_outer = bsxfun(@times, S.psi_outer, scfac);
-    else
-        S.psi_outer = S.psi;
-    end
+while(err_Exx > S.FOCK_TOL && count_Exx <= S.MAXIT_FOCK)
+    % Store orbitals and occupations for outer loop
+    S.psi_outer = S.psi;                                                                                                                                                                                                                                                                                                 
     S.occ_outer = S.occ;
-    S = scf_loop(S,S.SCF_tol,count_xx);
+    
+    fileID = fopen(S.outfname,'a');
+    fprintf(fileID, 'No.%d Exx outer loop:\n', count_Exx);
+    fclose(fileID);
+    
+    % Start SCF with hybrid functional
+    S = scf_loop(S,S.SCF_tol,count_Exx);
+    % Calculate Exact Exchange energy
     S = evaluateExactExchangeEnergy(S);
     
     err_Exx = abs(S.Eband - Eband_prev);
-    fprintf(' Error in outer loop iteration: %.4e \n',err_Exx) ;
+    fprintf(' Error in outer loop: %.4e \n',err_Exx) ;
     Eband_prev = S.Eband;
-    count_xx = count_xx + 1;
+    count_Exx = count_Exx + 1;
 end % end of Vxx loop
 
-fprintf('\n Finished outer loop in %d steps!\n', (count_xx - 1));
+fprintf('\n Finished outer loop in %d steps!\n', (count_Exx - 1));
 fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
+
+if count_Exx > S.MAXIT_FOCK && err_Exx > S.FOCK_TOL
+    disp(' Exact Exchange outer loop did not converge. Maximum iterations reached!');
+    fileID = fopen(S.outfname,'a');
+    fprintf(fileID, ...
+        ' Warning: Exact Exchange outer loop did not converge. Maximum iterations reached!\n ');
+    fclose(fileID);
+end
 
 staticfname = S.staticfname;
 fileID = fopen(staticfname,'a');
-if (fileID == -1) 
-    error('\n Cannot open file "%s"\n',staticfname);
-end
 fprintf(fileID, 'Eigenvalues:\n');
 fprintf(fileID, '%f\n', S.EigVal);
 fprintf(fileID, 'Occupations:\n');
@@ -158,8 +158,7 @@ fprintf(fileID, '%f\n', S.occ);
 fclose(fileID);
 
 % make sure next scf starts with normal scf
-S.ExxFlag = S.ExxFlag+1;
-        
+S.usefock = S.usefock+1;
 end
 
 
@@ -169,7 +168,7 @@ S = varargin{1};
 scf_tol = varargin{2};
 
 if nargin == 3
-	count_xx = varargin{3};
+	count_Exx = varargin{3};
 elseif nargin > 3 || nargin < 2
 	error('Too many input arguments.');
 end
@@ -185,12 +184,7 @@ min_scf_iter = S.MINIT_SCF;
 if max_scf_iter < min_scf_iter
 	min_scf_iter = max_scf_iter;
 end
-
-if (S.ExxFlag == 2 && count_xx ==1)
-    max_scf_iter = 3;
-end
     
-
 % Spectrum bounds and filter cutoff for Chebyshev filtering
 bup = zeros(S.tnkpt*S.nspin,1);
 a0 = zeros(S.tnkpt*S.nspin,1);
@@ -218,15 +212,15 @@ while (err > scf_tol && count_SCF <= max_scf_iter || count_SCF <= min_scf_iter)
 	tic_cheb = tic;
 	if(count_SCF > 1)
 		fprintf(' ========================= \n');
-        if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
-            fprintf(' Outer loop iteration number: %2d\n', count_xx);
+        if (mod(S.usefock,2) == 0 && S.usefock > 1)
+            fprintf(' Outer loop iteration number: %2d\n', count_Exx);
         end
 		fprintf(' Relaxation iteration: %2d \n SCF iteration number: %2d \n',S.Relax_iter,count_SCF);
 		fprintf(' ========================= \n');
 	else
 		fprintf(' ============================================= \n');
-        if (mod(S.ExxFlag,2) == 0 && S.ExxFlag > 1)
-            fprintf(' Outer loop iteration number: %2d\n', count_xx);
+        if (mod(S.usefock,2) == 0 && S.usefock > 1)
+            fprintf(' Outer loop iteration number: %2d\n', count_Exx);
         end
 		fprintf(' Relaxation iteration: %2d\n SCF iteration number:  1, Chebyshev cycle: %d \n',S.Relax_iter,count);
 		fprintf(' ============================================= \n');
@@ -450,6 +444,7 @@ dz = S.dz;
 
 dx2 = dx*dx; dy2 = dy*dy; dz2 = dz*dz;
 
+% FD approximationi of alpha = -G^2
 % alpha follows conjugate even space
 alpha = w2(1)*(1/dx2+1/dy2+1/dz2).*ones(N1,N2,N3);
 for k=1:FDn

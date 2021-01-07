@@ -40,7 +40,6 @@ Flag_accuracy = 0;
 Flag_ionT = 0;
 Flag_eqT = 0;
 %Flag_ionT_end = 0;
-S.ExxFlag = 0;
 
 while(~feof(fid1))
 	C_inpt = textscan(fid1,'%s',1,'delimiter',' ','MultipleDelimsAsOne',1);
@@ -564,9 +563,21 @@ while(~feof(fid1))
 		C_param = textscan(fid1,'%s',1,'delimiter',' ','MultipleDelimsAsOne',1);
 		S.filename_out = char(C_param{:});
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
-    elseif (strcmp(str,'EXX_FLAG:'))	  
+    elseif (strcmp(str,'MAXIT_FOCK:'))	  
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
-		S.ExxFlag = C_param{1};
+		S.MAXIT_FOCK = C_param{1};
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+    elseif (strcmp(str,'TOL_FOCK:'))	  
+		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.FOCK_TOL = C_param{1};
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+    elseif (strcmp(str,'HYB_MIXING:'))	  
+		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.hyb_mixing = C_param{1};
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+    elseif (strcmp(str,'EXX_METHOD:'))	  
+		C_param = textscan(fid1,'%s',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.ExxMethod = char(C_param{:});
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
 	else 
 		error('\nCannot recognize input variable identifier: "%s"\n',str);

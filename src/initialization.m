@@ -150,6 +150,37 @@ elseif strcmp(S.XC, 'LDA_PZ')
 	S.xc = 1; % TODO: Implement PZ LDA!
 elseif strcmp(S.XC, 'GGA_PBE') || strcmp(S.XC, 'GGA')
 	S.xc = 2;
+elseif strcmp(S.XC, 'HF')
+	S.xc = 40;
+    S.usefock = 1;
+elseif strcmp(S.XC, 'PBE0')
+	S.xc = 41;
+    S.usefock = 1;
+end
+
+if S.usefock == 1
+    if S.MAXIT_FOCK < 0
+        S.MAXIT_FOCK = 20;
+    end
+    if S.FOCK_TOL < 0
+        S.FOCK_TOL = 1e-6;
+    end
+    if S.xc == 40
+        S.hyb_mixing = 1.0;
+    elseif S.xc == 41
+        S.hyb_mixing = 0.25;
+    end
+    if strcmp(S.ExxMethod, 'FOURIER_SPACE') || strcmp(S.ExxMethod, 'fourier_space')
+        S.exxmethod = 0;
+    elseif strcmp(S.ExxMethod, 'REAL_SPACE') || strcmp(S.ExxMethod, 'real_space')
+        S.exxmethod = 1;
+    elseif strcmp(S.ExxMethod, '')
+        fprintf("Default setting: Solving Exact Exchange in Fourier Space.\n");
+        S.exxmethod = 0;
+        S.ExxMethod = 'FOURIER_SPACE';
+    else
+        error('Please provide correct method for solving Exact Exchange, fourier_space or real_space.\n');
+    end
 end
 
 % calculate Nelectron
@@ -1052,6 +1083,13 @@ S.zin = 0;
 
 % Cychel
 S.alph = 0.0;
+
+% hybrid functionals
+S.usefock = 0;
+S.MAXIT_FOCK = -1;
+S.FOCK_TOL = -1;
+S.hyb_mixing = 0.0;
+S.ExxMethod = '';
 end
 
 
@@ -1250,6 +1288,13 @@ end
 
 if(S.RelaxFlag == 1)
 	fprintf(fileID,'PRINT_RELAXOUT: %d\n',S.PrintRelaxout);
+end
+
+if(S.usefock == 1)
+    fprintf(fileID,'MAXIT_FOCK: %d\n',S.MAXIT_FOCK);
+    fprintf(fileID,'TOL_FOCK: %.2E\n',S.FOCK_TOL);
+    fprintf(fileID,'HYB_MIXING: %.2f\n',S.hyb_mixing);
+    fprintf(fileID,'EXX_METHOD: %s\n',S.ExxMethod);
 end
 
 fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);

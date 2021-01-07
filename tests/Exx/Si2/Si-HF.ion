@@ -14,9 +14,11 @@
 
 # this is a comment
 
-ATOM_TYPE:   C                             # atom type 
+ATOM_TYPE:   Si                            # atom type 
 N_TYPE_ATOM: 2                             # number of atoms of this type
-PSEUDO_POT:  C.pot   # pseudopotential
+PSEUDO_POT:  Si.pot    # pseudopotential
 COORD:                                     # coordinates follows
-6.8 8 8  
-9.2 8 8 
+10 12 12
+14 12 12
+
+
