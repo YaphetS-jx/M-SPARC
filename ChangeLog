@@ -10,6 +10,11 @@ Name: Shashikant Kumar
 * Deleted the old "tests" folder
 
 ----------------
+Jan 13, 2021
+Name: Xin Jing
+* Add Exx implementation
+
+----------------
 Oct 07, 2020
 Name: Qimen Xu
 * Modify pseudopotential reading to support TM potentials.
