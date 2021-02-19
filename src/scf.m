@@ -445,22 +445,43 @@ dx = S.dx;
 dy = S.dy;
 dz = S.dz;
 
-[I,J,K] = meshgrid(0:(N1-1),0:(N2-1),0:(N3-1));
-
 dx2 = dx*dx; dy2 = dy*dy; dz2 = dz*dz;
 
-% FD approximationi of alpha = -G^2
+w2_x = w2 / dx2;
+w2_y = w2 / dy2;
+w2_z = w2 / dz2;
+
+% FD approximationi of d_hat = G^2
 % alpha follows conjugate even space
-alpha = w2(1)*(1/dx2+1/dy2+1/dz2).*ones(N1,N2,N3);
-for k=1:FDn
-    alpha = alpha + w2(k+1)*2.*(cos(2*pi*I*k/N1)./dx2 + cos(2*pi*J*k/N2)./dy2 + cos(2*pi*K*k/N3)./dz2);
+count = 1;
+d_hat = zeros(N1,N2,N3);
+% G2 = zeros(N1,N2,N3);
+w2_diag = w2_x(1) + w2_y(1) +w2_z(1);
+for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
+    for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
+        for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
+% 			G2(count) = ((k1-1)*2*pi/L1)^2 + ((k2-1)*2*pi/L2)^2 + ((k3-1)*2*pi/L3)^2;
+			d_hat(count) = -w2_diag;
+            for p = 1:FDn
+                d_hat(count) = d_hat(count) - 2 * ...
+                    (  cos(2*pi*(k1-1)*p/N1)*w2_x(p+1) ...
+                     + cos(2*pi*(k2-1)*p/N2)*w2_y(p+1) ...
+                     + cos(2*pi*(k3-1)*p/N3)*w2_z(p+1));
+            end
+            count = count + 1;
+        end
+    end
 end
+% alpha = -d_hat;
 
 V = S.L1*S.L2*S.L3;
 R_c = (3*V/(4*pi))^(1/3);
-alpha(1,1,1) = -2/R_c^2;
+% alpha(1,1,1) = -2/R_c^2;
+d_hat(1,1,1) = 2/R_c^2;
 
-const = 1 - cos(R_c*sqrt(-1*alpha));
+% const = 1 - cos(R_c*sqrt(-1*alpha));
+const = 1 - cos(R_c*sqrt(d_hat));
 const(1,1,1) = 1;
-S.const_by_alpha = const./alpha;
+% S.const_by_alpha = const./alpha;
+S.const_by_alpha = -1*const./d_hat;
 end
