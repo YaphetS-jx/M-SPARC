@@ -166,9 +166,13 @@ if S.usefock == 1
         S.FOCK_TOL = 1e-4;
     end
     if S.xc == 40
-        S.hyb_mixing = 1.0;
+        if S.hyb_mixing == 0.0
+            S.hyb_mixing = 1.0;
+        end
     elseif S.xc == 41
-        S.hyb_mixing = 0.25;
+        if S.hyb_mixing == 0.0
+            S.hyb_mixing = 0.25;
+        end
     end
     if strcmp(S.ExxMethod, 'FOURIER_SPACE') || strcmp(S.ExxMethod, 'fourier_space')
         S.exxmethod = 0;
@@ -1298,6 +1302,7 @@ if(S.usefock == 1)
     fprintf(fileID,'TOL_SCF_INIT: %.2E\n',S.SCF_tol_init);
     fprintf(fileID,'EXX_METHOD: %s\n',S.ExxMethod);
     fprintf(fileID,'ACE_FLAG: %d\n',S.ACEFlag);
+    fprintf(fileID,'HYB_MIXING: %f\n',S.hyb_mixing);
 end
 
 fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);
