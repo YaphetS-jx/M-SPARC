@@ -571,13 +571,17 @@ while(~feof(fid1))
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
 		S.FOCK_TOL = C_param{1};
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
-    elseif (strcmp(str,'HYB_MIXING:'))	  
+    elseif (strcmp(str,'TOL_SCF_INIT'))	  
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
-		S.hyb_mixing = C_param{1};
+		S.SCF_tol_init = C_param{1};
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
     elseif (strcmp(str,'EXX_METHOD:'))	  
 		C_param = textscan(fid1,'%s',1,'delimiter',' ','MultipleDelimsAsOne',1);
 		S.ExxMethod = char(C_param{:});
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+    elseif (strcmp(str,'ACE_FLAG:'))	  
+		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.ACEFlag = char(C_param{:});
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
 	else 
 		error('\nCannot recognize input variable identifier: "%s"\n',str);

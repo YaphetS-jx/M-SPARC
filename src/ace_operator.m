@@ -1,39 +1,36 @@
-function [S] = evaluateExactExchangeEnergy(S)
-S.Eex = 0;
-if S.ACEFlag == 0
-    V_guess = rand(S.N,1);
-    for i = 1:S.Nev
-        for j = 1:S.Nev
-            rhs = conj(S.psi_outer(:,i)).*S.psi(:,j);
+function S = ace_operator(S)
+% Ns = S.Nev;
+Ns = sum(S.occ_outer>1e-6);
 
+S.Xi = zeros(S.N,Ns);    % For storage of W and Xi
+V_guess = rand(S.N,1);
+rhs = zeros(S.N,Ns);
+
+for i = 1:Ns
+    rhs(:,i:Ns) = bsxfun(@times,S.psi_outer(:,i:Ns),S.psi_outer(:,i));
+    V_i = zeros(S.N,Ns);
+    for j = i:Ns
+        if (S.occ_outer(i) + S.occ_outer(j) > 1e-4)
             if S.exxmethod == 0             % solving in fourier space
-                gij = poissonSolve_FFT(S,rhs);
+                V_i(:,j) = poissonSolve_FFT(S,rhs(:,j));
             else                            % solving in real space
-                f = poisson_RHS(S,rhs);
-                [gij, flag] = pcg(-S.Lap_std,-f,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
+                f = poisson_RHS(S,rhs(:,j));
+                [V_i(:,j), flag] = pcg(-S.Lap_std,-f,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
                 assert(flag==0);
-                V_guess = gij;    
+                V_guess = V_i(:,j);
             end
-
-            S.Eex = S.Eex + S.occ_outer(i)*S.occ_outer(j)*sum(conj(rhs).*gij.*S.W);
         end
     end
-else
-    psi_times_Xi = transpose(S.psi)*S.Xi;
-    S.Eex = (transpose(S.occ_outer)*sum(psi_times_Xi.*psi_times_Xi,2))*(S.dx*S.dy*S.dz)^2;
+    S.Xi(:,(i+1:Ns)) = S.Xi(:,(i+1:Ns)) - S.occ_outer(i)*bsxfun(@times,S.psi_outer(:,i),V_i(:,(i+1:Ns)));
+    S.Xi(:,i) = S.Xi(:,i) - bsxfun(@times,S.psi_outer(:,(i:Ns)),V_i(:,(i:Ns))) * S.occ_outer((i:Ns));
 end
 
+M = (transpose(S.psi_outer(:,1:Ns))*S.Xi)*S.dx*S.dy*S.dz;
+L = chol(-M); 
+S.Xi = S.Xi * inv(L); % Do it efficiently
 
-S.Etotal = S.Etotal + S.hyb_mixing * S.Eex;
-fprintf(' Eex = %.8f\n', S.Eex);
-fprintf(' Etot = %.8f\n', S.Etotal);
-fprintf(2,' ------------------\n');
-
-fileID = fopen(S.outfname,'a');
-fprintf(fileID,' Eex = %.8f\n', S.Eex);
-fprintf(fileID,' Etot = %.8f\n', S.Etotal);
-fclose(fileID);
 end
+
 
 function [V] = poissonSolve_FFT(S,rhs)
 % t1 = tic;
@@ -88,3 +85,4 @@ end
 d = d(:);
 f = f + d;
 end
+

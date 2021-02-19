@@ -86,7 +86,7 @@ end
 % S.EigVal = zeros(S.Nev,S.tnkpt*S.nspin);
 
 if S.usefock == 1
-    scf_tol_init = 1e-6;
+    scf_tol_init = S.SCF_tol_init;
 else
     scf_tol_init = S.SCF_tol;
 end
@@ -122,6 +122,10 @@ while(err_Exx > S.FOCK_TOL && count_Exx <= S.MAXIT_FOCK)
     % Store orbitals and occupations for outer loop
     S.psi_outer = S.psi;                                                                                                                                                                                                                                                                                                 
     S.occ_outer = S.occ;
+    
+    if S.ACEFlag == 1
+        S = ace_operator(S);
+    end
     
     fileID = fopen(S.outfname,'a');
     fprintf(fileID, 'No.%d Exx outer loop:\n', count_Exx);
@@ -233,7 +237,8 @@ while (err > scf_tol && count_SCF <= max_scf_iter || count_SCF <= min_scf_iter)
 	S = occupations(S);
 	
 	if (((S.ForceCount == 1) && (count >= max_count_first_relax)) ...
-			|| ((S.ForceCount > 1) && (count >= max_count_gen_relax)))
+			|| ((S.ForceCount > 1) && (count >= max_count_gen_relax)) ...
+            || (mod(S.usefock,2) == 0 && S.usefock > 1 && count >= max_count_gen_relax))
 		% for density mixing, can estimate energy based on input rho and
 		% input veff, will recalculate energy once scf is converged
 		if S.MixingVariable == 0
