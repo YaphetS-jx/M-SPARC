@@ -3,7 +3,7 @@ function [S] = NLCG_Teter(S,u)
 S.ofdft_phi_flag = 0;
 % options = optimset('fminsearch');
 options = optimset('fminbnd');
-options.TolX = 1E-3;
+options.TolX = 1E-2;
 % options.TolFun = 1E-6;
 
 outfname = S.outfname;
