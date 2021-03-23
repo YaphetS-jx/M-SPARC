@@ -46,7 +46,7 @@ end
 % assert(conv_flag==0,'Electrostatic Poisson solve did not converge')
 % S_Debug.relax(S.Relax_iter).poisson_flag_init = conv_flag;
 
-fprintf(' Poisson problem took %fs\n',toc(t1));
+% fprintf(' Poisson problem took %fs\n',toc(t1));
 
 end
 

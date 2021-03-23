@@ -33,6 +33,10 @@ end
 % Read initial data and create a structure S to store the data
 S = initialization(fname);
 
+S.ofdft = 1;
+S.ofdft_lambda = 0.2;
+S.ofdft_Cf = 0.3*((3*pi*pi)^(2/3));
+
 S.parallel = parallel_switch; %0 - N0 && 1 - Yes
 if S.parallel == 1
 	% Set up the parallel environment
