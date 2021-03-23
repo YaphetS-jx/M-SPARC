@@ -36,6 +36,7 @@ S = initialization(fname);
 S.ofdft = 1;
 S.ofdft_lambda = 0.2;
 S.ofdft_Cf = 0.3*((3*pi*pi)^(2/3));
+S = FDFFT_const(S);
 
 S.parallel = parallel_switch; %0 - N0 && 1 - Yes
 if S.parallel == 1

@@ -3,7 +3,7 @@ function [S] = NLCG_Teter(S,u)
 S.ofdft_phi_flag = 0;
 % options = optimset('fminsearch');
 options = optimset('fminbnd');
-options.TolX = 1E-6;
+options.TolX = 1E-3;
 % options.TolFun = 1E-6;
 
 outfname = S.outfname;
@@ -11,7 +11,7 @@ fileID = fopen(outfname,'a');
 fprintf(fileID,'=====================================================================\n');
 fprintf(fileID,'             Nonlinear Conjugate Gradient (NLCG#%d)                  \n',S.Relax_iter);
 fprintf(fileID,'=====================================================================\n');
-fprintf(fileID,'Iteration                     Error                      Timing (sec)\n');
+fprintf(fileID,'Iteration     s       iter         Error                 Timing (sec)\n');
 fclose(fileID);
 
 tic_nlcg = tic;
@@ -34,7 +34,7 @@ d = 0 * r;
 % find s
 OFDFTEnergyEvaluator = @(s) ofdft_find_mins(S,u,s,r);
 % [s,~,exitflag] = fminsearch(OFDFTEnergyEvaluator,0.2,options);
-[s,~,exitflag] = fminbnd(OFDFTEnergyEvaluator,0,1,options);
+[s,~,exitflag,output] = fminbnd(OFDFTEnergyEvaluator,0,1,options);
 if exitflag ~= 1
 %     error("fminsearch not converged\n");
     error("fminbnd not converged\n");
@@ -51,7 +51,7 @@ while i < imax
     eta = dot(F,u) * S.dV / S.Nelectron;
     r = -2 * (F - eta * u);
     deltaNew = dot(r,r);
-    fprintf("iter %d s %.6f error %.3e\n", i+1,s,deltaNew);
+    fprintf("iter %d s %.6f iter %d error %.3e\n", i+1,s,output.iterations,deltaNew);
     
     if deltaNew < tol1
         break;
@@ -59,8 +59,8 @@ while i < imax
     
     nlcg_runtime = nlcg_runtime + toc(tic_nlcg);
     fileID = fopen(outfname,'a');
-    fprintf(fileID,'%-6d                      %.3E                     %.3f\n', ...
-					i, deltaNew, nlcg_runtime);
+    fprintf(fileID,'%-6d       %.6f  %2d   %.3E                  %.3f\n', ...
+					i, s, output.iterations, deltaNew, nlcg_runtime);
     fclose(fileID);
     tic_nlcg = tic;
     
@@ -77,7 +77,7 @@ while i < imax
     % find s
     OFDFTEnergyEvaluator = @(s) ofdft_find_mins(S,u,s,d);
 %     [s,~,exitflag] = fminsearch(OFDFTEnergyEvaluator, 0.2,options);
-    [s,~,exitflag] = fminbnd(OFDFTEnergyEvaluator,0,1,options);
+    [s,~,exitflag,output] = fminbnd(OFDFTEnergyEvaluator,0,1,options);
     
     if exitflag ~= 1
 %         error("fminsearch not converged\n");
@@ -93,17 +93,15 @@ while i < imax
     i = i + 1;
 end
 
-fprintf('\n Finished NLCG in %d steps!\n', i);
+fprintf('\n Finished NLCG in %d steps!\n', i+1);
 % fprintf('\n dot(u,u)*dV = %.4f\n', dot(u,u)*S.dV);
 
-% S.rho = u.^2;
-% S = poissonSolve(S, S.poisson_tol, 1);
 [S.Etotal,S.Et,S.Exc] = ofdftTotalEnergy(S,u);
 
 nlcg_runtime = nlcg_runtime + toc(tic_nlcg);
 fileID = fopen(outfname,'a');
-fprintf(fileID,'%-6d                      %.3E                     %.3f\n', ...
-                i, deltaNew, nlcg_runtime);
+fprintf(fileID,'%-6d       %.6f  %2d   %.3E                  %.3f\n', ...
+                i, s,  output.iterations, deltaNew, nlcg_runtime);
 fclose(fileID);
 end
 
@@ -116,12 +114,15 @@ F = -0.5*S.ofdft_lambda*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S));
 rho = u.^2;
 S.rho = rho;
 % phi
-if S.ofdft_phi_flag == 0
-    S = poissonSolve(S, S.poisson_tol, 0);
-    S.ofdft_phi_flag = 1;
-else
-    S = poissonSolve(S, S.poisson_tol, 1);
-end
+% if S.ofdft_phi_flag == 0
+%     S = poissonSolve(S, S.poisson_tol, 0);
+%     S.ofdft_phi_flag = 1;
+% else
+%     S = poissonSolve(S, S.poisson_tol, 1);
+% end
+
+S.phi = FD_FFT(S,rho);
+
 % Vxc
 S = exchangeCorrelationPotential(S);
 Vk = (5/3)*S.ofdft_Cf*(rho.^(2/3));
@@ -137,9 +138,12 @@ u = u + s .* d;
 u = sqrt(S.Nelectron / (dot(u,u) * S.dV)) * u;
 u = abs(u);
 S.rho = u.^2;
-S = poissonSolve(S, S.poisson_tol, 1);
+
+% S = poissonSolve(S, S.poisson_tol, 1);
+
+S.phi = FD_FFT(S,S.rho);
+
 Etot = ofdftTotalEnergy(S,u);
 Eatm = Etot/S.n_atm;
 end
-
 
