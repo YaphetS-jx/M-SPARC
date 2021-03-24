@@ -48,10 +48,10 @@ fprintf(' Time for b calculation: %.3f seconds.\n',toc(t_calc_b));
 % set up guess electron density (guess rho)
 S = initElectrondensity(S);
 
-if S.ofdft
+if S.OFDFTFlag
     u = sqrt(abs(S.rho));
     u = abs(u);
-    S = NLCG_Teter(S,u);
+    S = ofdft_NLCG_Teter(S,u);
 else
     % Calculate nonlocal projectors	
     S.Atom = calculate_nloc_projector(S);
@@ -65,7 +65,9 @@ S.S_Debug.relax(S.Relax_iter).Eself = S.Eself;
 S.S_Debug.relax(S.Relax_iter).Eself_ref = S.Eself_ref;
 S.S_Debug.relax(S.Relax_iter).E_corr = S.E_corr;
 
-if S.ofdft == 0
+if S.OFDFTFlag
+% doing nothing. no occ in ofdft.
+else
     if abs(1-S.occ(1))>1e-6 || abs(S.occ(end))>1e-6
         fprintf('[\b Warning: No. of states is not enough!]\b \n');
         S.S_Debug.relax(S.Relax_iter).occ_check = 1; % 1 means not satisfied
@@ -93,15 +95,19 @@ fprintf(fileID,'                                Energy                          
 fprintf(fileID,'====================================================================\n');
 fprintf(fileID,'Free energy per atom               :%18.10E (Ha/atom)\n', S.Etotal / S.n_atm);
 fprintf(fileID,'Total free energy                  :%18.10E (Ha)\n', S.Etotal);
-if S.ofdft == 0
-fprintf(fileID,'Band structure energy              :%18.10E (Ha)\n', S.Eband);
+
+if S.OFDFTFlag
+    fprintf(fileID,'Kinetic energy                     :%18.10E (Ha)\n', S.Et);
+    fprintf(fileID,'Exchange correlation energy        :%18.10E (Ha)\n', S.Exc);
+    fprintf(fileID,'Self and correction energy         :%18.10E (Ha)\n', S.E_corr-S.Eself);
+else
+    fprintf(fileID,'Band structure energy              :%18.10E (Ha)\n', S.Eband);
+    fprintf(fileID,'Exchange correlation energy        :%18.10E (Ha)\n', S.Exc);
+    fprintf(fileID,'Self and correction energy         :%18.10E (Ha)\n', S.E_corr-S.Eself);
+    fprintf(fileID,'Entropy*kb*T                       :%18.10E (Ha)\n', S.Eent);
+    fprintf(fileID,'Fermi level                        :%18.10E (Ha)\n', S.lambda_f);
 end
-fprintf(fileID,'Exchange correlation energy        :%18.10E (Ha)\n', S.Exc);
-fprintf(fileID,'Self and correction energy         :%18.10E (Ha)\n', S.E_corr-S.Eself);
-if S.ofdft == 0
-fprintf(fileID,'Entropy*kb*T                       :%18.10E (Ha)\n', S.Eent);
-fprintf(fileID,'Fermi level                        :%18.10E (Ha)\n', S.lambda_f);
-end
+
 if S.nspin ~= 1
 	fprintf(fileID,'Net Magnetization                  :%18.10E \n', S.netM);
 end

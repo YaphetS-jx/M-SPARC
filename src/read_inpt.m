@@ -563,6 +563,14 @@ while(~feof(fid1))
 		C_param = textscan(fid1,'%s',1,'delimiter',' ','MultipleDelimsAsOne',1);
 		S.filename_out = char(C_param{:});
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+    elseif(strcmp(str,'OFDFT_FLAG:'))
+		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.OFDFTFlag = C_param{1};
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+    elseif(strcmp(str,'TOL_OFDFT:'))
+		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.ofdft_tol = C_param{1};
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
 	else 
 		error('\nCannot recognize input variable identifier: "%s"\n',str);
 		%fprintf('\nCannot recognize input flag in .inpt file: "%s"\n',str);
@@ -605,6 +613,33 @@ if(S.MDFlag == 1 && S.ion_elec_eqT == 1)
 	S.bet = 1 / (S.kB * S.Temp);
 end
 
+if S.OFDFTFlag
+    if S.BCx || S.BCy || S.BCz
+        error('Only periodic B.C. is supported in OFDFT!');
+    end
+    if S.spin_typ
+        error('Polarized calculation is not supported in OFDFT!');
+    end
+    if sum(S.kptgrid ~= [0.0 0.0 0.0]) ...
+            || sum(S.kptshift ~= [0.0 0.0 0.0])
+        error('Only Gamma-point is supported in OFDFT!');
+    end
+    if S.Temp ~= -1 || S.bet ~= -1
+        error('Temperature and smearing options are not supported in OFDFT!');
+    end
+    if S.MDFlag
+        error('MD is not supported in OFDFT!');
+    end
+    if S.Calc_stress || S.Calc_pres 
+        error('Stress and pressure are not supported in OFDFT!');
+    end
+    if S.Nev ~= -1 || S.PrintEigenFlag
+        error('No states in OFDFT. Options like NSTATES and PRINT_EIGEN are not supported in OFDFT!');
+    end
+    if S.SCF_tol ~= -1 || S.npl ~= -1
+        error('SCF related options like TOL_SCF, CHEB_DEGREE are not supported in OFDFT!');
+    end
+end
 end
 
 function msparc_neglect_warning(str)

@@ -247,7 +247,9 @@ end % end of loop over atoms
 
 fprintf(' local force calculation: %.3f s\n', toc(tic_locforces));
 
-if S.ofdft == 0
+if S.OFDFTFlag == 1
+% no nonlocal term in OFDFT
+else
 %**********************************************************************
 %*                   Calculate nonlocal atomic force                  *
 %**********************************************************************

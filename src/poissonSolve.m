@@ -14,7 +14,7 @@ function [S] = poissonSolve(S, poisson_tol, Isguess)
 % @copyright (c) 2019 Material Physics & Mechanics Group, Georgia Tech
 %
 
-t1 = tic;
+% t1 = tic;
 
 if S.cell_typ < 3
 	f = poisson_RHS(S);
@@ -24,16 +24,20 @@ end
 
 %fprintf(' Time taken for poisson_RHS: %f s\n',toc(t1));
 
-% solve the poisson equation using a linear solver (AAR or gmres)
-% AAR reference: see AAR.m 
-if Isguess
-	phi_guess = S.phi;
+if S.OFDFTFlag
+    S.phi = FD_FFT(S,f);
 else
-	phi_guess = [];
-end
+    % solve the poisson equation using a linear solver (AAR or gmres)
+    % AAR reference: see AAR.m 
+    if Isguess
+        phi_guess = S.phi;
+    else
+        phi_guess = [];
+    end
 
-%[S.phi,conv_flag, relres, iter] = gmres(S.Lap_std,f,50,poisson_tol,50,S.LapPreconL,S.LapPreconU,phi_guess);
-S.phi = aar(S.Lap_std,f,phi_guess,poisson_tol,S.MAXIT_POISSON,0.6,0.6,7,6,S.LapPreconL,S.LapPreconU);
+    %[S.phi,conv_flag, relres, iter] = gmres(S.Lap_std,f,50,poisson_tol,50,S.LapPreconL,S.LapPreconU,phi_guess);
+    S.phi = aar(S.Lap_std,f,phi_guess,poisson_tol,S.MAXIT_POISSON,0.6,0.6,7,6,S.LapPreconL,S.LapPreconU);
+end
 
 if(S.BC == 2)
 	% To make sure integral phi is 0 (this removes the arbitariness of the
@@ -292,3 +296,22 @@ xmy = xx - yy;
 
 end
 
+% FD-FFT sovler in periodic B.C.
+function [x] = FD_FFT(S,rhs)
+% only work for periodic B.C.
+if S.BC ~= 2
+    error("only work for PBC");
+end
+% rhs = -4*pi*(rho + S.b);
+N1 = S.Nx;
+N2 = S.Ny;
+N3 = S.Nz;
+
+f = reshape(rhs,N1,N2,N3);
+f_hat = fftn(f);
+u_hat = f_hat ./ S.d_hat;
+u_hat(1) = 0; % this is because f_hat(1) = int {f_hat} = 0
+x = ifftn(u_hat);
+x = x(:);
+x = x - dot(S.W,x)/sum(S.W);
+end
