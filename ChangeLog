@@ -1,4 +1,10 @@
 ----------------
+Mar 24, 2021
+Name: Xin Jing
+* Add OFDFT with TFW kinetic energy functional
+
+
+----------------
 Oct 07, 2020
 Name: Qimen Xu
 * Modify pseudopotential reading to support TM potentials.
