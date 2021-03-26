@@ -50,18 +50,17 @@ while i < imax
     eta = dot(F,u) * S.dV / S.Nelectron;
     r = -2 * (F - eta * u);
     deltaNew = dot(r,r);
-    fprintf(" iter%-5d  Energy(Ha/atom) %.6E   error %.3E\n", i+1,fval,sqrt(deltaNew/S.N));
+    fprintf(" iter%-5d  s %.6f sit %d Energy(Ha/atom) %.6E   error %.3E\n", i+1,s,output.iterations, fval,sqrt(deltaNew/S.N));
+    
+    fileID = fopen(outfname,'a');
+    fprintf(fileID,'%-6d        %18.10E       %.3E         %.3f\n', ...
+					i+1, fval, sqrt(deltaNew/S.N), toc(tic_nlcg));
+    fclose(fileID);
+    tic_nlcg = tic;
     
     if deltaNew < tol1
         break;
     end
-    
-    fileID = fopen(outfname,'a');
-    fprintf(fileID,'%-6d        %18.10E       %.3E         %.3f\n', ...
-					i, fval, sqrt(deltaNew/S.N), toc(tic_nlcg));
-    fclose(fileID);
-    tic_nlcg = tic;
-    
     
     v1 = dot(rold,r);
     v2 = dot(rold,rold);
@@ -80,6 +79,7 @@ while i < imax
     end
     
     u = u + s * r;
+%     u = u + s * d;
     u = sqrt(S.Nelectron / (dot(u,u) * S.dV)) * u;
     u = abs(u);
     rold = r;
@@ -90,12 +90,6 @@ end
 fprintf('\n Finished NLCG in %d steps!\n', i+1);
 
 [S.Etotal,S.Et,S.Exc] = ofdftTotalEnergy(S,u);
-
-
-fileID = fopen(outfname,'a');
-fprintf(fileID,'%-6d        %18.10E       %.3E         %.3f\n', ...
-                i, S.Etotal/S.n_atm, sqrt(deltaNew/S.N), toc(tic_nlcg));
-fclose(fileID);
 end
 
 % function to compute (-lambda/5*lap + phi + Vxc + Vk) (x)
