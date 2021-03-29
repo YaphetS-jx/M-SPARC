@@ -1,8 +1,8 @@
 ***************************************************************************
-*                      M-SPARC v1.0.0 (Mar 24, 2021)                      *
+*                      M-SPARC v1.0.0 (Mar 29, 2021)                      *
 *   Copyright (c) 2019 Material Physics & Mechanics Group, Georgia Tech   *
 *           Distributed under GNU General Public License 3 (GPL)          *
-*                Date: 26-Mar-2021  Start time: 10:25:01                  *
+*                Date: 29-Mar-2021  Start time: 16:38:44                  *
 ***************************************************************************
                            Input parameters                                
 ***************************************************************************
@@ -14,6 +14,7 @@ KPOINT_GRID: 1 1 1
 KPOINT_SHIFT: 0 0 0
 EXCHANGE_CORRELATION: LDA_PZ
 OFDFT_FLAG: 1
+OFDFT_LAMBDA: 0.200000
 TOL_OFDFT: 1.00E-03
 CALC_STRESS: 0
 CALC_PRES: 0
@@ -43,9 +44,9 @@ Estimated total memory usage       :  7.73 MB
                 Orbital-Free DFT NLCG (OFDFT-NLCG#1)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2117957040E+00       1.064E-02         0.009
-2              -2.2126455819E+00       6.804E-03         0.006
-3              -2.2132128588E+00       2.447E-03         0.007
+1              -2.2117957040E+00       1.064E-02         0.010
+2              -2.2126455819E+00       6.804E-03         0.007
+3              -2.2132128588E+00       2.447E-03         0.008
 4              -2.2132551969E+00       1.113E-03         0.006
 5              -2.2132684487E+00       5.272E-04         0.006
 ====================================================================
@@ -58,11 +59,11 @@ Exchange correlation energy        : -3.1459609442E+00 (Ha)
 Self and correction energy         : -1.6381808913E+01 (Ha)
 Average force                      :  6.6137583806E-16 (Ha/Bohr)
 Maximum force                      :  7.8832453994E-16 (Ha/Bohr)
-Time for force calculation         :  0.278 (sec)
+Time for force calculation         :  0.285 (sec)
 ***************************************************************************
                                Timing info                                 
 ***************************************************************************
-Total walltime                     :  0.656 sec
+Total walltime                     :  0.655 sec
 ___________________________________________________________________________
 
 ***************************************************************************

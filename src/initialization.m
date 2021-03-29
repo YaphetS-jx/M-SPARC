@@ -730,7 +730,9 @@ S.memory_usage = estimate_memory(S);
 
 if S.OFDFTFlag
     S = FDFFT_const(S);
-    S.ofdft_lambda = 0.2;
+    if S.ofdft_lambda < 0
+        S.ofdft_lambda = 0.2;
+    end
     S.ofdft_Cf = 0.3*((3*pi*pi)^(2/3));
     if S.ofdft_tol < 0
         S.ofdft_tol = 1E-3;
@@ -1063,6 +1065,7 @@ S.alph = 0.0;
 % OFDFT
 S.OFDFTFlag = 0;
 S.ofdft_tol = -1;
+S.ofdft_lambda = -1;
 end
 
 
@@ -1706,6 +1709,7 @@ end
 fprintf(fileID,'EXCHANGE_CORRELATION: %s\n',S.XC);
 
 fprintf(fileID,'OFDFT_FLAG: %d\n',S.OFDFTFlag);
+fprintf(fileID,'OFDFT_LAMBDA: %.6f\n',S.ofdft_lambda);
 fprintf(fileID,'TOL_OFDFT: %.2E\n',S.ofdft_tol);
 
 fprintf(fileID,'CALC_STRESS: %d\n',S.Calc_stress);
