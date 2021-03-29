@@ -1,4 +1,11 @@
 ----------------
+Mar 29, 2021
+Name: Xin Jing
+* Change default solver for non-orthogonal system to AAR solver.
+* FD-FFT solver currently only works for orthogonal system.
+
+
+----------------
 Mar 24, 2021
 Name: Xin Jing
 * Add OFDFT with TFW kinetic energy functional
