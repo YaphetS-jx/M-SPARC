@@ -1,0 +1,75 @@
+***************************************************************************
+*                      M-SPARC v1.0.0 (Mar 29, 2021)                      *
+*   Copyright (c) 2019 Material Physics & Mechanics Group, Georgia Tech   *
+*           Distributed under GNU General Public License 3 (GPL)          *
+*                Date: 29-Mar-2021  Start time: 16:38:47                  *
+***************************************************************************
+                           Input parameters                                
+***************************************************************************
+CELL: 16.000000 24.000000 32.000000 
+FD_GRID: 32 48 64
+FD_ORDER: 6
+BC: P P P
+KPOINT_GRID: 1 1 1
+KPOINT_SHIFT: 0 0 0
+EXCHANGE_CORRELATION: LDA_PZ
+OFDFT_FLAG: 1
+OFDFT_LAMBDA: 0.200000
+TOL_OFDFT: 1.00E-03
+CALC_STRESS: 0
+CALC_PRES: 0
+TOL_PSEUDOCHARGE: 1.00E-08
+REFERENCE_CUTOFF: 0.50
+FIX_RAND: 0
+PRINT_FORCES: 1
+PRINT_ATOMS: 1
+PRINT_DENSITY: 0
+OUTPUT_FILE: ../tests/OFDFT/Al96/Al.out
+***************************************************************************
+                             Initialization                                
+***************************************************************************
+Mesh spacing                       :  0.500000 (Bohr)
+Number of symmetry adapted k-points:  1
+Output printed to                  :  ../tests/OFDFT/Al96/Al.out
+Total number of atom types         :  1
+Total number of atoms              :  96
+Total number of electrons          :  288
+Atom type 1  (valence electrons)   :  Al 3
+Pseudopotential                    :  Al_goodwin.psp8
+lloc                               :  0
+Pseudocharge radii of atom type 1  :  10.00 10.00 10.00
+Number of atoms of type 1          :  96
+Estimated total memory usage       :  683.63 MB
+=====================================================================
+                Orbital-Free DFT NLCG (OFDFT-NLCG#1)                
+=====================================================================
+Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
+1              -2.2117957040E+00       1.064E-02         0.095
+2              -2.2126455819E+00       6.804E-03         0.071
+3              -2.2132128588E+00       2.447E-03         0.082
+4              -2.2132551969E+00       1.113E-03         0.071
+5              -2.2132684487E+00       5.272E-04         0.071
+====================================================================
+                                Energy                              
+====================================================================
+Free energy per atom               : -2.2132684487E+00 (Ha/atom)
+Total free energy                  : -2.1247377108E+02 (Ha)
+Kinetic energy                     :  7.9342395730E+01 (Ha)
+Exchange correlation energy        : -7.5503062662E+01 (Ha)
+Self and correction energy         : -3.9316341390E+02 (Ha)
+Average force                      :  2.6898239058E-14 (Ha/Bohr)
+Maximum force                      :  4.0093947452E-14 (Ha/Bohr)
+Time for force calculation         :  3.699 (sec)
+***************************************************************************
+                               Timing info                                 
+***************************************************************************
+Total walltime                     :  6.896 sec
+___________________________________________________________________________
+
+***************************************************************************
+*             Material Physics & Mechanics Group, Georgia Tech            *
+*                       PI: Phanish Suryanarayana                         *
+*                Main Developers: Qimen Xu, Abhiraj Sharma                *
+*     Acknowledgements: U.S. DOE (DE-SC0019410); NSF (1333500,1553212)    *
+***************************************************************************
+                                                                           

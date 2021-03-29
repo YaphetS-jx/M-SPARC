@@ -194,7 +194,9 @@ Apart from the output structure returned, depending on the calculations performe
 \hyperlink{PRINT_ATOMS}{\texttt{PRINT\_ATOMS}} $\vert$ \hyperlink{PRINT_FORCES}{\texttt{PRINT\_FORCES}} $\vert$ \hyperlink{PRINT_MDOUT}{\texttt{PRINT\_MDOUT}} $\vert$ \hyperlink{PRINT_RELAXOUT}{\texttt{PRINT\_RELAXOUT}} $\vert$ \hyperlink{PRINT_RESTART}{\texttt{PRINT\_RESTART}} $\vert$ \hyperlink{PRINT_RESTART_FQ}{\texttt{PRINT\_RESTART\_FQ}} $\vert$ \hyperlink{PRINT_VELS}{\texttt{PRINT\_VELS}} $\vert$ \hyperlink{OUTPUT_FILE}{\texttt{OUTPUT\_FILE}}
 \end{block}
 
-
+\begin{block}{Orbital Free DFT}
+\hyperlink{OFDFT_FLAG}{\texttt{OFDFT\_FLAG}} $\vert$ \hyperlink{OFDFT_LAMBDA}{\texttt{OFDFT\_LAMBDA}} $\vert$ \hyperlink{TOL_OFDFT}{\texttt{TOL\_OFDFT}}
+\end{block}
 \end{frame}
 
 
@@ -3023,7 +3025,110 @@ If an output file with the same name already exist, the results will be written 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks,c]{} \label{OFDFT}
 
+\begin{center}
+\Huge \textbf{Orbital Free DFT}
+\end{center}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks]{\texttt{OFDFT\_FLAG}} \label{OFDFT_FLAG}
+\vspace*{-12pt}
+\begin{columns}
+\column{0.4\linewidth}
+\begin{block}{Type}
+Integer
+\end{block}
+
+\begin{block}{Default}
+0
+\end{block}
+
+\column{0.4\linewidth}
+\begin{block}{Unit}
+No unit
+\end{block}
+
+\begin{block}{Example}
+\texttt{OFDFT\_FLAG}: 1
+\end{block}
+\end{columns}
+
+\begin{block}{Description}
+Flag for Orbital-free DFT calculation.
+\end{block}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks]{\texttt{OFDFT\_LAMBDA}} \label{OFDFT_LAMBDA}
+\vspace*{-12pt}
+\begin{columns}
+\column{0.4\linewidth}
+\begin{block}{Type}
+Double
+\end{block}
+
+\begin{block}{Default}
+0.2
+\end{block}
+
+\column{0.4\linewidth}
+\begin{block}{Unit}
+No unit
+\end{block}
+
+\begin{block}{Example}
+\texttt{OFDFT\_LAMBDA}: 0.5
+\end{block}
+\end{columns}
+
+\begin{block}{Description}
+The coefficient in front of Laplacian operator is -lambda/2. 
+\end{block}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks]{\texttt{TOL\_OFDFT}} \label{TOL_OFDFT}
+\vspace*{-12pt}
+\begin{columns}
+\column{0.4\linewidth}
+\begin{block}{Type}
+Double
+\end{block}
+
+\begin{block}{Default}
+$10^{-3}$
+\end{block}
+
+\column{0.45\linewidth}
+\begin{block}{Unit}
+No unit
+\end{block}
+
+\begin{block}{Example}
+\texttt{TOL\_OFDFT}: 1E-6
+\end{block}
+\end{columns}
+
+\begin{block}{Description}
+The tolerance on the normalized residual (l2-norm of residual/sqrt(N), N is number of nodes) for convergence of NLCG. 
+\end{block}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[allowframebreaks]{\textbf{Acknowledgments}} \label{Acknowledgments}
 The work was supported by the grant DE-SC0019410 funded by the U.S. Department of Energy, Office of Science. Initial development efforts were supported by the grants 1333500 and 1553212 funded by the U.S. National Science Foundation.
 \end{frame}

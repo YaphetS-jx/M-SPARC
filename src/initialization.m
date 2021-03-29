@@ -39,7 +39,6 @@ S = Calculate_rb(S);
 
 % write initialized parameters into output file
 S = Write_output_init(S, filename);
-
 end
 
 
@@ -729,6 +728,16 @@ fprintf(' Done. (%.3f sec)\n', toc(t1));
 % Estimate memory usage
 S.memory_usage = estimate_memory(S);
 
+if S.OFDFTFlag
+    S = FDFFT_const(S);
+    if S.ofdft_lambda < 0
+        S.ofdft_lambda = 0.2;
+    end
+    S.ofdft_Cf = 0.3*((3*pi*pi)^(2/3));
+    if S.ofdft_tol < 0
+        S.ofdft_tol = 1E-3;
+    end
+end
 end
 
 
@@ -1052,6 +1061,11 @@ S.zin = 0;
 
 % Cychel
 S.alph = 0.0;
+
+% OFDFT
+S.OFDFTFlag = 0;
+S.ofdft_tol = -1;
+S.ofdft_lambda = -1;
 end
 
 
@@ -1083,7 +1097,7 @@ end
 
 start_time = fix(clock);
 fprintf(fileID,'***************************************************************************\n');
-fprintf(fileID,'*                      M-SPARC v1.0.0 (Oct 07, 2020)                      *\n');
+fprintf(fileID,'*                      M-SPARC v1.0.0 (Mar 29, 2021)                      *\n');
 fprintf(fileID,'*   Copyright (c) 2019 Material Physics & Mechanics Group, Georgia Tech   *\n');
 fprintf(fileID,'*           Distributed under GNU General Public License 3 (GPL)          *\n');
 fprintf(fileID,'*                Date: %s  Start time: %02d:%02d:%02d                  *\n',date,start_time(4),start_time(5),start_time(6));
@@ -1091,172 +1105,180 @@ fprintf(fileID,'****************************************************************
 fprintf(fileID,'                           Input parameters                                \n');
 fprintf(fileID,'***************************************************************************\n');
 
-fprintf(fileID,'CELL: %f %f %f \n',S.L1,S.L2,S.L3);
-if max(max(abs(S.lat_vec - eye(3)))) > 1e-14
-	fprintf(fileID,'LATVEC:\n');
-	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(1,:));
-	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(2,:));
-	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(3,:));
-end
-fprintf(fileID,'FD_GRID: %d %d %d\n',S.Nx-S.BCx,S.Ny-S.BCy,S.Nz-S.BCz);
-fprintf(fileID,'FD_ORDER: %d\n',S.FDn*2);
-%fprintf(fileID,'BOUNDARY_CONDITION: %d\n',S.BC);
-str_BC = ['P', 'D'];
-fprintf(fileID,'BC:');
-fprintf(fileID,' %s',str_BC(S.BCx+1));
-fprintf(fileID,' %s',str_BC(S.BCy+1));
-fprintf(fileID,' %s',str_BC(S.BCz+1));
-fprintf(fileID,'\n');
-if (S.BC==2 || S.BC==3 || S.BC==4)
-	fprintf(fileID,'KPOINT_GRID: %d %d %d\n',S.nkpt);
-	fprintf(fileID,'KPOINT_SHIFT: %d %d %d\n',S.kptshift);
-end
+if S.OFDFTFlag
+    write_output_ofdft(S,fileID);
+else
+    fprintf(fileID,'CELL: %f %f %f \n',S.L1,S.L2,S.L3);
+    if max(max(abs(S.lat_vec - eye(3)))) > 1e-14
+        fprintf(fileID,'LATVEC:\n');
+        fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(1,:));
+        fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(2,:));
+        fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(3,:));
+    end
+    fprintf(fileID,'FD_GRID: %d %d %d\n',S.Nx-S.BCx,S.Ny-S.BCy,S.Nz-S.BCz);
+    fprintf(fileID,'FD_ORDER: %d\n',S.FDn*2);
+    %fprintf(fileID,'BOUNDARY_CONDITION: %d\n',S.BC);
+    str_BC = ['P', 'D'];
+    fprintf(fileID,'BC:');
+    fprintf(fileID,' %s',str_BC(S.BCx+1));
+    fprintf(fileID,' %s',str_BC(S.BCy+1));
+    fprintf(fileID,' %s',str_BC(S.BCz+1));
+    fprintf(fileID,'\n');
+    if (S.BC==2 || S.BC==3 || S.BC==4)
+        fprintf(fileID,'KPOINT_GRID: %d %d %d\n',S.nkpt);
+        fprintf(fileID,'KPOINT_SHIFT: %d %d %d\n',S.kptshift);
+    end
 
-if (S.spin_typ ~= 0) 
-	fprintf(fileID,'SPIN_TYP: %d\n', S.spin_typ);  
-end
+    if (S.spin_typ ~= 0) 
+        fprintf(fileID,'SPIN_TYP: %d\n', S.spin_typ);  
+    end
 
-if (S.elec_T_type == 0) 
-	fprintf(fileID,'ELEC_TEMP_TYPE: fermi-dirac\n');  
-elseif (S.elec_T_type == 1) 
-	fprintf(fileID,'ELEC_TEMP_TYPE: gaussian\n');  
-end
-%fprintf(fileID,'ELEC_TEMP: %lf\n',S.elec_T);
+    if (S.elec_T_type == 0) 
+        fprintf(fileID,'ELEC_TEMP_TYPE: fermi-dirac\n');  
+    elseif (S.elec_T_type == 1) 
+        fprintf(fileID,'ELEC_TEMP_TYPE: gaussian\n');  
+    end
+    %fprintf(fileID,'ELEC_TEMP: %lf\n',S.elec_T);
 
-fprintf(fileID,'SMEARING: %.9f\n',1/S.bet);
-fprintf(fileID,'CHEB_DEGREE: %d\n',S.npl);
-fprintf(fileID,'NSTATES: %d\n',S.Nev);
-%fprintf(fileID,'NTYPES: %d\n',S.Ntypes);
-fprintf(fileID,'EXCHANGE_CORRELATION: %s\n',S.XC);
-fprintf(fileID,'CALC_STRESS: %d\n',S.Calc_stress);
-if(S.Calc_stress == 0)
-	fprintf(fileID,'CALC_PRES: %d\n',S.Calc_pres);
-end
-%if (S.MDFlag == 1 || S.RelaxFlag == 1)
-%    fprintf(fileID,'TWTIME: %f\n',S.TWtime);
-%end
+    fprintf(fileID,'SMEARING: %.9f\n',1/S.bet);
+    fprintf(fileID,'CHEB_DEGREE: %d\n',S.npl);
+    fprintf(fileID,'NSTATES: %d\n',S.Nev);
+    %fprintf(fileID,'NTYPES: %d\n',S.Ntypes);
+    fprintf(fileID,'EXCHANGE_CORRELATION: %s\n',S.XC);
+    fprintf(fileID,'CALC_STRESS: %d\n',S.Calc_stress);
+    if(S.Calc_stress == 0)
+        fprintf(fileID,'CALC_PRES: %d\n',S.Calc_pres);
+    end
+    %if (S.MDFlag == 1 || S.RelaxFlag == 1)
+    %    fprintf(fileID,'TWTIME: %f\n',S.TWtime);
+    %end
 
-if (S.CheFSI_Optmz == 1)
-	fprintf(fileID,'CHEFSI_OPTMZ: %d\n',S.CheFSI_Optmz);
-end
-if (S.chefsibound_flag == 1)
-	fprintf(fileID,'CHEFSI_BOUND_FLAG: %d\n',S.chefsibound_flag);
-end
-if (S.NetCharge ~= 0)
-	fprintf(fileID,'NET_CHARGE: %d\n',S.NetCharge);
-end
-fprintf(fileID,'MAXIT_SCF: %d\n',S.MAXIT_SCF);
-if (S.MDFlag == 1)
-	fprintf(fileID,'MD_FLAG: %d\n',S.MDFlag);
-	fprintf(fileID,'MD_METHOD: %s\n',S.MDMeth);
-	fprintf(fileID,'MD_TIMESTEP: %.2f\n',S.MD_dt); 
-	%fprintf(fileID,'ATOMIC_MASS:');
-	%for (i = 0; i < S.Ntypes; i++)	 
-	%     fprintf(fileID,' %.15f', S.Mass[i]);      
-	%end
-	fprintf(fileID,'MD_NSTEP: %d\n',S.MD_Nstep);
-	fprintf(fileID,'ION_ELEC_EQT: %d\n',S.ion_elec_eqT);
-	% fprintf(fileID,'ION_VEL_DSTR: %d\n',S.ion_vel_dstr);
-	fprintf(fileID,'ION_TEMP: %f\n',S.ion_T);
-	% if(strcmp(S.MDMeth,'NVT_NH'))
-		% fprintf(fileID,'ION_TEMP_END: %lf\n',S.thermos_Tf);
-		% fprintf(fileID,'QMASS: %lf\n',S.qmass);
-	% end
-end
-if (S.RelaxFlag==1)
-	fprintf(fileID,'RELAX_FLAG: %d\n',S.RelaxFlag);
-	fprintf(fileID,'RELAX_METHOD: %s\n',S.RelaxMeth);
-	fprintf(fileID,'RELAX_NITER: %d\n',S.max_relax_it);
-	if(strcmp(S.RelaxMeth,'LBFGS'))
-		fprintf(fileID,'L_HISTORY: %d\n',S.L_history);
-		fprintf(fileID,'L_FINIT_STP: %f\n',S.L_finit_stp);
-		fprintf(fileID,'L_MAXMOV: %f\n',S.L_maxmov);
-		fprintf(fileID,'L_AUTOSCALE: %d\n',S.L_autoscale);
-		fprintf(fileID,'L_LINEOPT: %d\n',S.L_lineopt);
-		fprintf(fileID,'L_ICURV: %f\n',S.L_icurv);
-	elseif (strcmp(S.RelaxMeth,'NLCG'))
-		fprintf(fileID,'NLCG_SIGMA: %f\n',S.NLCG_sigma);
-	elseif (strcmp(S.RelaxMeth,'FIRE'))
-		fprintf(fileID,'FIRE_dt: %f\n',S.FIRE_dt);
-		fprintf(fileID,'FIRE_mass: %f\n',S.FIRE_mass);
-		fprintf(fileID,'FIRE_maxmov: %f\n',S.FIRE_maxmov);
-	end
-	fprintf(fileID,'TOL_RELAX: %.2E\n',S.TOL_RELAX);
-elseif (S.RelaxFlag==2)	
-	fprintf(fileID,'RELAX_FLAG: %d\n',S.RelaxFlag);	
-	fprintf(fileID,'RELAX_NITER: %d\n',S.max_relax_it);	
-	fprintf(fileID,'TOL_RELAX_CELL: %.2E\n',S.TOL_RELAX_CELL);	
-	fprintf(fileID,'RELAX_MAXDILAT: %f\n',S.max_dilatation);    
-end
-fprintf(fileID,'TOL_SCF: %.2E\n',S.SCF_tol);
-fprintf(fileID,'TOL_POISSON: %.2E\n',S.poisson_tol);
-fprintf(fileID,'TOL_LANCZOS: %.2E\n',S.TOL_LANCZOS);
-fprintf(fileID,'TOL_PSEUDOCHARGE: %.2E\n',S.pseudocharge_tol);
-if (S.MixingVariable == 0)
-	fprintf(fileID,'MIXING_VARIABLE: density\n');
-elseif  (S.MixingVariable == 1)
-	fprintf(fileID,'MIXING_VARIABLE: potential\n');
-end
-if (S.MixingPrecond == 0)
-	fprintf(fileID,'MIXING_PRECOND: none\n');
-elseif (S.MixingPrecond == 1)
-	fprintf(fileID,'MIXING_PRECOND: kerker\n');
-elseif (S.MixingPrecond == 2)
-	fprintf(fileID,'MIXING_PRECOND: resta\n');
-elseif (S.MixingPrecond == 3)
-	fprintf(fileID,'MIXING_PRECOND: truncated_kerker\n');
-end
-if (S.MixingPrecond ~= 0)
-	fprintf(fileID,'TOL_PRECOND: %.2E\n',S.precond_tol);
-end
-if (S.MixingPrecond == 1) % kerker
-	%fprintf(fileID,'TOL_KERKER: %.2E\n',S.kerker_tol);
-	fprintf(fileID,'PRECOND_KERKER_KTF: %.2f\n',S.precond_kTF);
-elseif (S.MixingPrecond == 2) % resta
-	%fprintf(fileID,'TOL_PRECOND: %.2E\n',S.precond_tol);
-	fprintf(fileID,'PRECOND_RESTA_Q0: %.3f\n',S.precond_resta_q0);
-	fprintf(fileID,'PRECOND_RESTA_RS: %.3f\n',S.precond_resta_Rs);
-	fprintf(fileID,'PRECOND_FITPOW: %d\n',S.precond_fitpow);
-elseif (S.MixingPrecond == 3) % truncated kerker
-	fprintf(fileID,'PRECOND_KERKER_KTF: %.2f\n',S.precond_kTF);
-	fprintf(fileID,'PRECOND_KERKER_THRESH: %.2f\n',S.precond_thresh);
-	fprintf(fileID,'PRECOND_FITPOW: %d\n',S.precond_fitpow);
-end
+    if (S.CheFSI_Optmz == 1)
+        fprintf(fileID,'CHEFSI_OPTMZ: %d\n',S.CheFSI_Optmz);
+    end
+    if (S.chefsibound_flag == 1)
+        fprintf(fileID,'CHEFSI_BOUND_FLAG: %d\n',S.chefsibound_flag);
+    end
+    if (S.NetCharge ~= 0)
+        fprintf(fileID,'NET_CHARGE: %d\n',S.NetCharge);
+    end
+    fprintf(fileID,'MAXIT_SCF: %d\n',S.MAXIT_SCF);
+    if (S.MDFlag == 1)
+        fprintf(fileID,'MD_FLAG: %d\n',S.MDFlag);
+        fprintf(fileID,'MD_METHOD: %s\n',S.MDMeth);
+        fprintf(fileID,'MD_TIMESTEP: %.2f\n',S.MD_dt); 
+        %fprintf(fileID,'ATOMIC_MASS:');
+        %for (i = 0; i < S.Ntypes; i++)	 
+        %     fprintf(fileID,' %.15f', S.Mass[i]);      
+        %end
+        fprintf(fileID,'MD_NSTEP: %d\n',S.MD_Nstep);
+        fprintf(fileID,'ION_ELEC_EQT: %d\n',S.ion_elec_eqT);
+        % fprintf(fileID,'ION_VEL_DSTR: %d\n',S.ion_vel_dstr);
+        fprintf(fileID,'ION_TEMP: %f\n',S.ion_T);
+        % if(strcmp(S.MDMeth,'NVT_NH'))
+            % fprintf(fileID,'ION_TEMP_END: %lf\n',S.thermos_Tf);
+            % fprintf(fileID,'QMASS: %lf\n',S.qmass);
+        % end
+    end
+    if (S.RelaxFlag==1)
+        fprintf(fileID,'RELAX_FLAG: %d\n',S.RelaxFlag);
+        fprintf(fileID,'RELAX_METHOD: %s\n',S.RelaxMeth);
+        fprintf(fileID,'RELAX_NITER: %d\n',S.max_relax_it);
+        if(strcmp(S.RelaxMeth,'LBFGS'))
+            fprintf(fileID,'L_HISTORY: %d\n',S.L_history);
+            fprintf(fileID,'L_FINIT_STP: %f\n',S.L_finit_stp);
+            fprintf(fileID,'L_MAXMOV: %f\n',S.L_maxmov);
+            fprintf(fileID,'L_AUTOSCALE: %d\n',S.L_autoscale);
+            fprintf(fileID,'L_LINEOPT: %d\n',S.L_lineopt);
+            fprintf(fileID,'L_ICURV: %f\n',S.L_icurv);
+        elseif (strcmp(S.RelaxMeth,'NLCG'))
+            fprintf(fileID,'NLCG_SIGMA: %f\n',S.NLCG_sigma);
+        elseif (strcmp(S.RelaxMeth,'FIRE'))
+            fprintf(fileID,'FIRE_dt: %f\n',S.FIRE_dt);
+            fprintf(fileID,'FIRE_mass: %f\n',S.FIRE_mass);
+            fprintf(fileID,'FIRE_maxmov: %f\n',S.FIRE_maxmov);
+        end
+        fprintf(fileID,'TOL_RELAX: %.2E\n',S.TOL_RELAX);
+    elseif (S.RelaxFlag==2)	
+        fprintf(fileID,'RELAX_FLAG: %d\n',S.RelaxFlag);	
+        fprintf(fileID,'RELAX_NITER: %d\n',S.max_relax_it);	
+        fprintf(fileID,'TOL_RELAX_CELL: %.2E\n',S.TOL_RELAX_CELL);	
+        fprintf(fileID,'RELAX_MAXDILAT: %f\n',S.max_dilatation);    
+    end
+    fprintf(fileID,'TOL_SCF: %.2E\n',S.SCF_tol);
+    fprintf(fileID,'TOL_POISSON: %.2E\n',S.poisson_tol);
+    fprintf(fileID,'TOL_LANCZOS: %.2E\n',S.TOL_LANCZOS);
+    fprintf(fileID,'TOL_PSEUDOCHARGE: %.2E\n',S.pseudocharge_tol);
+    if (S.MixingVariable == 0)
+        fprintf(fileID,'MIXING_VARIABLE: density\n');
+    elseif  (S.MixingVariable == 1)
+        fprintf(fileID,'MIXING_VARIABLE: potential\n');
+    end
+    if (S.MixingPrecond == 0)
+        fprintf(fileID,'MIXING_PRECOND: none\n');
+    elseif (S.MixingPrecond == 1)
+        fprintf(fileID,'MIXING_PRECOND: kerker\n');
+    elseif (S.MixingPrecond == 2)
+        fprintf(fileID,'MIXING_PRECOND: resta\n');
+    elseif (S.MixingPrecond == 3)
+        fprintf(fileID,'MIXING_PRECOND: truncated_kerker\n');
+    end
+    if (S.MixingPrecond ~= 0)
+        fprintf(fileID,'TOL_PRECOND: %.2E\n',S.precond_tol);
+    end
+    if (S.MixingPrecond == 1) % kerker
+        %fprintf(fileID,'TOL_KERKER: %.2E\n',S.kerker_tol);
+        fprintf(fileID,'PRECOND_KERKER_KTF: %.2f\n',S.precond_kTF);
+    elseif (S.MixingPrecond == 2) % resta
+        %fprintf(fileID,'TOL_PRECOND: %.2E\n',S.precond_tol);
+        fprintf(fileID,'PRECOND_RESTA_Q0: %.3f\n',S.precond_resta_q0);
+        fprintf(fileID,'PRECOND_RESTA_RS: %.3f\n',S.precond_resta_Rs);
+        fprintf(fileID,'PRECOND_FITPOW: %d\n',S.precond_fitpow);
+    elseif (S.MixingPrecond == 3) % truncated kerker
+        fprintf(fileID,'PRECOND_KERKER_KTF: %.2f\n',S.precond_kTF);
+        fprintf(fileID,'PRECOND_KERKER_THRESH: %.2f\n',S.precond_thresh);
+        fprintf(fileID,'PRECOND_FITPOW: %d\n',S.precond_fitpow);
+    end
 
-fprintf(fileID,'MIXING_PARAMETER: %.2f\n',S.MixingParameter);
-if S.MixingParameter ~= S.MixingParameterSimple
-	fprintf(fileID,'MIXING_PARAMETER_SIMPLE: %.2f\n',S.MixingParameterSimple);
-end
-fprintf(fileID,'MIXING_HISTORY: %d\n',S.MixingHistory);
-fprintf(fileID,'PULAY_FREQUENCY: %d\n',S.PulayFrequency);
-fprintf(fileID,'PULAY_RESTART_FREQ: %d\n',S.PulayRestartFreq);
-fprintf(fileID,'REFERENCE_CUTOFF: %.2f\n',S.rc_ref);
-fprintf(fileID,'RHO_TRIGGER: %d\n',S.rhoTrigger);
-fprintf(fileID,'FIX_RAND: %d\n',S.FixRandSeed);
-fprintf(fileID,'PRINT_FORCES: %d\n',S.PrintForceFlag);
-fprintf(fileID,'PRINT_ATOMS: %d\n',S.PrintAtomPosFlag);
-fprintf(fileID,'PRINT_EIGEN: %d\n',S.PrintEigenFlag);
-fprintf(fileID,'PRINT_DENSITY: %d\n',S.PrintElecDensFlag);
-if(S.MDFlag == 1)
-	fprintf(fileID,'PRINT_MDOUT: %d\n',S.PrintMDout);
-end
-if(S.MDFlag == 1 || S.RelaxFlag == 1)  
-	fprintf(fileID,'PRINT_VELS: %d\n',S.PrintAtomVelFlag);  
-	fprintf(fileID,'PRINT_RESTART: %d\n',S.Printrestart);
-	if(S.Printrestart == 1)
-		fprintf(fileID,'PRINT_RESTART_FQ: %d\n',S.Printrestart_fq);
-	end
-end
+    fprintf(fileID,'MIXING_PARAMETER: %.2f\n',S.MixingParameter);
+    if S.MixingParameter ~= S.MixingParameterSimple
+        fprintf(fileID,'MIXING_PARAMETER_SIMPLE: %.2f\n',S.MixingParameterSimple);
+    end
+    fprintf(fileID,'MIXING_HISTORY: %d\n',S.MixingHistory);
+    fprintf(fileID,'PULAY_FREQUENCY: %d\n',S.PulayFrequency);
+    fprintf(fileID,'PULAY_RESTART_FREQ: %d\n',S.PulayRestartFreq);
+    fprintf(fileID,'REFERENCE_CUTOFF: %.2f\n',S.rc_ref);
+    fprintf(fileID,'RHO_TRIGGER: %d\n',S.rhoTrigger);
+    fprintf(fileID,'FIX_RAND: %d\n',S.FixRandSeed);
+    fprintf(fileID,'PRINT_FORCES: %d\n',S.PrintForceFlag);
+    fprintf(fileID,'PRINT_ATOMS: %d\n',S.PrintAtomPosFlag);
+    fprintf(fileID,'PRINT_EIGEN: %d\n',S.PrintEigenFlag);
+    fprintf(fileID,'PRINT_DENSITY: %d\n',S.PrintElecDensFlag);
+    if(S.MDFlag == 1)
+        fprintf(fileID,'PRINT_MDOUT: %d\n',S.PrintMDout);
+    end
+    if(S.MDFlag == 1 || S.RelaxFlag == 1)  
+        fprintf(fileID,'PRINT_VELS: %d\n',S.PrintAtomVelFlag);  
+        fprintf(fileID,'PRINT_RESTART: %d\n',S.Printrestart);
+        if(S.Printrestart == 1)
+            fprintf(fileID,'PRINT_RESTART_FQ: %d\n',S.Printrestart_fq);
+        end
+    end
 
-if(S.RelaxFlag == 1)
-	fprintf(fileID,'PRINT_RELAXOUT: %d\n',S.PrintRelaxout);
+    if(S.RelaxFlag == 1)
+        fprintf(fileID,'PRINT_RELAXOUT: %d\n',S.PrintRelaxout);
+    end
+
+    fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);
+    if (S.RestartFlag == 1)
+        fprintf(fileID,'RESTART_FLAG: %d\n',S.RestartFlag);
+    end
 end
 
 fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);
 if (S.RestartFlag == 1)
 	fprintf(fileID,'RESTART_FLAG: %d\n',S.RestartFlag);
 end
-
 % fprintf(fileID,'***************************************************************************\n');
 % fprintf(fileID,'                           Parallelization                                 \n');
 % fprintf(fileID,'***************************************************************************\n');
@@ -1612,4 +1634,137 @@ function [S] = Generate_kpts(S)
 	S.kptgrid = kptgrid;
 	S.tnkpt   = tnkpt;
 	S.wkpt    = wkpt;
+end
+
+
+function S = FDFFT_const(S)
+% only for periodic B.C.
+w2 = S.w2;
+FDn = S.FDn;
+N1 = S.Nx;
+N2 = S.Ny;
+N3 = S.Nz;
+dx = S.dx;
+dy = S.dy;
+dz = S.dz;
+
+dx2 = dx*dx; dy2 = dy*dy; dz2 = dz*dz;
+w2_x = w2 / dx2;
+w2_y = w2 / dy2;
+w2_z = w2 / dz2;
+
+% FD approximationi of d_hat = G^2
+% alpha follows conjugate even space
+count = 1;
+d_hat = zeros(N1,N2,N3);
+% G2 = zeros(N1,N2,N3);
+w2_diag = w2_x(1) + w2_y(1) +w2_z(1);
+for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
+    for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
+        for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
+% 			G2(count) = ((k1-1)*2*pi/L1)^2 + ((k2-1)*2*pi/L2)^2 + ((k3-1)*2*pi/L3)^2;
+			d_hat(count) = -w2_diag;
+            for p = 1:FDn
+                d_hat(count) = d_hat(count) - 2 * ...
+                    (  cos(2*pi*(k1-1)*p/N1)*w2_x(p+1) ...
+                     + cos(2*pi*(k2-1)*p/N2)*w2_y(p+1) ...
+                     + cos(2*pi*(k3-1)*p/N3)*w2_z(p+1));
+            end
+            count = count + 1;
+        end
+    end
+end
+d_hat(1) = 1;
+% S.d_hat is -G^2
+S.d_hat = -1*d_hat;
+end
+
+
+function write_output_ofdft(S,fileID)
+fprintf(fileID,'CELL: %f %f %f \n',S.L1,S.L2,S.L3);
+if max(max(abs(S.lat_vec - eye(3)))) > 1e-14
+	fprintf(fileID,'LATVEC:\n');
+	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(1,:));
+	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(2,:));
+	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(3,:));
+end
+fprintf(fileID,'FD_GRID: %d %d %d\n',S.Nx-S.BCx,S.Ny-S.BCy,S.Nz-S.BCz);
+fprintf(fileID,'FD_ORDER: %d\n',S.FDn*2);
+%fprintf(fileID,'BOUNDARY_CONDITION: %d\n',S.BC);
+str_BC = ['P', 'D'];
+fprintf(fileID,'BC:');
+fprintf(fileID,' %s',str_BC(S.BCx+1));
+fprintf(fileID,' %s',str_BC(S.BCy+1));
+fprintf(fileID,' %s',str_BC(S.BCz+1));
+fprintf(fileID,'\n');
+if (S.BC==2 || S.BC==3 || S.BC==4)
+	fprintf(fileID,'KPOINT_GRID: %d %d %d\n',S.nkpt);
+	fprintf(fileID,'KPOINT_SHIFT: %d %d %d\n',S.kptshift);
+end
+
+if (S.spin_typ ~= 0) 
+	fprintf(fileID,'SPIN_TYP: %d\n', S.spin_typ);  
+end
+
+fprintf(fileID,'EXCHANGE_CORRELATION: %s\n',S.XC);
+
+fprintf(fileID,'OFDFT_FLAG: %d\n',S.OFDFTFlag);
+fprintf(fileID,'OFDFT_LAMBDA: %.6f\n',S.ofdft_lambda);
+fprintf(fileID,'TOL_OFDFT: %.2E\n',S.ofdft_tol);
+
+fprintf(fileID,'CALC_STRESS: %d\n',S.Calc_stress);
+if(S.Calc_stress == 0)
+	fprintf(fileID,'CALC_PRES: %d\n',S.Calc_pres);
+end
+
+if (S.NetCharge ~= 0)
+	fprintf(fileID,'NET_CHARGE: %d\n',S.NetCharge);
+end
+
+if (S.RelaxFlag==1)
+	fprintf(fileID,'RELAX_FLAG: %d\n',S.RelaxFlag);
+	fprintf(fileID,'RELAX_METHOD: %s\n',S.RelaxMeth);
+	fprintf(fileID,'RELAX_NITER: %d\n',S.max_relax_it);
+	if(strcmp(S.RelaxMeth,'LBFGS'))
+		fprintf(fileID,'L_HISTORY: %d\n',S.L_history);
+		fprintf(fileID,'L_FINIT_STP: %f\n',S.L_finit_stp);
+		fprintf(fileID,'L_MAXMOV: %f\n',S.L_maxmov);
+		fprintf(fileID,'L_AUTOSCALE: %d\n',S.L_autoscale);
+		fprintf(fileID,'L_LINEOPT: %d\n',S.L_lineopt);
+		fprintf(fileID,'L_ICURV: %f\n',S.L_icurv);
+	elseif (strcmp(S.RelaxMeth,'NLCG'))
+		fprintf(fileID,'NLCG_SIGMA: %f\n',S.NLCG_sigma);
+	elseif (strcmp(S.RelaxMeth,'FIRE'))
+		fprintf(fileID,'FIRE_dt: %f\n',S.FIRE_dt);
+		fprintf(fileID,'FIRE_mass: %f\n',S.FIRE_mass);
+		fprintf(fileID,'FIRE_maxmov: %f\n',S.FIRE_maxmov);
+	end
+	fprintf(fileID,'TOL_RELAX: %.2E\n',S.TOL_RELAX);
+elseif (S.RelaxFlag==2)	
+	fprintf(fileID,'RELAX_FLAG: %d\n',S.RelaxFlag);	
+	fprintf(fileID,'RELAX_NITER: %d\n',S.max_relax_it);	
+	fprintf(fileID,'TOL_RELAX_CELL: %.2E\n',S.TOL_RELAX_CELL);	
+	fprintf(fileID,'RELAX_MAXDILAT: %f\n',S.max_dilatation);    
+end
+
+fprintf(fileID,'TOL_PSEUDOCHARGE: %.2E\n',S.pseudocharge_tol);
+
+fprintf(fileID,'REFERENCE_CUTOFF: %.2f\n',S.rc_ref);
+fprintf(fileID,'FIX_RAND: %d\n',S.FixRandSeed);
+fprintf(fileID,'PRINT_FORCES: %d\n',S.PrintForceFlag);
+fprintf(fileID,'PRINT_ATOMS: %d\n',S.PrintAtomPosFlag);
+fprintf(fileID,'PRINT_DENSITY: %d\n',S.PrintElecDensFlag);
+
+if(S.RelaxFlag == 1)  
+	fprintf(fileID,'PRINT_VELS: %d\n',S.PrintAtomVelFlag);  
+	fprintf(fileID,'PRINT_RESTART: %d\n',S.Printrestart);
+	if(S.Printrestart == 1)
+		fprintf(fileID,'PRINT_RESTART_FQ: %d\n',S.Printrestart_fq);
+	end
+end
+
+if(S.RelaxFlag == 1)
+	fprintf(fileID,'PRINT_RELAXOUT: %d\n',S.PrintRelaxout);
+end
+
 end

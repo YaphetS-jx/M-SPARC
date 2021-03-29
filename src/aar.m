@@ -68,7 +68,7 @@ end
 if count-1 == max_iter
 	fprintf(' AAR exceeded maximum iterations and converged to a relative residual of %g. \n',relres);
 else
-	fprintf(' AAR converged to a relative residual of %g in %d iterations.\n',relres,count-1);
+% 	fprintf(' AAR converged to a relative residual of %g in %d iterations.\n',relres,count-1);
 end
 
 end

@@ -247,68 +247,71 @@ end % end of loop over atoms
 
 fprintf(' local force calculation: %.3f s\n', toc(tic_locforces));
 
+if S.OFDFTFlag == 1
+% no nonlocal term in OFDFT
+else
 %**********************************************************************
 %*                   Calculate nonlocal atomic force                  *
 %**********************************************************************
 
 for ks = 1:S.tnkpt*S.nspin
-	if ks <= S.tnkpt
-		kpt = ks;
-	else
-		kpt = ks - S.tnkpt;
-	end
+    if ks <= S.tnkpt
+        kpt = ks;
+    else
+        kpt = ks - S.tnkpt;
+    end
 
-	if (kpt(1) == 0 && kpt(2) == 0 && kpt(3) == 0)
-		fac = 1.0;
-	else
-		fac = 1.0i;
-	end
-	
-	kpt_vec = S.kptgrid(kpt,:);
+    if (kpt(1) == 0 && kpt(2) == 0 && kpt(3) == 0)
+        fac = 1.0;
+    else
+        fac = 1.0i;
+    end
 
-	% Calculate gradient of psi    
-	Dpsi_x = blochGradient(S,kpt_vec,1)*S.psi(:,:,ks);
-	Dpsi_y = blochGradient(S,kpt_vec,2)*S.psi(:,:,ks);
-	Dpsi_z = blochGradient(S,kpt_vec,3)*S.psi(:,:,ks);
+    kpt_vec = S.kptgrid(kpt,:);
 
-	force_atm = zeros(S.n_atm,3);
-	for JJ_a = 1:S.n_atm % loop over all atoms
-		% Calculate nonlocal components of the force acting on atom JJ_a
-		integral_1 = zeros(S.Atom(JJ_a).angnum,S.Nev);
-		integral_2_x = zeros(S.Atom(JJ_a).angnum,S.Nev);
-		integral_2_y = zeros(S.Atom(JJ_a).angnum,S.Nev);
-		integral_2_z = zeros(S.Atom(JJ_a).angnum,S.Nev);
-		for img = 1:S.Atom(JJ_a).n_image_rc
-			img_disp = S.Atoms(JJ_a,:)-S.Atom(JJ_a).rcImage(img).coordinates;
-			phase_fac = exp(dot(kpt_vec,img_disp*fac));
-			%integral_1 = integral_1 + (S.Atom(JJ_a).rcImage(img).Chi_mat .* S.W(S.Atom(JJ_a).rcImage(img).rc_pos)).' * conj(S.psi(S.Atom(JJ_a).rcImage(img).rc_pos,:,ks)) * conj(phase_fac);
-			ChiW = transpose(bsxfun(@times, conj(S.Atom(JJ_a).rcImage(img).Chi_mat), S.W(S.Atom(JJ_a).rcImage(img).rc_pos)));
-			integral_1 = integral_1 + conj(ChiW) * conj(S.psi(S.Atom(JJ_a).rcImage(img).rc_pos,:,ks)) * conj(phase_fac);
-			integral_2_x_temp = ChiW * (Dpsi_x(S.Atom(JJ_a).rcImage(img).rc_pos,:)) * (phase_fac);
-			integral_2_y_temp = ChiW * (Dpsi_y(S.Atom(JJ_a).rcImage(img).rc_pos,:)) * (phase_fac);
-			integral_2_z_temp = ChiW * (Dpsi_z(S.Atom(JJ_a).rcImage(img).rc_pos,:)) * (phase_fac);
-			% Perform Rotations for cychel
-			if(S.cell_typ == 3 || S.cell_typ == 4 || S.cell_typ == 5)
-				fac1 = img_disp(2)/S.L2;
-				fac2 = img_disp(3)/S.L3;
-				ROT = (S.RotM1^fac1) * (S.RotM2^fac2);
-				integral_2_x_temp_rot = ROT(1,1)*integral_2_x_temp + ROT(1,2)*integral_2_y_temp;
-				integral_2_y_temp_rot = ROT(2,1)*integral_2_x_temp + ROT(2,2)*integral_2_y_temp;
-				integral_2_x_temp = integral_2_x_temp_rot;
-				integral_2_y_temp = integral_2_y_temp_rot;
-			end
-			integral_2_x = integral_2_x + integral_2_x_temp;
-			integral_2_y = integral_2_y + integral_2_y_temp;
-			integral_2_z = integral_2_z + integral_2_z_temp;
-		end
-		tf_x = transpose(S.Atom(JJ_a).gamma_Jl) * real(integral_1.*integral_2_x) * S.occ(:,ks);
-		tf_y = transpose(S.Atom(JJ_a).gamma_Jl) * real(integral_1.*integral_2_y) * S.occ(:,ks);
-		tf_z = transpose(S.Atom(JJ_a).gamma_Jl) * real(integral_1.*integral_2_z) * S.occ(:,ks);
-		force_atm(JJ_a,:) = [tf_x tf_y tf_z];
-	end
-	force_nloc = force_nloc - S.occfac*2*S.wkpt(kpt)*force_atm;
+    % Calculate gradient of psi    
+    Dpsi_x = blochGradient(S,kpt_vec,1)*S.psi(:,:,ks);
+    Dpsi_y = blochGradient(S,kpt_vec,2)*S.psi(:,:,ks);
+    Dpsi_z = blochGradient(S,kpt_vec,3)*S.psi(:,:,ks);
+
+    force_atm = zeros(S.n_atm,3);
+    for JJ_a = 1:S.n_atm % loop over all atoms
+        % Calculate nonlocal components of the force acting on atom JJ_a
+        integral_1 = zeros(S.Atom(JJ_a).angnum,S.Nev);
+        integral_2_x = zeros(S.Atom(JJ_a).angnum,S.Nev);
+        integral_2_y = zeros(S.Atom(JJ_a).angnum,S.Nev);
+        integral_2_z = zeros(S.Atom(JJ_a).angnum,S.Nev);
+        for img = 1:S.Atom(JJ_a).n_image_rc
+            img_disp = S.Atoms(JJ_a,:)-S.Atom(JJ_a).rcImage(img).coordinates;
+            phase_fac = exp(dot(kpt_vec,img_disp*fac));
+            %integral_1 = integral_1 + (S.Atom(JJ_a).rcImage(img).Chi_mat .* S.W(S.Atom(JJ_a).rcImage(img).rc_pos)).' * conj(S.psi(S.Atom(JJ_a).rcImage(img).rc_pos,:,ks)) * conj(phase_fac);
+            ChiW = transpose(bsxfun(@times, conj(S.Atom(JJ_a).rcImage(img).Chi_mat), S.W(S.Atom(JJ_a).rcImage(img).rc_pos)));
+            integral_1 = integral_1 + conj(ChiW) * conj(S.psi(S.Atom(JJ_a).rcImage(img).rc_pos,:,ks)) * conj(phase_fac);
+            integral_2_x_temp = ChiW * (Dpsi_x(S.Atom(JJ_a).rcImage(img).rc_pos,:)) * (phase_fac);
+            integral_2_y_temp = ChiW * (Dpsi_y(S.Atom(JJ_a).rcImage(img).rc_pos,:)) * (phase_fac);
+            integral_2_z_temp = ChiW * (Dpsi_z(S.Atom(JJ_a).rcImage(img).rc_pos,:)) * (phase_fac);
+            % Perform Rotations for cychel
+            if(S.cell_typ == 3 || S.cell_typ == 4 || S.cell_typ == 5)
+                fac1 = img_disp(2)/S.L2;
+                fac2 = img_disp(3)/S.L3;
+                ROT = (S.RotM1^fac1) * (S.RotM2^fac2);
+                integral_2_x_temp_rot = ROT(1,1)*integral_2_x_temp + ROT(1,2)*integral_2_y_temp;
+                integral_2_y_temp_rot = ROT(2,1)*integral_2_x_temp + ROT(2,2)*integral_2_y_temp;
+                integral_2_x_temp = integral_2_x_temp_rot;
+                integral_2_y_temp = integral_2_y_temp_rot;
+            end
+            integral_2_x = integral_2_x + integral_2_x_temp;
+            integral_2_y = integral_2_y + integral_2_y_temp;
+            integral_2_z = integral_2_z + integral_2_z_temp;
+        end
+        tf_x = transpose(S.Atom(JJ_a).gamma_Jl) * real(integral_1.*integral_2_x) * S.occ(:,ks);
+        tf_y = transpose(S.Atom(JJ_a).gamma_Jl) * real(integral_1.*integral_2_y) * S.occ(:,ks);
+        tf_z = transpose(S.Atom(JJ_a).gamma_Jl) * real(integral_1.*integral_2_z) * S.occ(:,ks);
+        force_atm(JJ_a,:) = [tf_x tf_y tf_z];
+    end
+    force_nloc = force_nloc - S.occfac*2*S.wkpt(kpt)*force_atm;
 end
-
+end
 
 % Total force
 
