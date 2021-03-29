@@ -78,8 +78,7 @@ while i < imax
         error('fminbnd not converged within %d iterations\n',output.iterations);
     end
     
-    u = u + s * r;
-%     u = u + s * d;
+    u = u + s * d;
     u = sqrt(S.Nelectron / (dot(u,u) * S.dV)) * u;
     u = abs(u);
     rold = r;
@@ -92,9 +91,9 @@ fprintf('\n Finished NLCG in %d steps!\n', i+1);
 [S.Etotal,S.Et,S.Exc] = ofdftTotalEnergy(S,u);
 end
 
-% function to compute (-lambda/5*lap + phi + Vxc + Vk) (x)
+% function to compute (-lambda/2*lap + phi + Vxc + Vk) (x)
 function [F,S] = Hx(S,DL11,DL22,DL33,DG1,DG2,DG3,u)
-% -lambda/5*lap(x)
+% -lambda/2*lap(x)
 F = -0.5*S.ofdft_lambda*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S));
 rho = u.^2;
 S.rho = rho;
