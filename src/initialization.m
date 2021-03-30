@@ -1720,7 +1720,23 @@ end
 if (S.NetCharge ~= 0)
 	fprintf(fileID,'NET_CHARGE: %d\n',S.NetCharge);
 end
-
+if (S.MDFlag == 1)
+    fprintf(fileID,'MD_FLAG: %d\n',S.MDFlag);
+    fprintf(fileID,'MD_METHOD: %s\n',S.MDMeth);
+    fprintf(fileID,'MD_TIMESTEP: %.2f\n',S.MD_dt); 
+    %fprintf(fileID,'ATOMIC_MASS:');
+    %for (i = 0; i < S.Ntypes; i++)	 
+    %     fprintf(fileID,' %.15f', S.Mass[i]);      
+    %end
+    fprintf(fileID,'MD_NSTEP: %d\n',S.MD_Nstep);
+    fprintf(fileID,'ION_ELEC_EQT: %d\n',S.ion_elec_eqT);
+    % fprintf(fileID,'ION_VEL_DSTR: %d\n',S.ion_vel_dstr);
+    fprintf(fileID,'ION_TEMP: %f\n',S.ion_T);
+    % if(strcmp(S.MDMeth,'NVT_NH'))
+        % fprintf(fileID,'ION_TEMP_END: %lf\n',S.thermos_Tf);
+        % fprintf(fileID,'QMASS: %lf\n',S.qmass);
+    % end
+end
 if (S.RelaxFlag==1)
 	fprintf(fileID,'RELAX_FLAG: %d\n',S.RelaxFlag);
 	fprintf(fileID,'RELAX_METHOD: %s\n',S.RelaxMeth);
@@ -1755,12 +1771,15 @@ fprintf(fileID,'PRINT_FORCES: %d\n',S.PrintForceFlag);
 fprintf(fileID,'PRINT_ATOMS: %d\n',S.PrintAtomPosFlag);
 fprintf(fileID,'PRINT_DENSITY: %d\n',S.PrintElecDensFlag);
 
-if(S.RelaxFlag == 1)  
-	fprintf(fileID,'PRINT_VELS: %d\n',S.PrintAtomVelFlag);  
-	fprintf(fileID,'PRINT_RESTART: %d\n',S.Printrestart);
-	if(S.Printrestart == 1)
-		fprintf(fileID,'PRINT_RESTART_FQ: %d\n',S.Printrestart_fq);
-	end
+if(S.MDFlag == 1)
+    fprintf(fileID,'PRINT_MDOUT: %d\n',S.PrintMDout);
+end
+if(S.MDFlag == 1 || S.RelaxFlag == 1)  
+    fprintf(fileID,'PRINT_VELS: %d\n',S.PrintAtomVelFlag);  
+    fprintf(fileID,'PRINT_RESTART: %d\n',S.Printrestart);
+    if(S.Printrestart == 1)
+        fprintf(fileID,'PRINT_RESTART_FQ: %d\n',S.Printrestart_fq);
+    end
 end
 
 if(S.RelaxFlag == 1)

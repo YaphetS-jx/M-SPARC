@@ -1,4 +1,11 @@
 ----------------
+Mar 30, 2021
+Name: Xin Jing
+* Enable MD for OFDFT
+* Add sample tests for OFDFT with MD and relaxation.
+
+
+----------------
 Mar 29, 2021
 Name: Xin Jing
 * Change default solver for non-orthogonal system to AAR solver.

@@ -628,12 +628,6 @@ if S.OFDFTFlag
             || sum(S.kptshift ~= [0.0 0.0 0.0])
         error('Only Gamma-point is supported in OFDFT!');
     end
-    if S.Temp ~= -1 || S.bet ~= -1
-        error('Temperature and smearing options are not supported in OFDFT!');
-    end
-    if S.MDFlag
-        error('MD is not supported in OFDFT!');
-    end
     if S.Calc_stress || S.Calc_pres 
         error('Stress and pressure are not supported in OFDFT!');
     end
