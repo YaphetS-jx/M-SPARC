@@ -1649,9 +1649,19 @@ dy = S.dy;
 dz = S.dz;
 
 dx2 = dx*dx; dy2 = dy*dy; dz2 = dz*dz;
-w2_x = w2 / dx2;
-w2_y = w2 / dy2;
-w2_z = w2 / dz2;
+
+T11 = S.lapc_T(1,1);T22 = S.lapc_T(2,2);T33 = S.lapc_T(3,3);
+T12 = S.lapc_T(2,1);T23 = S.lapc_T(3,2);T13 = S.lapc_T(3,1);
+
+w2_x = w2 * T11 / dx2;
+w2_y = w2 * T22 / dy2;
+w2_z = w2 * T33 / dz2;
+
+w1 = S.w1;
+w1_x = w1 / dx;
+w1_y = w1 / dy;
+w1_z = w1 / dz;
+
 
 % FD approximationi of d_hat = G^2
 % alpha follows conjugate even space
@@ -1662,13 +1672,23 @@ w2_diag = w2_x(1) + w2_y(1) +w2_z(1);
 for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
     for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
         for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
-% 			G2(count) = ((k1-1)*2*pi/L1)^2 + ((k2-1)*2*pi/L2)^2 + ((k3-1)*2*pi/L3)^2;
 			d_hat(count) = -w2_diag;
+            % G2(count) = ((k1-1)*2*pi/L1)^2 + ((k2-1)*2*pi/L2)^2 + ((k3-1)*2*pi/L3)^2;
             for p = 1:FDn
                 d_hat(count) = d_hat(count) - 2 * ...
                     (  cos(2*pi*(k1-1)*p/N1)*w2_x(p+1) ...
                      + cos(2*pi*(k2-1)*p/N2)*w2_y(p+1) ...
                      + cos(2*pi*(k3-1)*p/N3)*w2_z(p+1));
+            end
+            for p = 1:FDn
+                for q = 1:FDn
+                    d_hat(count) = d_hat(count) + 8 *...
+                        T12 * w1_x(p+1) * w1_y(q+1) * sin(2*pi*(k1-1)*p/N1) * sin(2*pi*(k2-1)*q/N2);
+                    d_hat(count) = d_hat(count) + 8 *...
+                        T13 * w1_x(p+1) * w1_z(q+1) * sin(2*pi*(k1-1)*p/N1) * sin(2*pi*(k3-1)*q/N3);
+                    d_hat(count) = d_hat(count) + 8 *...
+                        T23 * w1_y(p+1) * w1_z(q+1) * sin(2*pi*(k2-1)*p/N2) * sin(2*pi*(k3-1)*q/N3);
+                end
             end
             count = count + 1;
         end
