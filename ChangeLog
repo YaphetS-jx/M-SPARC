@@ -1,4 +1,10 @@
 ----------------
+Mar 31, 2021
+Name: Xin Jing
+* Add FD-FFT solver for non-orthogonal system
+
+
+----------------
 Mar 30, 2021
 Name: Xin Jing
 * Enable MD for OFDFT

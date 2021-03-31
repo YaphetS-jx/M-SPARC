@@ -25,7 +25,7 @@ end
 %fprintf(' Time taken for poisson_RHS: %f s\n',toc(t1));
 
 % Currently FD-FFT solver only works for orthogonal system
-if S.OFDFTFlag && S.cell_typ == 1
+if S.OFDFTFlag
     S.phi = FD_FFT(S,f);
 else
     % solve the poisson equation using a linear solver (AAR or gmres)
