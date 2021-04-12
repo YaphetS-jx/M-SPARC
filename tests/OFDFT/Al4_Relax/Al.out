@@ -2,13 +2,13 @@
 *                      M-SPARC v1.0.0 (Mar 29, 2021)                      *
 *   Copyright (c) 2019 Material Physics & Mechanics Group, Georgia Tech   *
 *           Distributed under GNU General Public License 3 (GPL)          *
-*                Date: 30-Mar-2021  Start time: 19:49:17                  *
+*                Date: 12-Apr-2021  Start time: 11:27:33                  *
 ***************************************************************************
                            Input parameters                                
 ***************************************************************************
 CELL: 8.000000 8.000000 8.000000 
 FD_GRID: 16 16 16
-FD_ORDER: 6
+FD_ORDER: 12
 BC: P P P
 KPOINT_GRID: 1 1 1
 KPOINT_SHIFT: 0 0 0
@@ -51,1127 +51,1149 @@ Total number of electrons          :  12
 Atom type 1  (valence electrons)   :  Al 3
 Pseudopotential                    :  Al_goodwin.psp8
 lloc                               :  0
-Pseudocharge radii of atom type 1  :  10.00 10.00 10.00
+Pseudocharge radii of atom type 1  :  11.00 11.00 11.00
 Number of atoms of type 1          :  4
-Estimated total memory usage       :  7.86 MB
+Estimated total memory usage       :  13.06 MB
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#1)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -1.3156514714E+00       2.266E-02         0.012
-2              -1.3193267869E+00       1.044E-02         0.007
-3              -1.3204215683E+00       5.384E-03         0.007
-4              -1.3206811871E+00       2.833E-03         0.007
-5              -1.3207677361E+00       1.697E-03         0.007
-6              -1.3208018533E+00       1.331E-03         0.007
-7              -1.3208269077E+00       1.128E-03         0.007
-8              -1.3208423455E+00       7.835E-04         0.007
-9              -1.3208493149E+00       5.521E-04         0.007
-10             -1.3208531121E+00       4.180E-04         0.007
-11             -1.3208550298E+00       2.746E-04         0.006
-12             -1.3208558525E+00       1.920E-04         0.006
-13             -1.3208562728E+00       1.352E-04         0.006
-14             -1.3208564843E+00       9.215E-05         0.007
+1              -1.3140475405E+00       2.642E-02         0.009
+2              -1.3182280264E+00       1.162E-02         0.007
+3              -1.3195331809E+00       6.985E-03         0.006
+4              -1.3198978410E+00       3.357E-03         0.007
+5              -1.3200069160E+00       2.051E-03         0.006
+6              -1.3200473347E+00       1.475E-03         0.006
+7              -1.3200741900E+00       1.287E-03         0.006
+8              -1.3200937684E+00       9.956E-04         0.006
+9              -1.3201038149E+00       6.914E-04         0.006
+10             -1.3201089409E+00       5.306E-04         0.006
+11             -1.3201119450E+00       3.876E-04         0.007
+12             -1.3201133687E+00       2.653E-04         0.006
+13             -1.3201140628E+00       1.884E-04         0.006
+14             -1.3201144345E+00       1.362E-04         0.006
+15             -1.3201146262E+00       9.594E-05         0.006
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -1.3208564843E+00 (Ha/atom)
-Total free energy                  : -5.2834259371E+00 (Ha)
-Kinetic energy                     :  4.9267755726E+00 (Ha)
-Exchange correlation energy        : -3.6396269753E+00 (Ha)
-Self and correction energy         : -1.3171727123E+01 (Ha)
-Average force                      :  2.0701653223E+00 (Ha/Bohr)
-Maximum force                      :  2.3397139141E+00 (Ha/Bohr)
-Time for force calculation         :  0.217 (sec)
-Relax time                         :  0.513 (sec)
+Free energy per atom               : -1.3201146262E+00 (Ha/atom)
+Total free energy                  : -5.2804585046E+00 (Ha)
+Kinetic energy                     :  4.9261113502E+00 (Ha)
+Exchange correlation energy        : -3.6394183383E+00 (Ha)
+Self and correction energy         : -1.3193382036E+01 (Ha)
+Average force                      :  2.0716349169E+00 (Ha/Bohr)
+Maximum force                      :  2.3443383319E+00 (Ha/Bohr)
+Time for force calculation         :  0.514 (sec)
+Relax time                         :  1.024 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#2)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -1.3260604738E+00       2.135E-04         0.007
-2              -1.3260607473E+00       1.037E-04         0.007
-3              -1.3260608822E+00       6.972E-05         0.006
+1              -1.3253239019E+00       2.514E-04         0.008
+2              -1.3253242095E+00       1.108E-04         0.007
+3              -1.3253243614E+00       8.140E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -1.3260608822E+00 (Ha/atom)
-Total free energy                  : -5.3042435286E+00 (Ha)
-Kinetic energy                     :  4.9253476698E+00 (Ha)
-Exchange correlation energy        : -3.6391110453E+00 (Ha)
-Self and correction energy         : -1.3206323470E+01 (Ha)
-Average force                      :  2.0607228051E+00 (Ha/Bohr)
-Maximum force                      :  2.3284918577E+00 (Ha/Bohr)
-Time for force calculation         :  0.212 (sec)
-Relax time                         :  0.415 (sec)
+Free energy per atom               : -1.3253243614E+00 (Ha/atom)
+Total free energy                  : -5.3012974457E+00 (Ha)
+Kinetic energy                     :  4.9247216215E+00 (Ha)
+Exchange correlation energy        : -3.6389117494E+00 (Ha)
+Self and correction energy         : -1.3228047917E+01 (Ha)
+Average force                      :  2.0621622532E+00 (Ha/Bohr)
+Maximum force                      :  2.3330443552E+00 (Ha/Bohr)
+Time for force calculation         :  0.496 (sec)
+Relax time                         :  0.904 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#3)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -1.5154064472E+00       4.819E-03         0.007
-2              -1.5157523723E+00       2.343E-03         0.006
-3              -1.5158383177E+00       1.565E-03         0.007
-4              -1.5158592791E+00       9.371E-04         0.007
-5              -1.5158668669E+00       5.038E-04         0.007
-6              -1.5158699017E+00       3.471E-04         0.007
-7              -1.5158714744E+00       2.382E-04         0.007
-8              -1.5158720823E+00       1.437E-04         0.006
-9              -1.5158723052E+00       1.008E-04         0.007
-10             -1.5158724265E+00       7.551E-05         0.007
+1              -1.5148198708E+00       4.882E-03         0.008
+2              -1.5151646711E+00       2.455E-03         0.007
+3              -1.5152480282E+00       1.910E-03         0.007
+4              -1.5152732115E+00       1.099E-03         0.007
+5              -1.5152836313E+00       5.911E-04         0.006
+6              -1.5152872261E+00       3.975E-04         0.007
+7              -1.5152890177E+00       2.999E-04         0.006
+8              -1.5152899169E+00       1.959E-04         0.007
+9              -1.5152902568E+00       1.264E-04         0.007
+10             -1.5152904182E+00       9.274E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -1.5158724265E+00 (Ha/atom)
-Total free energy                  : -6.0634897060E+00 (Ha)
-Kinetic energy                     :  4.8418332312E+00 (Ha)
-Exchange correlation energy        : -3.6097983328E+00 (Ha)
-Self and correction energy         : -1.4471566104E+01 (Ha)
-Average force                      :  1.7145159723E+00 (Ha/Bohr)
-Maximum force                      :  1.9164491166E+00 (Ha/Bohr)
-Time for force calculation         :  0.212 (sec)
-Relax time                         :  0.462 (sec)
+Free energy per atom               : -1.5152904182E+00 (Ha/atom)
+Total free energy                  : -6.0611616727E+00 (Ha)
+Kinetic energy                     :  4.8412115958E+00 (Ha)
+Exchange correlation energy        : -3.6096114080E+00 (Ha)
+Self and correction energy         : -1.4495404176E+01 (Ha)
+Average force                      :  1.7149986894E+00 (Ha/Bohr)
+Maximum force                      :  1.9183402574E+00 (Ha/Bohr)
+Time for force calculation         :  0.488 (sec)
+Relax time                         :  0.946 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#4)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -1.4018675929E+00       1.304E-01         0.012
-2              -1.5282044752E+00       8.760E-02         0.009
-3              -1.6191761302E+00       5.135E-02         0.009
-4              -1.6535933551E+00       3.804E-02         0.009
-5              -1.6666091276E+00       1.920E-02         0.008
-6              -1.6702881416E+00       1.131E-02         0.006
-7              -1.6715542664E+00       6.601E-03         0.006
-8              -1.6720316618E+00       3.953E-03         0.006
-9              -1.6722001610E+00       2.633E-03         0.006
-10             -1.6722729017E+00       1.715E-03         0.006
-11             -1.6723060496E+00       1.200E-03         0.006
-12             -1.6723221185E+00       8.165E-04         0.007
-13             -1.6723295524E+00       5.666E-04         0.006
-14             -1.6723332863E+00       4.037E-04         0.006
-15             -1.6723351264E+00       2.819E-04         0.006
-16             -1.6723360540E+00       2.075E-04         0.006
-17             -1.6723365772E+00       1.458E-04         0.006
-18             -1.6723368236E+00       9.683E-05         0.007
+1              -1.3808445416E+00       1.381E-01         0.010
+2              -1.5062663558E+00       9.421E-02         0.008
+3              -1.6080918452E+00       5.811E-02         0.007
+4              -1.6470255055E+00       4.603E-02         0.008
+5              -1.6635931912E+00       2.336E-02         0.007
+6              -1.6687296623E+00       1.490E-02         0.007
+7              -1.6706126608E+00       8.702E-03         0.007
+8              -1.6713430792E+00       5.558E-03         0.006
+9              -1.6716244379E+00       3.514E-03         0.007
+10             -1.6717500874E+00       2.199E-03         0.007
+11             -1.6717993712E+00       1.543E-03         0.006
+12             -1.6718241372E+00       1.066E-03         0.007
+13             -1.6718359032E+00       7.638E-04         0.007
+14             -1.6718418039E+00       5.388E-04         0.007
+15             -1.6718447035E+00       3.853E-04         0.006
+16             -1.6718461749E+00       2.797E-04         0.007
+17             -1.6718470143E+00       2.068E-04         0.006
+18             -1.6718474675E+00       1.497E-04         0.006
+19             -1.6718476934E+00       1.031E-04         0.007
+20             -1.6718478040E+00       7.659E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -1.6723368236E+00 (Ha/atom)
-Total free energy                  : -6.6893472943E+00 (Ha)
-Kinetic energy                     :  4.7539006483E+00 (Ha)
-Exchange correlation energy        : -3.5802265138E+00 (Ha)
-Self and correction energy         : -1.5463950408E+01 (Ha)
-Average force                      :  1.4026191708E+00 (Ha/Bohr)
-Maximum force                      :  1.5451717309E+00 (Ha/Bohr)
-Time for force calculation         :  0.238 (sec)
-Relax time                         :  0.592 (sec)
+Free energy per atom               : -1.6718478040E+00 (Ha/atom)
+Total free energy                  : -6.6873912159E+00 (Ha)
+Kinetic energy                     :  4.7530472340E+00 (Ha)
+Exchange correlation energy        : -3.5799448112E+00 (Ha)
+Self and correction energy         : -1.5488755993E+01 (Ha)
+Average force                      :  1.4025922968E+00 (Ha/Bohr)
+Maximum force                      :  1.5457034535E+00 (Ha/Bohr)
+Time for force calculation         :  0.505 (sec)
+Relax time                         :  1.033 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#5)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -1.7987857561E+00       3.599E-03         0.008
-2              -1.7988715171E+00       1.669E-03         0.007
-3              -1.7988952351E+00       6.208E-04         0.007
-4              -1.7988987605E+00       3.626E-04         0.007
-5              -1.7988999098E+00       1.668E-04         0.007
-6              -1.7989001987E+00       1.040E-04         0.007
-7              -1.7989002989E+00       5.980E-05         0.007
+1              -1.7983435179E+00       4.051E-03         0.009
+2              -1.7984421820E+00       1.973E-03         0.006
+3              -1.7984717860E+00       7.573E-04         0.006
+4              -1.7984765533E+00       4.538E-04         0.007
+5              -1.7984781563E+00       2.143E-04         0.007
+6              -1.7984785820E+00       1.366E-04         0.006
+7              -1.7984787331E+00       7.817E-05         0.006
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -1.7989002989E+00 (Ha/atom)
-Total free energy                  : -7.1956011955E+00 (Ha)
-Kinetic energy                     :  4.6551008787E+00 (Ha)
-Exchange correlation energy        : -3.5490070597E+00 (Ha)
-Self and correction energy         : -1.6156988345E+01 (Ha)
-Average force                      :  1.1246593192E+00 (Ha/Bohr)
-Maximum force                      :  1.2140011974E+00 (Ha/Bohr)
-Time for force calculation         :  0.223 (sec)
-Relax time                         :  0.467 (sec)
+Free energy per atom               : -1.7984787331E+00 (Ha/atom)
+Total free energy                  : -7.1939149324E+00 (Ha)
+Kinetic energy                     :  4.6541793003E+00 (Ha)
+Exchange correlation energy        : -3.5487065015E+00 (Ha)
+Self and correction energy         : -1.6181853078E+01 (Ha)
+Average force                      :  1.1242042456E+00 (Ha/Bohr)
+Maximum force                      :  1.2137459581E+00 (Ha/Bohr)
+Time for force calculation         :  0.537 (sec)
+Relax time                         :  0.983 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#6)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -1.8990203710E+00       3.886E-03         0.008
-2              -1.8991214099E+00       1.690E-03         0.007
-3              -1.8991453530E+00       6.341E-04         0.006
-4              -1.8991488054E+00       3.726E-04         0.007
-5              -1.8991500377E+00       1.725E-04         0.007
-6              -1.8991503307E+00       1.029E-04         0.006
-7              -1.8991504328E+00       5.832E-05         0.006
+1              -1.8986310023E+00       4.385E-03         0.009
+2              -1.8987465353E+00       1.970E-03         0.006
+3              -1.8987761473E+00       7.863E-04         0.006
+4              -1.8987807270E+00       4.704E-04         0.007
+5              -1.8987825570E+00       2.293E-04         0.007
+6              -1.8987830159E+00       1.445E-04         0.008
+7              -1.8987832023E+00       8.509E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -1.8991504328E+00 (Ha/atom)
-Total free energy                  : -7.5966017312E+00 (Ha)
-Kinetic energy                     :  4.5445798818E+00 (Ha)
-Exchange correlation energy        : -3.5159586515E+00 (Ha)
-Self and correction energy         : -1.6568852409E+01 (Ha)
-Average force                      :  8.8302173747E-01 (Ha/Bohr)
-Maximum force                      :  9.4235656493E-01 (Ha/Bohr)
-Time for force calculation         :  0.221 (sec)
-Relax time                         :  0.471 (sec)
+Free energy per atom               : -1.8987832023E+00 (Ha/atom)
+Total free energy                  : -7.5951328090E+00 (Ha)
+Kinetic energy                     :  4.5436813797E+00 (Ha)
+Exchange correlation energy        : -3.5156771864E+00 (Ha)
+Self and correction energy         : -1.6593173149E+01 (Ha)
+Average force                      :  8.8220643338E-01 (Ha/Bohr)
+Maximum force                      :  9.4136296758E-01 (Ha/Bohr)
+Time for force calculation         :  0.553 (sec)
+Relax time                         :  1.026 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#7)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -1.9768011472E+00       3.971E-03         0.008
-2              -1.9769070302E+00       1.737E-03         0.006
-3              -1.9769322618E+00       6.169E-04         0.006
-4              -1.9769354597E+00       3.508E-04         0.007
-5              -1.9769365997E+00       1.613E-04         0.007
-6              -1.9769368481E+00       9.834E-05         0.006
+1              -1.9764530377E+00       4.539E-03         0.009
+2              -1.9765764623E+00       2.064E-03         0.008
+3              -1.9766087171E+00       7.776E-04         0.008
+4              -1.9766131006E+00       4.438E-04         0.007
+5              -1.9766147712E+00       2.141E-04         0.007
+6              -1.9766151438E+00       1.305E-04         0.007
+7              -1.9766152892E+00       6.875E-05         0.012
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -1.9769368481E+00 (Ha/atom)
-Total free energy                  : -7.9077473924E+00 (Ha)
-Kinetic energy                     :  4.4247970596E+00 (Ha)
-Exchange correlation energy        : -3.4815269501E+00 (Ha)
-Self and correction energy         : -1.6750468342E+01 (Ha)
-Average force                      :  6.7952370601E-01 (Ha/Bohr)
-Maximum force                      :  7.1499286845E-01 (Ha/Bohr)
-Time for force calculation         :  0.224 (sec)
-Relax time                         :  0.459 (sec)
+Free energy per atom               : -1.9766152892E+00 (Ha/atom)
+Total free energy                  : -7.9064611566E+00 (Ha)
+Kinetic energy                     :  4.4240388040E+00 (Ha)
+Exchange correlation energy        : -3.4813099297E+00 (Ha)
+Self and correction energy         : -1.6773949867E+01 (Ha)
+Average force                      :  6.7851890527E-01 (Ha/Bohr)
+Maximum force                      :  7.1378730745E-01 (Ha/Bohr)
+Time for force calculation         :  0.513 (sec)
+Relax time                         :  0.981 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#8)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.0360387538E+00       4.330E-03         0.008
-2              -2.0361578286E+00       1.865E-03         0.007
-3              -2.0361867023E+00       6.645E-04         0.006
-4              -2.0361907415E+00       3.867E-04         0.006
-5              -2.0361920303E+00       1.736E-04         0.007
-6              -2.0361923358E+00       1.001E-04         0.007
-7              -2.0361924240E+00       5.200E-05         0.006
+1              -2.0357282734E+00       4.890E-03         0.009
+2              -2.0358646667E+00       2.197E-03         0.007
+3              -2.0359007608E+00       8.166E-04         0.007
+4              -2.0359061740E+00       4.919E-04         0.007
+5              -2.0359080870E+00       2.298E-04         0.007
+6              -2.0359085693E+00       1.415E-04         0.007
+7              -2.0359087299E+00       7.651E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.0361924240E+00 (Ha/atom)
-Total free energy                  : -8.1447696961E+00 (Ha)
-Kinetic energy                     :  4.2990460182E+00 (Ha)
-Exchange correlation energy        : -3.4461866106E+00 (Ha)
-Self and correction energy         : -1.6768344633E+01 (Ha)
-Average force                      :  5.1395250877E-01 (Ha/Bohr)
-Maximum force                      :  5.3183379279E-01 (Ha/Bohr)
-Time for force calculation         :  0.249 (sec)
-Relax time                         :  0.515 (sec)
+Free energy per atom               : -2.0359087299E+00 (Ha/atom)
+Total free energy                  : -8.1436349197E+00 (Ha)
+Kinetic energy                     :  4.2984268087E+00 (Ha)
+Exchange correlation energy        : -3.4460204707E+00 (Ha)
+Self and correction energy         : -1.6790936995E+01 (Ha)
+Average force                      :  5.1289353622E-01 (Ha/Bohr)
+Maximum force                      :  5.3065031802E-01 (Ha/Bohr)
+Time for force calculation         :  0.489 (sec)
+Relax time                         :  0.928 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#9)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.0805417003E+00       3.745E-03         0.008
-2              -2.0806312117E+00       1.728E-03         0.006
-3              -2.0806566753E+00       6.474E-04         0.006
-4              -2.0806605422E+00       3.873E-04         0.006
-5              -2.0806619077E+00       1.765E-04         0.006
-6              -2.0806622357E+00       1.032E-04         0.007
-7              -2.0806623326E+00       5.679E-05         0.006
+1              -2.0802678540E+00       4.264E-03         0.008
+2              -2.0803704243E+00       2.021E-03         0.006
+3              -2.0804019417E+00       7.898E-04         0.006
+4              -2.0804069459E+00       4.799E-04         0.006
+5              -2.0804088725E+00       2.289E-04         0.007
+6              -2.0804093574E+00       1.433E-04         0.007
+7              -2.0804095253E+00       8.085E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.0806623326E+00 (Ha/atom)
-Total free energy                  : -8.3226493303E+00 (Ha)
-Kinetic energy                     :  4.1725065646E+00 (Ha)
-Exchange correlation energy        : -3.4108729292E+00 (Ha)
-Self and correction energy         : -1.6688764593E+01 (Ha)
-Average force                      :  3.8342335776E-01 (Ha/Bohr)
-Maximum force                      :  3.9942473927E-01 (Ha/Bohr)
-Time for force calculation         :  0.231 (sec)
-Relax time                         :  0.512 (sec)
+Free energy per atom               : -2.0804095253E+00 (Ha/atom)
+Total free energy                  : -8.3216381014E+00 (Ha)
+Kinetic energy                     :  4.1718977884E+00 (Ha)
+Exchange correlation energy        : -3.4107005474E+00 (Ha)
+Self and correction energy         : -1.6710580691E+01 (Ha)
+Average force                      :  3.8241118800E-01 (Ha/Bohr)
+Maximum force                      :  3.9849151834E-01 (Ha/Bohr)
+Time for force calculation         :  0.488 (sec)
+Relax time                         :  0.929 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#10)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.1135634386E+00       3.843E-03         0.010
-2              -2.1136551699E+00       1.669E-03         0.006
-3              -2.1136783281E+00       5.792E-04         0.007
-4              -2.1136814973E+00       3.366E-04         0.008
-5              -2.1136824810E+00       1.528E-04         0.008
-6              -2.1136827404E+00       8.839E-05         0.008
+1              -2.1133134199E+00       4.332E-03         0.009
+2              -2.1134193231E+00       1.964E-03         0.007
+3              -2.1134479615E+00       7.081E-04         0.006
+4              -2.1134522111E+00       4.266E-04         0.007
+5              -2.1134536077E+00       1.967E-04         0.007
+6              -2.1134539836E+00       1.190E-04         0.007
+7              -2.1134540957E+00       6.693E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.1136827404E+00 (Ha/atom)
-Total free energy                  : -8.4547309617E+00 (Ha)
-Kinetic energy                     :  4.0491585247E+00 (Ha)
-Exchange correlation energy        : -3.3763622937E+00 (Ha)
-Self and correction energy         : -1.6567204881E+01 (Ha)
-Average force                      :  2.8350242992E-01 (Ha/Bohr)
-Maximum force                      :  3.0052808279E-01 (Ha/Bohr)
-Time for force calculation         :  0.237 (sec)
-Relax time                         :  0.497 (sec)
+Free energy per atom               : -2.1134540957E+00 (Ha/atom)
+Total free energy                  : -8.4538163828E+00 (Ha)
+Kinetic energy                     :  4.0484172896E+00 (Ha)
+Exchange correlation energy        : -3.3761432884E+00 (Ha)
+Self and correction energy         : -1.6588448833E+01 (Ha)
+Average force                      :  2.8264860545E-01 (Ha/Bohr)
+Maximum force                      :  2.9968144496E-01 (Ha/Bohr)
+Time for force calculation         :  0.495 (sec)
+Relax time                         :  0.930 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#11)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.1379328166E+00       3.861E-03         0.009
-2              -2.1380303338E+00       1.765E-03         0.007
-3              -2.1380563280E+00       6.225E-04         0.007
-4              -2.1380600206E+00       3.484E-04         0.007
-5              -2.1380610375E+00       1.550E-04         0.007
-6              -2.1380613002E+00       8.498E-05         0.008
+1              -2.1376999361E+00       4.352E-03         0.010
+2              -2.1378108766E+00       2.063E-03         0.007
+3              -2.1378430799E+00       7.703E-04         0.007
+4              -2.1378481066E+00       4.524E-04         0.007
+5              -2.1378496786E+00       2.075E-04         0.007
+6              -2.1378500977E+00       1.252E-04         0.006
+7              -2.1378502229E+00       7.132E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.1380613002E+00 (Ha/atom)
-Total free energy                  : -8.5522452008E+00 (Ha)
-Kinetic energy                     :  3.9320124025E+00 (Ha)
-Exchange correlation energy        : -3.3432381095E+00 (Ha)
-Self and correction energy         : -1.6443604835E+01 (Ha)
-Average force                      :  2.0901897008E-01 (Ha/Bohr)
-Maximum force                      :  2.2478554528E-01 (Ha/Bohr)
-Time for force calculation         :  0.244 (sec)
-Relax time                         :  0.509 (sec)
+Free energy per atom               : -2.1378502229E+00 (Ha/atom)
+Total free energy                  : -8.5514008916E+00 (Ha)
+Kinetic energy                     :  3.9312978972E+00 (Ha)
+Exchange correlation energy        : -3.3430272918E+00 (Ha)
+Self and correction energy         : -1.6464512800E+01 (Ha)
+Average force                      :  2.0826991649E-01 (Ha/Bohr)
+Maximum force                      :  2.2400258789E-01 (Ha/Bohr)
+Time for force calculation         :  0.506 (sec)
+Relax time                         :  0.940 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#12)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.1559548041E+00       3.354E-03         0.008
-2              -2.1560318580E+00       1.476E-03         0.006
-3              -2.1560506730E+00       5.415E-04         0.007
-4              -2.1560533367E+00       3.149E-04         0.006
-5              -2.1560542291E+00       1.429E-04         0.007
-6              -2.1560544401E+00       8.934E-05         0.006
+1              -2.1557365621E+00       3.788E-03         0.009
+2              -2.1558263080E+00       1.744E-03         0.007
+3              -2.1558498352E+00       6.704E-04         0.007
+4              -2.1558534784E+00       4.033E-04         0.007
+5              -2.1558547901E+00       1.867E-04         0.007
+6              -2.1558551067E+00       1.203E-04         0.008
+7              -2.1558552295E+00       6.588E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.1560544401E+00 (Ha/atom)
-Total free energy                  : -8.6242177603E+00 (Ha)
-Kinetic energy                     :  3.8243799191E+00 (Ha)
-Exchange correlation energy        : -3.3122897321E+00 (Ha)
-Self and correction energy         : -1.6342108480E+01 (Ha)
-Average force                      :  1.5447390110E-01 (Ha/Bohr)
-Maximum force                      :  1.6796685470E-01 (Ha/Bohr)
-Time for force calculation         :  0.264 (sec)
-Relax time                         :  0.545 (sec)
+Free energy per atom               : -2.1558552295E+00 (Ha/atom)
+Total free energy                  : -8.6234209182E+00 (Ha)
+Kinetic energy                     :  3.8238344228E+00 (Ha)
+Exchange correlation energy        : -3.3121357835E+00 (Ha)
+Self and correction energy         : -1.6362906814E+01 (Ha)
+Average force                      :  1.5386216413E-01 (Ha/Bohr)
+Maximum force                      :  1.6727308052E-01 (Ha/Bohr)
+Time for force calculation         :  0.485 (sec)
+Relax time                         :  0.924 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#13)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.1693026212E+00       3.490E-03         0.009
-2              -2.1693834787E+00       1.525E-03         0.006
-3              -2.1694032336E+00       5.490E-04         0.006
-4              -2.1694059344E+00       3.215E-04         0.006
-5              -2.1694068612E+00       1.423E-04         0.007
-6              -2.1694070587E+00       8.332E-05         0.007
+1              -2.1690910684E+00       4.021E-03         0.008
+2              -2.1691845218E+00       1.792E-03         0.006
+3              -2.1692093333E+00       6.945E-04         0.007
+4              -2.1692130112E+00       4.085E-04         0.007
+5              -2.1692144090E+00       1.903E-04         0.007
+6              -2.1692147079E+00       1.135E-04         0.007
+7              -2.1692148199E+00       5.788E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.1694070587E+00 (Ha/atom)
-Total free energy                  : -8.6776282349E+00 (Ha)
-Kinetic energy                     :  3.7281847781E+00 (Ha)
-Exchange correlation energy        : -3.2840424095E+00 (Ha)
-Self and correction energy         : -1.6273366050E+01 (Ha)
-Average force                      :  1.1504217748E-01 (Ha/Bohr)
-Maximum force                      :  1.2615005107E-01 (Ha/Bohr)
-Time for force calculation         :  0.259 (sec)
-Relax time                         :  0.521 (sec)
+Free energy per atom               : -2.1692148199E+00 (Ha/atom)
+Total free energy                  : -8.6768592798E+00 (Ha)
+Kinetic energy                     :  3.7276670759E+00 (Ha)
+Exchange correlation energy        : -3.2839067039E+00 (Ha)
+Self and correction energy         : -1.6294241286E+01 (Ha)
+Average force                      :  1.1457712014E-01 (Ha/Bohr)
+Maximum force                      :  1.2559137434E-01 (Ha/Bohr)
+Time for force calculation         :  0.489 (sec)
+Relax time                         :  0.928 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#14)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.1792971792E+00       3.772E-03         0.008
-2              -2.1793938212E+00       1.713E-03         0.006
-3              -2.1794182564E+00       6.015E-04         0.006
-4              -2.1794216206E+00       3.575E-04         0.007
-5              -2.1794227317E+00       1.549E-04         0.007
-6              -2.1794229671E+00       8.735E-05         0.007
+1              -2.1790836769E+00       4.364E-03         0.007
+2              -2.1791958719E+00       2.020E-03         0.006
+3              -2.1792270640E+00       7.632E-04         0.006
+4              -2.1792316133E+00       4.584E-04         0.006
+5              -2.1792333511E+00       2.109E-04         0.006
+6              -2.1792337244E+00       1.246E-04         0.007
+7              -2.1792338549E+00       6.363E-05         0.006
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.1794229671E+00 (Ha/atom)
-Total free energy                  : -8.7176918682E+00 (Ha)
-Kinetic energy                     :  3.6436819007E+00 (Ha)
-Exchange correlation energy        : -3.2586062566E+00 (Ha)
-Self and correction energy         : -1.6238042478E+01 (Ha)
-Average force                      :  8.6828238874E-02 (Ha/Bohr)
-Maximum force                      :  9.5905640427E-02 (Ha/Bohr)
-Time for force calculation         :  0.266 (sec)
-Relax time                         :  0.542 (sec)
+Free energy per atom               : -2.1792338549E+00 (Ha/atom)
+Total free energy                  : -8.7169354195E+00 (Ha)
+Kinetic energy                     :  3.6431039569E+00 (Ha)
+Exchange correlation energy        : -3.2584570775E+00 (Ha)
+Self and correction energy         : -1.6259119959E+01 (Ha)
+Average force                      :  8.6476113862E-02 (Ha/Bohr)
+Maximum force                      :  9.5469836261E-02 (Ha/Bohr)
+Time for force calculation         :  0.476 (sec)
+Relax time                         :  0.912 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#15)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.1868988765E+00       4.090E-03         0.008
-2              -2.1870102669E+00       1.867E-03         0.006
-3              -2.1870399125E+00       6.762E-04         0.007
-4              -2.1870441792E+00       3.921E-04         0.007
-5              -2.1870455084E+00       1.771E-04         0.007
-6              -2.1870458567E+00       1.005E-04         0.007
-7              -2.1870459483E+00       5.405E-05         0.007
+1              -2.1866832056E+00       4.667E-03         0.010
+2              -2.1868116245E+00       2.191E-03         0.008
+3              -2.1868488271E+00       8.358E-04         0.008
+4              -2.1868545646E+00       4.953E-04         0.009
+5              -2.1868565076E+00       2.262E-04         0.008
+6              -2.1868570113E+00       1.367E-04         0.008
+7              -2.1868571604E+00       7.294E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.1870459483E+00 (Ha/atom)
-Total free energy                  : -8.7481837932E+00 (Ha)
-Kinetic energy                     :  3.5712217294E+00 (Ha)
-Exchange correlation energy        : -3.2361819970E+00 (Ha)
-Self and correction energy         : -1.6230512603E+01 (Ha)
-Average force                      :  6.6517146544E-02 (Ha/Bohr)
-Maximum force                      :  7.4174160944E-02 (Ha/Bohr)
-Time for force calculation         :  0.287 (sec)
-Relax time                         :  0.571 (sec)
+Free energy per atom               : -2.1868571604E+00 (Ha/atom)
+Total free energy                  : -8.7474286416E+00 (Ha)
+Kinetic energy                     :  3.5706321451E+00 (Ha)
+Exchange correlation energy        : -3.2360281452E+00 (Ha)
+Self and correction energy         : -1.6251850075E+01 (Ha)
+Average force                      :  6.6268275072E-02 (Ha/Bohr)
+Maximum force                      :  7.3862580919E-02 (Ha/Bohr)
+Time for force calculation         :  0.494 (sec)
+Relax time                         :  0.941 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#16)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.1927551992E+00       4.560E-03         0.007
-2              -2.1928977501E+00       2.033E-03         0.007
-3              -2.1929321987E+00       7.237E-04         0.007
-4              -2.1929374309E+00       4.076E-04         0.007
-5              -2.1929387622E+00       1.869E-04         0.007
-6              -2.1929391240E+00       1.000E-04         0.007
-7              -2.1929392133E+00       5.403E-05         0.007
+1              -2.1925338293E+00       5.199E-03         0.008
+2              -2.1926966660E+00       2.350E-03         0.007
+3              -2.1927396873E+00       8.774E-04         0.008
+4              -2.1927464427E+00       5.171E-04         0.008
+5              -2.1927484046E+00       2.370E-04         0.008
+6              -2.1927489211E+00       1.382E-04         0.007
+7              -2.1927490702E+00       7.333E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.1929392133E+00 (Ha/atom)
-Total free energy                  : -8.7717568532E+00 (Ha)
-Kinetic energy                     :  3.5102396076E+00 (Ha)
-Exchange correlation energy        : -3.2167720011E+00 (Ha)
-Self and correction energy         : -1.6242217662E+01 (Ha)
-Average force                      :  5.1695086707E-02 (Ha/Bohr)
-Maximum force                      :  5.8537396098E-02 (Ha/Bohr)
-Time for force calculation         :  0.269 (sec)
-Relax time                         :  0.548 (sec)
+Free energy per atom               : -2.1927490702E+00 (Ha/atom)
+Total free energy                  : -8.7709962807E+00 (Ha)
+Kinetic energy                     :  3.5096169727E+00 (Ha)
+Exchange correlation energy        : -3.2166127756E+00 (Ha)
+Self and correction energy         : -1.6263817885E+01 (Ha)
+Average force                      :  5.1528220289E-02 (Ha/Bohr)
+Maximum force                      :  5.8322779831E-02 (Ha/Bohr)
+Time for force calculation         :  0.481 (sec)
+Relax time                         :  0.917 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#17)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.1974049875E+00       4.235E-03         0.009
-2              -2.1975242919E+00       1.857E-03         0.006
-3              -2.1975535957E+00       6.707E-04         0.006
-4              -2.1975577964E+00       4.080E-04         0.006
-5              -2.1975592788E+00       1.788E-04         0.007
-6              -2.1975596025E+00       9.891E-05         0.006
+1              -2.1971850875E+00       4.819E-03         0.008
+2              -2.1973225711E+00       2.177E-03         0.006
+3              -2.1973589637E+00       8.253E-04         0.006
+4              -2.1973645333E+00       5.124E-04         0.006
+5              -2.1973667032E+00       2.339E-04         0.006
+6              -2.1973671986E+00       1.367E-04         0.006
+7              -2.1973673502E+00       6.936E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.1975596025E+00 (Ha/atom)
-Total free energy                  : -8.7902384102E+00 (Ha)
-Kinetic energy                     :  3.4604991821E+00 (Ha)
-Exchange correlation energy        : -3.2004505462E+00 (Ha)
-Self and correction energy         : -1.6264357789E+01 (Ha)
-Average force                      :  4.0566943675E-02 (Ha/Bohr)
-Maximum force                      :  4.7069048274E-02 (Ha/Bohr)
-Time for force calculation         :  0.262 (sec)
-Relax time                         :  0.533 (sec)
+Free energy per atom               : -2.1973673502E+00 (Ha/atom)
+Total free energy                  : -8.7894694008E+00 (Ha)
+Kinetic energy                     :  3.4599058486E+00 (Ha)
+Exchange correlation energy        : -3.2003002013E+00 (Ha)
+Self and correction energy         : -1.6286177549E+01 (Ha)
+Average force                      :  4.0466631060E-02 (Ha/Bohr)
+Maximum force                      :  4.6913852127E-02 (Ha/Bohr)
+Time for force calculation         :  0.475 (sec)
+Relax time                         :  0.911 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#18)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2010551033E+00       4.371E-03         0.008
-2              -2.2011836863E+00       1.908E-03         0.006
-3              -2.2012145811E+00       6.841E-04         0.006
-4              -2.2012189214E+00       4.124E-04         0.006
-5              -2.2012204529E+00       1.861E-04         0.006
-6              -2.2012208122E+00       1.039E-04         0.007
-7              -2.2012209076E+00       5.268E-05         0.006
+1              -2.2008337257E+00       4.913E-03         0.009
+2              -2.2009798616E+00       2.210E-03         0.006
+3              -2.2010174073E+00       8.293E-04         0.006
+4              -2.2010231598E+00       5.134E-04         0.007
+5              -2.2010253366E+00       2.411E-04         0.007
+6              -2.2010258793E+00       1.425E-04         0.007
+7              -2.2010260412E+00       7.419E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2012209076E+00 (Ha/atom)
-Total free energy                  : -8.8048836304E+00 (Ha)
-Kinetic energy                     :  3.4205969509E+00 (Ha)
-Exchange correlation energy        : -3.1870043592E+00 (Ha)
-Self and correction energy         : -1.6289641289E+01 (Ha)
-Average force                      :  3.2046515265E-02 (Ha/Bohr)
-Maximum force                      :  3.8498040061E-02 (Ha/Bohr)
-Time for force calculation         :  0.268 (sec)
-Relax time                         :  0.548 (sec)
+Free energy per atom               : -2.2010260412E+00 (Ha/atom)
+Total free energy                  : -8.8041041647E+00 (Ha)
+Kinetic energy                     :  3.4200162043E+00 (Ha)
+Exchange correlation energy        : -3.1868597959E+00 (Ha)
+Self and correction energy         : -1.6311611349E+01 (Ha)
+Average force                      :  3.1957920416E-02 (Ha/Bohr)
+Maximum force                      :  3.8362289561E-02 (Ha/Bohr)
+Time for force calculation         :  0.492 (sec)
+Relax time                         :  0.955 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#19)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2039572924E+00       4.571E-03         0.009
-2              -2.2040989053E+00       2.049E-03         0.006
-3              -2.2041357721E+00       7.686E-04         0.006
-4              -2.2041412187E+00       4.635E-04         0.007
-5              -2.2041431848E+00       2.076E-04         0.006
-6              -2.2041436162E+00       1.203E-04         0.006
-7              -2.2041437479E+00       5.890E-05         0.006
+1              -2.2037256286E+00       5.241E-03         0.009
+2              -2.2038892063E+00       2.407E-03         0.006
+3              -2.2039357096E+00       9.602E-04         0.007
+4              -2.2039428971E+00       5.724E-04         0.007
+5              -2.2039457341E+00       2.715E-04         0.007
+6              -2.2039463701E+00       1.635E-04         0.006
+7              -2.2039465957E+00       8.232E-05         0.006
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2041437479E+00 (Ha/atom)
-Total free energy                  : -8.8165749915E+00 (Ha)
-Kinetic energy                     :  3.3890280857E+00 (Ha)
-Exchange correlation energy        : -3.1761095252E+00 (Ha)
-Self and correction energy         : -1.6313125500E+01 (Ha)
-Average force                      :  2.5401850912E-02 (Ha/Bohr)
-Maximum force                      :  3.2099345097E-02 (Ha/Bohr)
-Time for force calculation         :  0.263 (sec)
-Relax time                         :  0.542 (sec)
+Free energy per atom               : -2.2039465957E+00 (Ha/atom)
+Total free energy                  : -8.8157863830E+00 (Ha)
+Kinetic energy                     :  3.3883983819E+00 (Ha)
+Exchange correlation energy        : -3.1759513839E+00 (Ha)
+Self and correction energy         : -1.6335169693E+01 (Ha)
+Average force                      :  2.5349420778E-02 (Ha/Bohr)
+Maximum force                      :  3.2008324472E-02 (Ha/Bohr)
+Time for force calculation         :  0.486 (sec)
+Relax time                         :  0.935 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#20)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2062710285E+00       5.223E-03         0.009
-2              -2.2064401761E+00       2.299E-03         0.006
-3              -2.2064865347E+00       8.225E-04         0.006
-4              -2.2064929455E+00       4.730E-04         0.006
-5              -2.2064949083E+00       2.177E-04         0.006
-6              -2.2064954196E+00       1.209E-04         0.007
-7              -2.2064955505E+00       6.592E-05         0.007
+1              -2.2060369339E+00       5.752E-03         0.008
+2              -2.2062281271E+00       2.712E-03         0.006
+3              -2.2062844856E+00       1.004E-03         0.006
+4              -2.2062933009E+00       5.920E-04         0.007
+5              -2.2062959941E+00       2.851E-04         0.006
+6              -2.2062967931E+00       1.645E-04         0.007
+7              -2.2062970073E+00       9.367E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2064955505E+00 (Ha/atom)
-Total free energy                  : -8.8259822019E+00 (Ha)
-Kinetic energy                     :  3.3647743318E+00 (Ha)
-Exchange correlation energy        : -3.1675450010E+00 (Ha)
-Self and correction energy         : -1.6332419844E+01 (Ha)
-Average force                      :  2.0019844872E-02 (Ha/Bohr)
-Maximum force                      :  2.7050100306E-02 (Ha/Bohr)
-Time for force calculation         :  0.267 (sec)
-Relax time                         :  0.555 (sec)
+Free energy per atom               : -2.2062970073E+00 (Ha/atom)
+Total free energy                  : -8.8251880292E+00 (Ha)
+Kinetic energy                     :  3.3641257727E+00 (Ha)
+Exchange correlation energy        : -3.1673836563E+00 (Ha)
+Self and correction energy         : -1.6354473812E+01 (Ha)
+Average force                      :  1.9989853932E-02 (Ha/Bohr)
+Maximum force                      :  2.6988692123E-02 (Ha/Bohr)
+Time for force calculation         :  0.487 (sec)
+Relax time                         :  0.939 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#21)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2082230636E+00       4.590E-03         0.009
-2              -2.2083600633E+00       2.095E-03         0.007
-3              -2.2084001088E+00       8.152E-04         0.006
-4              -2.2084061502E+00       4.683E-04         0.007
-5              -2.2084081228E+00       2.159E-04         0.006
-6              -2.2084086159E+00       1.233E-04         0.006
-7              -2.2084087478E+00       6.154E-05         0.006
+1              -2.2079941159E+00       5.115E-03         0.007
+2              -2.2081496549E+00       2.447E-03         0.006
+3              -2.2081981369E+00       9.934E-04         0.006
+4              -2.2082063067E+00       5.928E-04         0.006
+5              -2.2082090958E+00       2.809E-04         0.006
+6              -2.2082098438E+00       1.738E-04         0.007
+7              -2.2082100765E+00       8.855E-05         0.006
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2084087478E+00 (Ha/atom)
-Total free energy                  : -8.8336349911E+00 (Ha)
-Kinetic energy                     :  3.3461334727E+00 (Ha)
-Exchange correlation energy        : -3.1608492224E+00 (Ha)
-Self and correction energy         : -1.6347275192E+01 (Ha)
-Average force                      :  1.5780877068E-02 (Ha/Bohr)
-Maximum force                      :  2.2923399049E-02 (Ha/Bohr)
-Time for force calculation         :  0.268 (sec)
-Relax time                         :  0.549 (sec)
+Free energy per atom               : -2.2082100765E+00 (Ha/atom)
+Total free energy                  : -8.8328403061E+00 (Ha)
+Kinetic energy                     :  3.3455043221E+00 (Ha)
+Exchange correlation energy        : -3.1606917867E+00 (Ha)
+Self and correction energy         : -1.6369295119E+01 (Ha)
+Average force                      :  1.5744627908E-02 (Ha/Bohr)
+Maximum force                      :  2.2855950733E-02 (Ha/Bohr)
+Time for force calculation         :  0.480 (sec)
+Relax time                         :  0.930 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#22)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2098101429E+00       4.393E-03         0.008
-2              -2.2099386284E+00       1.960E-03         0.007
-3              -2.2099727822E+00       7.294E-04         0.007
-4              -2.2099779851E+00       4.334E-04         0.008
-5              -2.2099796320E+00       2.023E-04         0.007
-6              -2.2099800586E+00       1.159E-04         0.007
-7              -2.2099801767E+00       5.865E-05         0.006
+1              -2.2095809955E+00       5.003E-03         0.008
+2              -2.2097296340E+00       2.310E-03         0.006
+3              -2.2097724290E+00       9.018E-04         0.006
+4              -2.2097793847E+00       5.503E-04         0.006
+5              -2.2097818168E+00       2.614E-04         0.007
+6              -2.2097824634E+00       1.591E-04         0.006
+7              -2.2097826679E+00       8.205E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2099801767E+00 (Ha/atom)
-Total free energy                  : -8.8399207070E+00 (Ha)
-Kinetic energy                     :  3.3315602346E+00 (Ha)
-Exchange correlation energy        : -3.1555908882E+00 (Ha)
-Self and correction energy         : -1.6358639347E+01 (Ha)
-Average force                      :  1.2588493751E-02 (Ha/Bohr)
-Maximum force                      :  1.9215809806E-02 (Ha/Bohr)
-Time for force calculation         :  0.265 (sec)
-Relax time                         :  0.549 (sec)
+Free energy per atom               : -2.2097826679E+00 (Ha/atom)
+Total free energy                  : -8.8391306717E+00 (Ha)
+Kinetic energy                     :  3.3308888509E+00 (Ha)
+Exchange correlation energy        : -3.1554200050E+00 (Ha)
+Self and correction energy         : -1.6380606085E+01 (Ha)
+Average force                      :  1.2567711637E-02 (Ha/Bohr)
+Maximum force                      :  1.9164796961E-02 (Ha/Bohr)
+Time for force calculation         :  0.483 (sec)
+Relax time                         :  0.924 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#23)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2111186597E+00       3.944E-03         0.008
-2              -2.2112227523E+00       1.783E-03         0.007
-3              -2.2112506614E+00       6.686E-04         0.006
-4              -2.2112546148E+00       3.820E-04         0.006
-5              -2.2112560047E+00       1.787E-04         0.006
-6              -2.2112563172E+00       1.067E-04         0.007
-7              -2.2112564287E+00       5.322E-05         0.006
+1              -2.2108980431E+00       4.480E-03         0.009
+2              -2.2110178564E+00       2.092E-03         0.007
+3              -2.2110529275E+00       8.145E-04         0.007
+4              -2.2110581536E+00       4.730E-04         0.007
+5              -2.2110600968E+00       2.315E-04         0.007
+6              -2.2110605583E+00       1.428E-04         0.006
+7              -2.2110607430E+00       7.460E-05         0.006
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2112564287E+00 (Ha/atom)
-Total free energy                  : -8.8450257147E+00 (Ha)
-Kinetic energy                     :  3.3205774830E+00 (Ha)
-Exchange correlation energy        : -3.1515787484E+00 (Ha)
-Self and correction energy         : -1.6367513263E+01 (Ha)
-Average force                      :  1.0018215800E-02 (Ha/Bohr)
-Maximum force                      :  1.5426448664E-02 (Ha/Bohr)
-Time for force calculation         :  0.283 (sec)
-Relax time                         :  0.585 (sec)
+Free energy per atom               : -2.2110607430E+00 (Ha/atom)
+Total free energy                  : -8.8442429722E+00 (Ha)
+Kinetic energy                     :  3.3198618545E+00 (Ha)
+Exchange correlation energy        : -3.1513909068E+00 (Ha)
+Self and correction energy         : -1.6389426536E+01 (Ha)
+Average force                      :  1.0024008533E-02 (Ha/Bohr)
+Maximum force                      :  1.5429803382E-02 (Ha/Bohr)
+Time for force calculation         :  0.487 (sec)
+Relax time                         :  0.937 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#24)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2120907585E+00       3.980E-03         0.008
-2              -2.2122006762E+00       1.861E-03         0.006
-3              -2.2122317589E+00       7.206E-04         0.006
-4              -2.2122366010E+00       4.269E-04         0.006
-5              -2.2122382941E+00       1.955E-04         0.006
-6              -2.2122386739E+00       1.185E-04         0.006
-7              -2.2122388056E+00       5.889E-05         0.006
+1              -2.2118692386E+00       4.537E-03         0.008
+2              -2.2119964448E+00       2.196E-03         0.006
+3              -2.2120358494E+00       8.875E-04         0.006
+4              -2.2120423658E+00       5.352E-04         0.007
+5              -2.2120448287E+00       2.541E-04         0.006
+6              -2.2120454022E+00       1.605E-04         0.007
+7              -2.2120456216E+00       8.260E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2122388056E+00 (Ha/atom)
-Total free energy                  : -8.8489552222E+00 (Ha)
-Kinetic energy                     :  3.3126545374E+00 (Ha)
-Exchange correlation energy        : -3.1486669231E+00 (Ha)
-Self and correction energy         : -1.6374348052E+01 (Ha)
-Average force                      :  7.4836895390E-03 (Ha/Bohr)
-Maximum force                      :  1.1245539578E-02 (Ha/Bohr)
-Time for force calculation         :  0.261 (sec)
-Relax time                         :  0.539 (sec)
+Free energy per atom               : -2.2120456216E+00 (Ha/atom)
+Total free energy                  : -8.8481824863E+00 (Ha)
+Kinetic energy                     :  3.3119060461E+00 (Ha)
+Exchange correlation energy        : -3.1484694725E+00 (Ha)
+Self and correction energy         : -1.6396220592E+01 (Ha)
+Average force                      :  7.5075112922E-03 (Ha/Bohr)
+Maximum force                      :  1.1290399407E-02 (Ha/Bohr)
+Time for force calculation         :  0.481 (sec)
+Relax time                         :  0.935 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#25)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2127487350E+00       4.238E-03         0.008
-2              -2.2128678923E+00       1.918E-03         0.006
-3              -2.2128989992E+00       7.146E-04         0.006
-4              -2.2129041444E+00       4.341E-04         0.006
-5              -2.2129057621E+00       2.018E-04         0.006
-6              -2.2129061920E+00       1.090E-04         0.006
-7              -2.2129062994E+00       5.868E-05         0.006
+1              -2.2125310019E+00       4.854E-03         0.009
+2              -2.2126680255E+00       2.225E-03         0.007
+3              -2.2127067655E+00       8.642E-04         0.007
+4              -2.2127133166E+00       5.418E-04         0.007
+5              -2.2127156654E+00       2.604E-04         0.008
+6              -2.2127163063E+00       1.532E-04         0.007
+7              -2.2127164949E+00       8.120E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2129062994E+00 (Ha/atom)
-Total free energy                  : -8.8516251977E+00 (Ha)
-Kinetic energy                     :  3.3074259442E+00 (Ha)
-Exchange correlation energy        : -3.1467408721E+00 (Ha)
-Self and correction energy         : -1.6379091642E+01 (Ha)
-Average force                      :  4.6431464931E-03 (Ha/Bohr)
-Maximum force                      :  6.6333411065E-03 (Ha/Bohr)
-Time for force calculation         :  0.255 (sec)
-Relax time                         :  0.532 (sec)
+Free energy per atom               : -2.2127164949E+00 (Ha/atom)
+Total free energy                  : -8.8508659796E+00 (Ha)
+Kinetic energy                     :  3.3066723414E+00 (Ha)
+Exchange correlation energy        : -3.1465391298E+00 (Ha)
+Self and correction energy         : -1.6400945197E+01 (Ha)
+Average force                      :  4.6685047989E-03 (Ha/Bohr)
+Maximum force                      :  6.6736489114E-03 (Ha/Bohr)
+Time for force calculation         :  0.507 (sec)
+Relax time                         :  0.953 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#26)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2131240614E+00       2.707E-03         0.008
-2              -2.2131738237E+00       1.216E-03         0.006
-3              -2.2131870450E+00       4.977E-04         0.006
-4              -2.2131893473E+00       2.970E-04         0.006
-5              -2.2131901650E+00       1.360E-04         0.007
-6              -2.2131903519E+00       7.881E-05         0.007
+1              -2.2129295427E+00       3.022E-03         0.008
+2              -2.2129847340E+00       1.385E-03         0.006
+3              -2.2130002947E+00       5.953E-04         0.007
+4              -2.2130031952E+00       3.613E-04         0.007
+5              -2.2130043259E+00       1.729E-04         0.008
+6              -2.2130045933E+00       1.056E-04         0.008
+7              -2.2130046875E+00       5.410E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2131903519E+00 (Ha/atom)
-Total free energy                  : -8.8527614075E+00 (Ha)
-Kinetic energy                     :  3.3051747185E+00 (Ha)
-Exchange correlation energy        : -3.1459134784E+00 (Ha)
-Self and correction energy         : -1.6381149150E+01 (Ha)
-Average force                      :  2.3063108325E-03 (Ha/Bohr)
-Maximum force                      :  3.1605419930E-03 (Ha/Bohr)
-Time for force calculation         :  0.263 (sec)
-Relax time                         :  0.535 (sec)
+Free energy per atom               : -2.2130046875E+00 (Ha/atom)
+Total free energy                  : -8.8520187498E+00 (Ha)
+Kinetic energy                     :  3.3043886162E+00 (Ha)
+Exchange correlation energy        : -3.1456977092E+00 (Ha)
+Self and correction energy         : -1.6403012488E+01 (Ha)
+Average force                      :  2.3309890603E-03 (Ha/Bohr)
+Maximum force                      :  3.1925902822E-03 (Ha/Bohr)
+Time for force calculation         :  0.564 (sec)
+Relax time                         :  1.052 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#27)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132289884E+00       2.374E-03         0.009
-2              -2.2132674580E+00       1.067E-03         0.007
-3              -2.2132777747E+00       4.042E-04         0.007
-4              -2.2132793478E+00       2.438E-04         0.007
-5              -2.2132798949E+00       1.152E-04         0.007
-6              -2.2132800343E+00       6.990E-05         0.007
+1              -2.2130297235E+00       2.812E-03         0.009
+2              -2.2130786902E+00       1.324E-03         0.007
+3              -2.2130927069E+00       5.234E-04         0.008
+4              -2.2130950622E+00       3.250E-04         0.007
+5              -2.2130959393E+00       1.574E-04         0.010
+6              -2.2130961742E+00       9.984E-05         0.010
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132800343E+00 (Ha/atom)
-Total free energy                  : -8.8531201373E+00 (Ha)
-Kinetic energy                     :  3.3044119989E+00 (Ha)
-Exchange correlation energy        : -3.1456389191E+00 (Ha)
-Self and correction energy         : -1.6381804102E+01 (Ha)
-Average force                      :  1.6849871910E-04 (Ha/Bohr)
-Maximum force                      :  1.9265844863E-04 (Ha/Bohr)
-Time for force calculation         :  0.275 (sec)
-Relax time                         :  0.562 (sec)
+Free energy per atom               : -2.2130961742E+00 (Ha/atom)
+Total free energy                  : -8.8523846969E+00 (Ha)
+Kinetic energy                     :  3.3035789362E+00 (Ha)
+Exchange correlation energy        : -3.1454095710E+00 (Ha)
+Self and correction energy         : -1.6403674917E+01 (Ha)
+Average force                      :  1.5995190043E-04 (Ha/Bohr)
+Maximum force                      :  1.7774019144E-04 (Ha/Bohr)
+Time for force calculation         :  0.531 (sec)
+Relax time                         :  1.119 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#28)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132753417E+00       7.190E-04         0.008
-2              -2.2132789686E+00       3.366E-04         0.006
-3              -2.2132799953E+00       1.292E-04         0.007
-4              -2.2132801672E+00       8.177E-05         0.007
+1              -2.2130918784E+00       7.223E-04         0.008
+2              -2.2130951157E+00       3.507E-04         0.007
+3              -2.2130961206E+00       1.420E-04         0.006
+4              -2.2130963001E+00       9.268E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132801672E+00 (Ha/atom)
-Total free energy                  : -8.8531206688E+00 (Ha)
-Kinetic energy                     :  3.3044713323E+00 (Ha)
-Exchange correlation energy        : -3.1456497805E+00 (Ha)
-Self and correction energy         : -1.6381804978E+01 (Ha)
-Average force                      :  5.7537410926E-05 (Ha/Bohr)
-Maximum force                      :  8.3448612813E-05 (Ha/Bohr)
-Time for force calculation         :  0.272 (sec)
-Relax time                         :  0.542 (sec)
+Free energy per atom               : -2.2130963001E+00 (Ha/atom)
+Total free energy                  : -8.8523852003E+00 (Ha)
+Kinetic energy                     :  3.3036605973E+00 (Ha)
+Exchange correlation energy        : -3.1454251714E+00 (Ha)
+Self and correction energy         : -1.6403675520E+01 (Ha)
+Average force                      :  6.5022491627E-05 (Ha/Bohr)
+Maximum force                      :  9.1989436760E-05 (Ha/Bohr)
+Time for force calculation         :  0.485 (sec)
+Relax time                         :  0.919 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#29)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802408E+00       4.277E-05         0.007
+1              -2.2130963804E+00       5.161E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802408E+00 (Ha/atom)
-Total free energy                  : -8.8531209631E+00 (Ha)
-Kinetic energy                     :  3.3044625026E+00 (Ha)
-Exchange correlation energy        : -3.1456487618E+00 (Ha)
-Self and correction energy         : -1.6381805106E+01 (Ha)
-Average force                      :  1.5450558801E-05 (Ha/Bohr)
-Maximum force                      :  2.2269923651E-05 (Ha/Bohr)
-Time for force calculation         :  0.267 (sec)
-Relax time                         :  0.515 (sec)
+Free energy per atom               : -2.2130963804E+00 (Ha/atom)
+Total free energy                  : -8.8523855217E+00 (Ha)
+Kinetic energy                     :  3.3036448740E+00 (Ha)
+Exchange correlation energy        : -3.1454228586E+00 (Ha)
+Self and correction energy         : -1.6403675654E+01 (Ha)
+Average force                      :  1.5847559614E-05 (Ha/Bohr)
+Maximum force                      :  2.0444208433E-05 (Ha/Bohr)
+Time for force calculation         :  0.493 (sec)
+Relax time                         :  0.902 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#30)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802606E+00       3.054E-05         0.008
+1              -2.2130964027E+00       4.099E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802606E+00 (Ha/atom)
-Total free energy                  : -8.8531210422E+00 (Ha)
-Kinetic energy                     :  3.3044639599E+00 (Ha)
-Exchange correlation energy        : -3.1456496872E+00 (Ha)
-Self and correction energy         : -1.6381805135E+01 (Ha)
-Average force                      :  1.1039402374E-05 (Ha/Bohr)
-Maximum force                      :  1.3493149911E-05 (Ha/Bohr)
-Time for force calculation         :  0.271 (sec)
-Relax time                         :  0.522 (sec)
+Free energy per atom               : -2.2130964027E+00 (Ha/atom)
+Total free energy                  : -8.8523856109E+00 (Ha)
+Kinetic energy                     :  3.3036448061E+00 (Ha)
+Exchange correlation energy        : -3.1454236359E+00 (Ha)
+Self and correction energy         : -1.6403675674E+01 (Ha)
+Average force                      :  9.9519232596E-06 (Ha/Bohr)
+Maximum force                      :  1.0614046284E-05 (Ha/Bohr)
+Time for force calculation         :  0.485 (sec)
+Relax time                         :  0.893 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#31)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802892E+00       1.784E-05         0.008
+1              -2.2130964288E+00       2.082E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802892E+00 (Ha/atom)
-Total free energy                  : -8.8531211570E+00 (Ha)
-Kinetic energy                     :  3.3044713138E+00 (Ha)
-Exchange correlation energy        : -3.1456529726E+00 (Ha)
-Self and correction energy         : -1.6381805203E+01 (Ha)
-Average force                      :  5.9406987102E-06 (Ha/Bohr)
-Maximum force                      :  6.7940963895E-06 (Ha/Bohr)
-Time for force calculation         :  0.273 (sec)
-Relax time                         :  0.523 (sec)
+Free energy per atom               : -2.2130964288E+00 (Ha/atom)
+Total free energy                  : -8.8523857153E+00 (Ha)
+Kinetic energy                     :  3.3036478646E+00 (Ha)
+Exchange correlation energy        : -3.1454255328E+00 (Ha)
+Self and correction energy         : -1.6403675705E+01 (Ha)
+Average force                      :  4.9165043490E-06 (Ha/Bohr)
+Maximum force                      :  6.1899930536E-06 (Ha/Bohr)
+Time for force calculation         :  0.488 (sec)
+Relax time                         :  0.898 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#32)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802949E+00       1.233E-05         0.008
+1              -2.2130964396E+00       1.421E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802949E+00 (Ha/atom)
-Total free energy                  : -8.8531211797E+00 (Ha)
-Kinetic energy                     :  3.3044772197E+00 (Ha)
-Exchange correlation energy        : -3.1456548659E+00 (Ha)
-Self and correction energy         : -1.6381805222E+01 (Ha)
-Average force                      :  5.6476735629E-06 (Ha/Bohr)
-Maximum force                      :  9.6431640581E-06 (Ha/Bohr)
-Time for force calculation         :  0.269 (sec)
-Relax time                         :  0.522 (sec)
+Free energy per atom               : -2.2130964396E+00 (Ha/atom)
+Total free energy                  : -8.8523857584E+00 (Ha)
+Kinetic energy                     :  3.3036534044E+00 (Ha)
+Exchange correlation energy        : -3.1454276985E+00 (Ha)
+Self and correction energy         : -1.6403675717E+01 (Ha)
+Average force                      :  5.7415882395E-06 (Ha/Bohr)
+Maximum force                      :  9.4716495639E-06 (Ha/Bohr)
+Time for force calculation         :  0.488 (sec)
+Relax time                         :  0.897 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#33)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802902E+00       2.818E-05         0.008
+1              -2.2130964427E+00       1.936E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802902E+00 (Ha/atom)
-Total free energy                  : -8.8531211607E+00 (Ha)
-Kinetic energy                     :  3.3044934265E+00 (Ha)
-Exchange correlation energy        : -3.1456596958E+00 (Ha)
-Self and correction energy         : -1.6381805252E+01 (Ha)
-Average force                      :  9.6230626906E-06 (Ha/Bohr)
-Maximum force                      :  1.5651100746E-05 (Ha/Bohr)
-Time for force calculation         :  0.269 (sec)
-Relax time                         :  0.520 (sec)
+Free energy per atom               : -2.2130964427E+00 (Ha/atom)
+Total free energy                  : -8.8523857710E+00 (Ha)
+Kinetic energy                     :  3.3036654603E+00 (Ha)
+Exchange correlation energy        : -3.1454321074E+00 (Ha)
+Self and correction energy         : -1.6403675745E+01 (Ha)
+Average force                      :  6.3938596888E-06 (Ha/Bohr)
+Maximum force                      :  1.1046079518E-05 (Ha/Bohr)
+Time for force calculation         :  0.488 (sec)
+Relax time                         :  0.899 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#34)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2129414305E+00       4.304E-03         0.009
-2              -2.2130554633E+00       1.886E-03         0.006
-3              -2.2130867004E+00       8.262E-04         0.007
-4              -2.2130936264E+00       4.321E-04         0.007
-5              -2.2130955784E+00       2.122E-04         0.007
-6              -2.2130959812E+00       1.156E-04         0.007
-7              -2.2130961099E+00       6.507E-05         0.006
+1              -2.2130964468E+00       1.208E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2130961099E+00 (Ha/atom)
-Total free energy                  : -8.8523844397E+00 (Ha)
-Kinetic energy                     :  3.3060583634E+00 (Ha)
-Exchange correlation energy        : -3.1462336953E+00 (Ha)
-Self and correction energy         : -1.6380507691E+01 (Ha)
-Average force                      :  3.2817386665E-03 (Ha/Bohr)
-Maximum force                      :  5.6271840373E-03 (Ha/Bohr)
-Time for force calculation         :  0.255 (sec)
-Relax time                         :  0.538 (sec)
+Free energy per atom               : -2.2130964468E+00 (Ha/atom)
+Total free energy                  : -8.8523857872E+00 (Ha)
+Kinetic energy                     :  3.3036682326E+00 (Ha)
+Exchange correlation energy        : -3.1454324080E+00 (Ha)
+Self and correction energy         : -1.6403675752E+01 (Ha)
+Average force                      :  6.0971973581E-06 (Ha/Bohr)
+Maximum force                      :  8.3017460031E-06 (Ha/Bohr)
+Time for force calculation         :  0.493 (sec)
+Relax time                         :  0.904 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#35)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802956E+00       1.701E-05         0.008
+1              -2.2130964472E+00       1.327E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802956E+00 (Ha/atom)
-Total free energy                  : -8.8531211822E+00 (Ha)
-Kinetic energy                     :  3.3044923793E+00 (Ha)
-Exchange correlation energy        : -3.1456594399E+00 (Ha)
-Self and correction energy         : -1.6381805254E+01 (Ha)
-Average force                      :  3.5815160490E-06 (Ha/Bohr)
-Maximum force                      :  4.1657583100E-06 (Ha/Bohr)
-Time for force calculation         :  0.270 (sec)
-Relax time                         :  0.531 (sec)
+Free energy per atom               : -2.2130964472E+00 (Ha/atom)
+Total free energy                  : -8.8523857890E+00 (Ha)
+Kinetic energy                     :  3.3036801892E+00 (Ha)
+Exchange correlation energy        : -3.1454354080E+00 (Ha)
+Self and correction energy         : -1.6403675765E+01 (Ha)
+Average force                      :  3.5722461716E-06 (Ha/Bohr)
+Maximum force                      :  5.0271466064E-06 (Ha/Bohr)
+Time for force calculation         :  0.491 (sec)
+Relax time                         :  0.903 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#36)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802978E+00       1.465E-05         0.009
+1              -2.2130964004E+00       3.411E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802978E+00 (Ha/atom)
-Total free energy                  : -8.8531211914E+00 (Ha)
-Kinetic energy                     :  3.3044937636E+00 (Ha)
-Exchange correlation energy        : -3.1456594263E+00 (Ha)
-Self and correction energy         : -1.6381805253E+01 (Ha)
-Average force                      :  1.5879324534E-06 (Ha/Bohr)
-Maximum force                      :  2.5985311454E-06 (Ha/Bohr)
-Time for force calculation         :  0.273 (sec)
-Relax time                         :  0.527 (sec)
+Free energy per atom               : -2.2130964004E+00 (Ha/atom)
+Total free energy                  : -8.8523856018E+00 (Ha)
+Kinetic energy                     :  3.3037274655E+00 (Ha)
+Exchange correlation energy        : -3.1454476652E+00 (Ha)
+Self and correction energy         : -1.6403675663E+01 (Ha)
+Average force                      :  1.3070861626E-05 (Ha/Bohr)
+Maximum force                      :  1.4653408309E-05 (Ha/Bohr)
+Time for force calculation         :  0.485 (sec)
+Relax time                         :  0.898 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#37)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132803000E+00       8.390E-06         0.008
+1              -2.2130964454E+00       1.765E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132803000E+00 (Ha/atom)
-Total free energy                  : -8.8531212000E+00 (Ha)
-Kinetic energy                     :  3.3044945450E+00 (Ha)
-Exchange correlation energy        : -3.1456593113E+00 (Ha)
-Self and correction energy         : -1.6381805253E+01 (Ha)
-Average force                      :  1.9068194048E-06 (Ha/Bohr)
-Maximum force                      :  2.4182779836E-06 (Ha/Bohr)
-Time for force calculation         :  0.270 (sec)
-Relax time                         :  0.524 (sec)
+Free energy per atom               : -2.2130964454E+00 (Ha/atom)
+Total free energy                  : -8.8523857817E+00 (Ha)
+Kinetic energy                     :  3.3036912479E+00 (Ha)
+Exchange correlation energy        : -3.1454379567E+00 (Ha)
+Self and correction energy         : -1.6403675763E+01 (Ha)
+Average force                      :  5.6923207052E-06 (Ha/Bohr)
+Maximum force                      :  5.9522791689E-06 (Ha/Bohr)
+Time for force calculation         :  0.483 (sec)
+Relax time                         :  0.900 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#38)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2088584762E+00       1.595E-02         0.009
-2              -2.2110279954E+00       1.060E-02         0.007
-3              -2.2124568220E+00       7.207E-03         0.007
-4              -2.2129542358E+00       2.660E-03         0.006
-5              -2.2130180913E+00       1.538E-03         0.007
-6              -2.2130414989E+00       8.410E-04         0.006
-7              -2.2130487400E+00       4.479E-04         0.007
-8              -2.2130507947E+00       2.738E-04         0.007
-9              -2.2130514700E+00       1.298E-04         0.007
-10             -2.2130516377E+00       6.846E-05         0.006
+1              -2.2130964460E+00       1.627E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2130516377E+00 (Ha/atom)
-Total free energy                  : -8.8522065509E+00 (Ha)
-Kinetic energy                     :  3.3065152532E+00 (Ha)
-Exchange correlation energy        : -3.1464130236E+00 (Ha)
-Self and correction energy         : -1.6380360953E+01 (Ha)
-Average force                      :  4.9023110520E-03 (Ha/Bohr)
-Maximum force                      :  5.9950147118E-03 (Ha/Bohr)
-Time for force calculation         :  0.260 (sec)
-Relax time                         :  0.567 (sec)
+Free energy per atom               : -2.2130964460E+00 (Ha/atom)
+Total free energy                  : -8.8523857839E+00 (Ha)
+Kinetic energy                     :  3.3036826343E+00 (Ha)
+Exchange correlation energy        : -3.1454360252E+00 (Ha)
+Self and correction energy         : -1.6403675764E+01 (Ha)
+Average force                      :  1.6544851451E-05 (Ha/Bohr)
+Maximum force                      :  1.9901359833E-05 (Ha/Bohr)
+Time for force calculation         :  0.490 (sec)
+Relax time                         :  0.906 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#39)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132102519E+00       1.173E-03         0.008
-2              -2.2132213437E+00       6.953E-04         0.006
-3              -2.2132260653E+00       3.699E-04         0.006
-4              -2.2132277645E+00       2.295E-04         0.006
-5              -2.2132282292E+00       1.215E-04         0.006
-6              -2.2132283687E+00       5.862E-05         0.006
+1              -2.2130964475E+00       1.300E-05         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132283687E+00 (Ha/atom)
-Total free energy                  : -8.8529134750E+00 (Ha)
-Kinetic energy                     :  3.3047937906E+00 (Ha)
-Exchange correlation energy        : -3.1457843526E+00 (Ha)
-Self and correction energy         : -1.6381430424E+01 (Ha)
-Average force                      :  1.8901722693E-03 (Ha/Bohr)
-Maximum force                      :  2.3265579783E-03 (Ha/Bohr)
-Time for force calculation         :  0.266 (sec)
-Relax time                         :  0.542 (sec)
+Free energy per atom               : -2.2130964475E+00 (Ha/atom)
+Total free energy                  : -8.8523857901E+00 (Ha)
+Kinetic energy                     :  3.3036896437E+00 (Ha)
+Exchange correlation energy        : -3.1454374645E+00 (Ha)
+Self and correction energy         : -1.6403675765E+01 (Ha)
+Average force                      :  1.5742265316E-06 (Ha/Bohr)
+Maximum force                      :  2.3149075726E-06 (Ha/Bohr)
+Time for force calculation         :  0.485 (sec)
+Relax time                         :  0.894 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#40)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132645258E+00       3.371E-04         0.008
-2              -2.2132652802E+00       1.540E-04         0.006
-3              -2.2132654892E+00       5.893E-05         0.006
+1              -2.2130964489E+00       8.587E-06         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132654892E+00 (Ha/atom)
-Total free energy                  : -8.8530619567E+00 (Ha)
-Kinetic energy                     :  3.3046063812E+00 (Ha)
-Exchange correlation energy        : -3.1457000390E+00 (Ha)
-Self and correction energy         : -1.6381705597E+01 (Ha)
-Average force                      :  1.1378240637E-03 (Ha/Bohr)
-Maximum force                      :  1.3366881994E-03 (Ha/Bohr)
-Time for force calculation         :  0.261 (sec)
-Relax time                         :  0.514 (sec)
+Free energy per atom               : -2.2130964489E+00 (Ha/atom)
+Total free energy                  : -8.8523857957E+00 (Ha)
+Kinetic energy                     :  3.3036888939E+00 (Ha)
+Exchange correlation energy        : -3.1454371392E+00 (Ha)
+Self and correction energy         : -1.6403675765E+01 (Ha)
+Average force                      :  2.0586256855E-06 (Ha/Bohr)
+Maximum force                      :  2.5036898787E-06 (Ha/Bohr)
+Time for force calculation         :  0.486 (sec)
+Relax time                         :  0.892 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#41)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132751838E+00       5.881E-04         0.008
-2              -2.2132773635E+00       2.467E-04         0.006
-3              -2.2132778629E+00       7.945E-05         0.006
+1              -2.2130964232E+00       2.996E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132778629E+00 (Ha/atom)
-Total free energy                  : -8.8531114517E+00 (Ha)
-Kinetic energy                     :  3.3045073058E+00 (Ha)
-Exchange correlation energy        : -3.1456670759E+00 (Ha)
-Self and correction energy         : -1.6381791705E+01 (Ha)
-Average force                      :  5.7506919966E-04 (Ha/Bohr)
-Maximum force                      :  6.5758917413E-04 (Ha/Bohr)
-Time for force calculation         :  0.274 (sec)
-Relax time                         :  0.539 (sec)
+Free energy per atom               : -2.2130964232E+00 (Ha/atom)
+Total free energy                  : -8.8523856927E+00 (Ha)
+Kinetic energy                     :  3.3036689511E+00 (Ha)
+Exchange correlation energy        : -3.1454298752E+00 (Ha)
+Self and correction energy         : -1.6403675747E+01 (Ha)
+Average force                      :  1.4209500123E-05 (Ha/Bohr)
+Maximum force                      :  2.0241472719E-05 (Ha/Bohr)
+Time for force calculation         :  0.485 (sec)
+Relax time                         :  0.898 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#42)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132799078E+00       1.857E-04         0.009
-2              -2.2132801456E+00       9.898E-05         0.007
+1              -2.2130964513E+00       2.396E-06         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132801456E+00 (Ha/atom)
-Total free energy                  : -8.8531205823E+00 (Ha)
-Kinetic energy                     :  3.3044970380E+00 (Ha)
-Exchange correlation energy        : -3.1456618231E+00 (Ha)
-Self and correction energy         : -1.6381805123E+01 (Ha)
-Average force                      :  6.9649610788E-05 (Ha/Bohr)
-Maximum force                      :  1.0552770582E-04 (Ha/Bohr)
-Time for force calculation         :  0.273 (sec)
-Relax time                         :  0.534 (sec)
+Free energy per atom               : -2.2130964513E+00 (Ha/atom)
+Total free energy                  : -8.8523858051E+00 (Ha)
+Kinetic energy                     :  3.3036835248E+00 (Ha)
+Exchange correlation energy        : -3.1454354113E+00 (Ha)
+Self and correction energy         : -1.6403675765E+01 (Ha)
+Average force                      :  3.1750931171E-06 (Ha/Bohr)
+Maximum force                      :  4.0978843710E-06 (Ha/Bohr)
+Time for force calculation         :  0.484 (sec)
+Relax time                         :  0.893 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#43)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802422E+00       5.793E-05         0.008
+1              -2.2130964498E+00       1.235E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802422E+00 (Ha/atom)
-Total free energy                  : -8.8531209687E+00 (Ha)
-Kinetic energy                     :  3.3044924105E+00 (Ha)
-Exchange correlation energy        : -3.1456603440E+00 (Ha)
-Self and correction energy         : -1.6381805207E+01 (Ha)
-Average force                      :  1.5592463814E-05 (Ha/Bohr)
-Maximum force                      :  2.0940344035E-05 (Ha/Bohr)
-Time for force calculation         :  0.271 (sec)
-Relax time                         :  0.526 (sec)
+Free energy per atom               : -2.2130964498E+00 (Ha/atom)
+Total free energy                  : -8.8523857991E+00 (Ha)
+Kinetic energy                     :  3.3036862631E+00 (Ha)
+Exchange correlation energy        : -3.1454363605E+00 (Ha)
+Self and correction energy         : -1.6403675766E+01 (Ha)
+Average force                      :  3.2109540719E-06 (Ha/Bohr)
+Maximum force                      :  4.1124351061E-06 (Ha/Bohr)
+Time for force calculation         :  0.478 (sec)
+Relax time                         :  0.887 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#44)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802700E+00       4.245E-05         0.007
+1              -2.2130964512E+00       4.801E-06         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802700E+00 (Ha/atom)
-Total free energy                  : -8.8531210800E+00 (Ha)
-Kinetic energy                     :  3.3044950812E+00 (Ha)
-Exchange correlation energy        : -3.1456603506E+00 (Ha)
-Self and correction energy         : -1.6381805217E+01 (Ha)
-Average force                      :  9.8479286732E-06 (Ha/Bohr)
-Maximum force                      :  1.5790602940E-05 (Ha/Bohr)
-Time for force calculation         :  0.272 (sec)
-Relax time                         :  0.521 (sec)
+Free energy per atom               : -2.2130964512E+00 (Ha/atom)
+Total free energy                  : -8.8523858050E+00 (Ha)
+Kinetic energy                     :  3.3036833765E+00 (Ha)
+Exchange correlation energy        : -3.1454354698E+00 (Ha)
+Self and correction energy         : -1.6403675766E+01 (Ha)
+Average force                      :  1.8322566718E-06 (Ha/Bohr)
+Maximum force                      :  2.0812459473E-06 (Ha/Bohr)
+Time for force calculation         :  0.498 (sec)
+Relax time                         :  0.898 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#45)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802947E+00       1.826E-05         0.008
+1              -2.2130964516E+00       2.503E-06         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802947E+00 (Ha/atom)
-Total free energy                  : -8.8531211790E+00 (Ha)
-Kinetic energy                     :  3.3044996108E+00 (Ha)
-Exchange correlation energy        : -3.1456603407E+00 (Ha)
-Self and correction energy         : -1.6381805243E+01 (Ha)
-Average force                      :  7.5610556318E-06 (Ha/Bohr)
-Maximum force                      :  1.0853060695E-05 (Ha/Bohr)
-Time for force calculation         :  0.267 (sec)
-Relax time                         :  0.517 (sec)
+Free energy per atom               : -2.2130964516E+00 (Ha/atom)
+Total free energy                  : -8.8523858064E+00 (Ha)
+Kinetic energy                     :  3.3036811916E+00 (Ha)
+Exchange correlation energy        : -3.1454348637E+00 (Ha)
+Self and correction energy         : -1.6403675767E+01 (Ha)
+Average force                      :  1.7014706873E-06 (Ha/Bohr)
+Maximum force                      :  2.0523895319E-06 (Ha/Bohr)
+Time for force calculation         :  0.480 (sec)
+Relax time                         :  0.883 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#46)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802956E+00       1.355E-05         0.008
+1              -2.2130964512E+00       4.750E-06         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802956E+00 (Ha/atom)
-Total free energy                  : -8.8531211823E+00 (Ha)
-Kinetic energy                     :  3.3044978044E+00 (Ha)
-Exchange correlation energy        : -3.1456601165E+00 (Ha)
-Self and correction energy         : -1.6381805246E+01 (Ha)
-Average force                      :  2.5078616328E-06 (Ha/Bohr)
-Maximum force                      :  3.7369492557E-06 (Ha/Bohr)
-Time for force calculation         :  0.273 (sec)
-Relax time                         :  0.531 (sec)
+Free energy per atom               : -2.2130964512E+00 (Ha/atom)
+Total free energy                  : -8.8523858047E+00 (Ha)
+Kinetic energy                     :  3.3036723721E+00 (Ha)
+Exchange correlation energy        : -3.1454324908E+00 (Ha)
+Self and correction energy         : -1.6403675767E+01 (Ha)
+Average force                      :  1.7130442396E-06 (Ha/Bohr)
+Maximum force                      :  2.5507352243E-06 (Ha/Bohr)
+Time for force calculation         :  0.483 (sec)
+Relax time                         :  0.893 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#47)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132802984E+00       1.224E-05         0.008
+1              -2.2130964512E+00       3.487E-06         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132802984E+00 (Ha/atom)
-Total free energy                  : -8.8531211935E+00 (Ha)
-Kinetic energy                     :  3.3044964469E+00 (Ha)
-Exchange correlation energy        : -3.1456596510E+00 (Ha)
-Self and correction energy         : -1.6381805249E+01 (Ha)
-Average force                      :  3.7310841389E-06 (Ha/Bohr)
-Maximum force                      :  4.5375936975E-06 (Ha/Bohr)
-Time for force calculation         :  0.268 (sec)
-Relax time                         :  0.518 (sec)
+Free energy per atom               : -2.2130964512E+00 (Ha/atom)
+Total free energy                  : -8.8523858050E+00 (Ha)
+Kinetic energy                     :  3.3036716325E+00 (Ha)
+Exchange correlation energy        : -3.1454323388E+00 (Ha)
+Self and correction energy         : -1.6403675767E+01 (Ha)
+Average force                      :  1.8846150025E-06 (Ha/Bohr)
+Maximum force                      :  2.6204693329E-06 (Ha/Bohr)
+Time for force calculation         :  0.487 (sec)
+Relax time                         :  0.916 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#48)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2110910684E+00       9.791E-03         0.009
-2              -2.2121360176E+00       8.659E-03         0.006
-3              -2.2128423292E+00       3.590E-03         0.006
-4              -2.2129783547E+00       1.686E-03         0.007
-5              -2.2130092529E+00       8.727E-04         0.006
-6              -2.2130185913E+00       5.106E-04         0.007
-7              -2.2130213181E+00       2.851E-04         0.007
-8              -2.2130220947E+00       1.612E-04         0.006
-9              -2.2130223498E+00       9.000E-05         0.007
+1              -2.2130964516E+00       3.000E-06         0.007
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2130223498E+00 (Ha/atom)
-Total free energy                  : -8.8520893991E+00 (Ha)
-Kinetic energy                     :  3.3067810643E+00 (Ha)
-Exchange correlation energy        : -3.1465343928E+00 (Ha)
-Self and correction energy         : -1.6380250247E+01 (Ha)
-Average force                      :  5.5404340839E-03 (Ha/Bohr)
-Maximum force                      :  6.7145451398E-03 (Ha/Bohr)
-Time for force calculation         :  0.261 (sec)
-Relax time                         :  0.557 (sec)
+Free energy per atom               : -2.2130964516E+00 (Ha/atom)
+Total free energy                  : -8.8523858064E+00 (Ha)
+Kinetic energy                     :  3.3036765175E+00 (Ha)
+Exchange correlation energy        : -3.1454337567E+00 (Ha)
+Self and correction energy         : -1.6403675767E+01 (Ha)
+Average force                      :  2.8427356084E-06 (Ha/Bohr)
+Maximum force                      :  4.2938496615E-06 (Ha/Bohr)
+Time for force calculation         :  0.517 (sec)
+Relax time                         :  0.926 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#49)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132803003E+00       7.600E-06         0.008
+1              -2.2130964488E+00       1.004E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132803003E+00 (Ha/atom)
-Total free energy                  : -8.8531212013E+00 (Ha)
-Kinetic energy                     :  3.3044949103E+00 (Ha)
-Exchange correlation energy        : -3.1456592507E+00 (Ha)
-Self and correction energy         : -1.6381805253E+01 (Ha)
-Average force                      :  2.2730497557E-06 (Ha/Bohr)
-Maximum force                      :  2.8224507140E-06 (Ha/Bohr)
-Time for force calculation         :  0.271 (sec)
-Relax time                         :  0.521 (sec)
+Free energy per atom               : -2.2130964488E+00 (Ha/atom)
+Total free energy                  : -8.8523857953E+00 (Ha)
+Kinetic energy                     :  3.3036876682E+00 (Ha)
+Exchange correlation energy        : -3.1454367921E+00 (Ha)
+Self and correction energy         : -1.6403675766E+01 (Ha)
+Average force                      :  5.2271123240E-06 (Ha/Bohr)
+Maximum force                      :  8.5501178772E-06 (Ha/Bohr)
+Time for force calculation         :  0.488 (sec)
+Relax time                         :  0.916 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#50)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132803014E+00       4.094E-06         0.008
+1              -2.2130964491E+00       7.958E-06         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132803014E+00 (Ha/atom)
-Total free energy                  : -8.8531212058E+00 (Ha)
-Kinetic energy                     :  3.3044936859E+00 (Ha)
-Exchange correlation energy        : -3.1456588629E+00 (Ha)
-Self and correction energy         : -1.6381805255E+01 (Ha)
-Average force                      :  2.3228063151E-06 (Ha/Bohr)
-Maximum force                      :  3.0138218802E-06 (Ha/Bohr)
-Time for force calculation         :  0.273 (sec)
-Relax time                         :  0.525 (sec)
+Free energy per atom               : -2.2130964491E+00 (Ha/atom)
+Total free energy                  : -8.8523857965E+00 (Ha)
+Kinetic energy                     :  3.3036902806E+00 (Ha)
+Exchange correlation energy        : -3.1454373473E+00 (Ha)
+Self and correction energy         : -1.6403675764E+01 (Ha)
+Average force                      :  6.3844429728E-06 (Ha/Bohr)
+Maximum force                      :  9.0095230717E-06 (Ha/Bohr)
+Time for force calculation         :  0.490 (sec)
+Relax time                         :  0.902 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#51)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2123435659E+00       6.337E-03         0.009
-2              -2.2126941512E+00       5.069E-03         0.006
-3              -2.2129897641E+00       2.389E-03         0.006
-4              -2.2130568961E+00       9.774E-04         0.006
-5              -2.2130682192E+00       5.546E-04         0.006
-6              -2.2130714944E+00       3.641E-04         0.006
-7              -2.2130728003E+00       1.829E-04         0.006
-8              -2.2130731645E+00       9.757E-05         0.006
+1              -2.2130964425E+00       1.599E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2130731645E+00 (Ha/atom)
-Total free energy                  : -8.8522926581E+00 (Ha)
-Kinetic energy                     :  3.3061570133E+00 (Ha)
-Exchange correlation energy        : -3.1462865567E+00 (Ha)
-Self and correction energy         : -1.6380401919E+01 (Ha)
-Average force                      :  4.2521351139E-03 (Ha/Bohr)
-Maximum force                      :  5.8544551527E-03 (Ha/Bohr)
-Time for force calculation         :  0.257 (sec)
-Relax time                         :  0.542 (sec)
+Free energy per atom               : -2.2130964425E+00 (Ha/atom)
+Total free energy                  : -8.8523857700E+00 (Ha)
+Kinetic energy                     :  3.3036741263E+00 (Ha)
+Exchange correlation energy        : -3.1454323528E+00 (Ha)
+Self and correction energy         : -1.6403675754E+01 (Ha)
+Average force                      :  1.8581439534E-05 (Ha/Bohr)
+Maximum force                      :  2.7814328914E-05 (Ha/Bohr)
+Time for force calculation         :  0.491 (sec)
+Relax time                         :  0.917 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#52)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132803019E+00       4.023E-06         0.009
+1              -2.2130964429E+00       1.672E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132803019E+00 (Ha/atom)
-Total free energy                  : -8.8531212075E+00 (Ha)
-Kinetic energy                     :  3.3044927138E+00 (Ha)
-Exchange correlation energy        : -3.1456585926E+00 (Ha)
-Self and correction energy         : -1.6381805256E+01 (Ha)
-Average force                      :  9.3089352183E-07 (Ha/Bohr)
-Maximum force                      :  1.3306552117E-06 (Ha/Bohr)
-Time for force calculation         :  0.278 (sec)
-Relax time                         :  0.540 (sec)
+Free energy per atom               : -2.2130964429E+00 (Ha/atom)
+Total free energy                  : -8.8523857715E+00 (Ha)
+Kinetic energy                     :  3.3036648785E+00 (Ha)
+Exchange correlation energy        : -3.1454301209E+00 (Ha)
+Self and correction energy         : -1.6403675759E+01 (Ha)
+Average force                      :  1.3504607236E-05 (Ha/Bohr)
+Maximum force                      :  2.2100561967E-05 (Ha/Bohr)
+Time for force calculation         :  0.493 (sec)
+Relax time                         :  0.906 (sec)
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#53)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2132803021E+00       2.305E-06         0.008
+1              -2.2130963634E+00       5.051E-05         0.008
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132803021E+00 (Ha/atom)
-Total free energy                  : -8.8531212084E+00 (Ha)
-Kinetic energy                     :  3.3044922475E+00 (Ha)
-Exchange correlation energy        : -3.1456584265E+00 (Ha)
-Self and correction energy         : -1.6381805257E+01 (Ha)
-Average force                      :  6.0911609319E-07 (Ha/Bohr)
-Maximum force                      :  8.1883423092E-07 (Ha/Bohr)
-Time for force calculation         :  0.271 (sec)
-Relax time                         :  0.530 (sec)
+Free energy per atom               : -2.2130963634E+00 (Ha/atom)
+Total free energy                  : -8.8523854534E+00 (Ha)
+Kinetic energy                     :  3.3036640028E+00 (Ha)
+Exchange correlation energy        : -3.1454325575E+00 (Ha)
+Self and correction energy         : -1.6403675576E+01 (Ha)
+Average force                      :  6.9537207690E-05 (Ha/Bohr)
+Maximum force                      :  9.7386957580E-05 (Ha/Bohr)
+Time for force calculation         :  0.509 (sec)
+Relax time                         :  0.923 (sec)
+=====================================================================
+                Orbital-Free DFT NLCG (OFDFT-NLCG#54)                
+=====================================================================
+Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
+1              -2.2130964491E+00       7.760E-06         0.008
+====================================================================
+                                Energy                              
+====================================================================
+Free energy per atom               : -2.2130964491E+00 (Ha/atom)
+Total free energy                  : -8.8523857962E+00 (Ha)
+Kinetic energy                     :  3.3036769520E+00 (Ha)
+Exchange correlation energy        : -3.1454341024E+00 (Ha)
+Self and correction energy         : -1.6403675762E+01 (Ha)
+Average force                      :  1.2874772257E-05 (Ha/Bohr)
+Maximum force                      :  1.8457968940E-05 (Ha/Bohr)
+Time for force calculation         :  0.483 (sec)
+Relax time                         :  0.897 (sec)
+=====================================================================
+                Orbital-Free DFT NLCG (OFDFT-NLCG#55)                
+=====================================================================
+Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
+1              -2.2130964514E+00       4.218E-06         0.007
+====================================================================
+                                Energy                              
+====================================================================
+Free energy per atom               : -2.2130964514E+00 (Ha/atom)
+Total free energy                  : -8.8523858055E+00 (Ha)
+Kinetic energy                     :  3.3036774655E+00 (Ha)
+Exchange correlation energy        : -3.1454337143E+00 (Ha)
+Self and correction energy         : -1.6403675767E+01 (Ha)
+Average force                      :  2.9966127668E-06 (Ha/Bohr)
+Maximum force                      :  4.4513508445E-06 (Ha/Bohr)
+Time for force calculation         :  0.489 (sec)
+Relax time                         :  0.913 (sec)
+=====================================================================
+                Orbital-Free DFT NLCG (OFDFT-NLCG#56)                
+=====================================================================
+Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
+1              -2.2130964518E+00       1.156E-06         0.008
+====================================================================
+                                Energy                              
+====================================================================
+Free energy per atom               : -2.2130964518E+00 (Ha/atom)
+Total free energy                  : -8.8523858073E+00 (Ha)
+Kinetic energy                     :  3.3036777012E+00 (Ha)
+Exchange correlation energy        : -3.1454339032E+00 (Ha)
+Self and correction energy         : -1.6403675768E+01 (Ha)
+Average force                      :  7.1219153634E-07 (Ha/Bohr)
+Maximum force                      :  9.2980739264E-07 (Ha/Bohr)
+Time for force calculation         :  0.487 (sec)
+Relax time                         :  0.895 (sec)
 ***************************************************************************
                                Timing info                                 
 ***************************************************************************
-Total walltime                     :  28.168 sec
+Total walltime                     :  52.266 sec
 ___________________________________________________________________________
 
 ***************************************************************************

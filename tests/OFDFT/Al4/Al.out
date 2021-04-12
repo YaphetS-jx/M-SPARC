@@ -2,13 +2,13 @@
 *                      M-SPARC v1.0.0 (Mar 29, 2021)                      *
 *   Copyright (c) 2019 Material Physics & Mechanics Group, Georgia Tech   *
 *           Distributed under GNU General Public License 3 (GPL)          *
-*                Date: 29-Mar-2021  Start time: 16:38:44                  *
+*                Date: 12-Apr-2021  Start time: 11:26:56                  *
 ***************************************************************************
                            Input parameters                                
 ***************************************************************************
 CELL: 8.000000 8.000000 8.000000 
 FD_GRID: 16 16 16
-FD_ORDER: 6
+FD_ORDER: 12
 BC: P P P
 KPOINT_GRID: 1 1 1
 KPOINT_SHIFT: 0 0 0
@@ -37,33 +37,33 @@ Total number of electrons          :  12
 Atom type 1  (valence electrons)   :  Al 3
 Pseudopotential                    :  Al_goodwin.psp8
 lloc                               :  0
-Pseudocharge radii of atom type 1  :  10.00 10.00 10.00
+Pseudocharge radii of atom type 1  :  11.00 11.00 11.00
 Number of atoms of type 1          :  4
-Estimated total memory usage       :  7.73 MB
+Estimated total memory usage       :  12.94 MB
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#1)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2117957040E+00       1.064E-02         0.010
-2              -2.2126455819E+00       6.804E-03         0.007
-3              -2.2132128588E+00       2.447E-03         0.008
-4              -2.2132551969E+00       1.113E-03         0.006
-5              -2.2132684487E+00       5.272E-04         0.006
+1              -2.2114653075E+00       1.125E-02         0.225
+2              -2.2123445996E+00       7.638E-03         0.016
+3              -2.2130046001E+00       2.992E-03         0.013
+4              -2.2130643674E+00       1.453E-03         0.024
+5              -2.2130835219E+00       6.365E-04         0.014
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132684487E+00 (Ha/atom)
-Total free energy                  : -8.8530737948E+00 (Ha)
-Kinetic energy                     :  3.3059331554E+00 (Ha)
-Exchange correlation energy        : -3.1459609442E+00 (Ha)
-Self and correction energy         : -1.6381808913E+01 (Ha)
-Average force                      :  6.6137583806E-16 (Ha/Bohr)
-Maximum force                      :  7.8832453994E-16 (Ha/Bohr)
-Time for force calculation         :  0.285 (sec)
+Free energy per atom               : -2.2130835219E+00 (Ha/atom)
+Total free energy                  : -8.8523340876E+00 (Ha)
+Kinetic energy                     :  3.3051378145E+00 (Ha)
+Exchange correlation energy        : -3.1457346917E+00 (Ha)
+Self and correction energy         : -1.6403679287E+01 (Ha)
+Average force                      :  1.2184663551E-15 (Ha/Bohr)
+Maximum force                      :  1.7845997268E-15 (Ha/Bohr)
+Time for force calculation         :  0.522 (sec)
 ***************************************************************************
                                Timing info                                 
 ***************************************************************************
-Total walltime                     :  0.655 sec
+Total walltime                     :  3.311 sec
 ___________________________________________________________________________
 
 ***************************************************************************

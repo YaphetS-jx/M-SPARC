@@ -2,13 +2,13 @@
 *                      M-SPARC v1.0.0 (Mar 29, 2021)                      *
 *   Copyright (c) 2019 Material Physics & Mechanics Group, Georgia Tech   *
 *           Distributed under GNU General Public License 3 (GPL)          *
-*                Date: 29-Mar-2021  Start time: 16:38:58                  *
+*                Date: 12-Apr-2021  Start time: 11:33:26                  *
 ***************************************************************************
                            Input parameters                                
 ***************************************************************************
 CELL: 40.000000 40.000000 40.000000 
 FD_GRID: 80 80 80
-FD_ORDER: 6
+FD_ORDER: 12
 BC: P P P
 KPOINT_GRID: 1 1 1
 KPOINT_SHIFT: 0 0 0
@@ -24,46 +24,46 @@ FIX_RAND: 0
 PRINT_FORCES: 1
 PRINT_ATOMS: 1
 PRINT_DENSITY: 0
-OUTPUT_FILE: ../tests/OFDFT/Al500/Al.out
+OUTPUT_FILE: ../tests/OFDFT/Al500/Al.out_1
 ***************************************************************************
                              Initialization                                
 ***************************************************************************
 Mesh spacing                       :  0.500000 (Bohr)
 Number of symmetry adapted k-points:  1
-Output printed to                  :  ../tests/OFDFT/Al500/Al.out
+Output printed to                  :  ../tests/OFDFT/Al500/Al.out_1
 Total number of atom types         :  1
 Total number of atoms              :  500
 Total number of electrons          :  1500
 Atom type 1  (valence electrons)   :  Al 3
 Pseudopotential                    :  Al_goodwin.psp8
 lloc                               :  0
-Pseudocharge radii of atom type 1  :  10.00 10.00 10.00
+Pseudocharge radii of atom type 1  :  11.00 11.00 11.00
 Number of atoms of type 1          :  500
-Estimated total memory usage       :  14.57 GB
+Estimated total memory usage       :  15.21 GB
 =====================================================================
                 Orbital-Free DFT NLCG (OFDFT-NLCG#1)                
 =====================================================================
 Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
-1              -2.2117957040E+00       1.064E-02         0.665
-2              -2.2126455819E+00       6.804E-03         0.457
-3              -2.2132128588E+00       2.447E-03         0.536
-4              -2.2132551969E+00       1.113E-03         0.459
-5              -2.2132684487E+00       5.272E-04         0.462
+1              -2.2114653075E+00       1.125E-02         0.770
+2              -2.2123445996E+00       7.638E-03         0.657
+3              -2.2130046001E+00       2.992E-03         0.599
+4              -2.2130643674E+00       1.453E-03         0.498
+5              -2.2130835219E+00       6.365E-04         0.502
 ====================================================================
                                 Energy                              
 ====================================================================
-Free energy per atom               : -2.2132684487E+00 (Ha/atom)
-Total free energy                  : -1.1066342243E+03 (Ha)
-Kinetic energy                     :  4.1324164442E+02 (Ha)
-Exchange correlation energy        : -3.9324511803E+02 (Ha)
-Self and correction energy         : -2.0477261141E+03 (Ha)
-Average force                      :  1.2304456950E-12 (Ha/Bohr)
-Maximum force                      :  1.7812003768E-12 (Ha/Bohr)
-Time for force calculation         :  16.310 (sec)
+Free energy per atom               : -2.2130835219E+00 (Ha/atom)
+Total free energy                  : -1.1065417609E+03 (Ha)
+Kinetic energy                     :  4.1314222681E+02 (Ha)
+Exchange correlation energy        : -3.9321683646E+02 (Ha)
+Self and correction energy         : -2.0504599109E+03 (Ha)
+Average force                      :  3.2125255574E-13 (Ha/Bohr)
+Maximum force                      :  4.6988607957E-13 (Ha/Bohr)
+Time for force calculation         :  30.088 (sec)
 ***************************************************************************
                                Timing info                                 
 ***************************************************************************
-Total walltime                     :  31.727 sec
+Total walltime                     :  56.096 sec
 ___________________________________________________________________________
 
 ***************************************************************************
