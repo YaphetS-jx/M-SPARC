@@ -763,7 +763,7 @@ if S.usefock == 1
         error('Please provide correct method for solving Exact Exchange, fourier_space or real_space.\n');
     end
     S = const_for_FFT(S);
-    S = create_r(S);
+    S = kshift_phasefactor(S);
     if S.isgamma == 0 && S.ACEFlag == 1
         S.ACEFlag = 0;
     end
@@ -1739,7 +1739,7 @@ end
 end
 
 
-function S = create_r(S)
+function S = kshift_phasefactor(S)
 r = zeros(S.N,3);
 count = 1;
 for k = 0:S.Nz-1
@@ -1752,6 +1752,15 @@ for k = 0:S.Nz-1
         end
     end
 end
-S.r = r;
+
+neg_phase = zeros(S.N,S.num_shift);
+pos_phase = zeros(S.N,S.num_shift);
+for i = 1:S.num_shift
+    k_shift = S.k_shift(i,:);
+    neg_phase(:,i) = exp(-1i*r*k_shift');
+    pos_phase(:,i) = exp(1i*r*k_shift');
+end
+S.neg_phase = neg_phase;
+S.pos_phase = pos_phase;
 end
 

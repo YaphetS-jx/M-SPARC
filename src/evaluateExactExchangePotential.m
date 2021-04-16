@@ -17,23 +17,23 @@ for i = 1:size(X,2)
                 V_guess = V_ji;
             end
 
-            Vexx(:,i) = Vexx(:,i) - S.wkpt(q_ind)*S.occ_outer(j)*V_ji.*S.psi_outer(:,j);
+            Vexx(:,i) = Vexx(:,i) - S.wkpt(q_ind)*S.occ_outer(j,q_ind)*V_ji.*S.psi_outer(:,j,q_ind);
         end
     end
 end
 end
 
 function [V] = poissonSolve_FFT(S,rhs,k_shift)
-sihft_ind = find(ismember(S.k_shift,k_shift,'rows'))+0;
+shift_ind = find(ismember(S.k_shift,k_shift,'rows'))+0;
 % t1 = tic;
 f = -4 * pi * rhs;
-u = f .* exp(-1i*S.r*k_shift');
+u = f .* S.neg_phase(:,shift_ind);
 u = reshape(u,S.Nx,S.Ny,S.Nz);
 u_hat = fftn(u);
 const_by_alpha = zeros(S.Nx,S.Ny,S.Nz);
-const_by_alpha(:) = S.const_by_alpha(sihft_ind,:,:,:);
+const_by_alpha(:) = S.const_by_alpha(shift_ind,:,:,:);
 V = ifftn(u_hat.*const_by_alpha);
-V = V(:) .* exp(1i*S.r*k_shift');
+V = V(:) .* S.pos_phase(:,shift_ind);
 if S.isgamma
     V = real(V(:));
 end
