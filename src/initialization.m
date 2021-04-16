@@ -158,35 +158,6 @@ elseif strcmp(S.XC, 'PBE0')
     S.usefock = 1;
 end
 
-if S.usefock == 1
-    if S.MAXIT_FOCK < 0
-        S.MAXIT_FOCK = 20;
-    end
-    if S.FOCK_TOL < 0
-        S.FOCK_TOL = 1e-4;
-    end
-    if S.xc == 40
-        if S.hyb_mixing == 0.0
-            S.hyb_mixing = 1.0;
-        end
-    elseif S.xc == 41
-        if S.hyb_mixing == 0.0
-            S.hyb_mixing = 0.25;
-        end
-    end
-    if strcmp(S.ExxMethod, 'FOURIER_SPACE') || strcmp(S.ExxMethod, 'fourier_space')
-        S.exxmethod = 0;
-    elseif strcmp(S.ExxMethod, 'REAL_SPACE') || strcmp(S.ExxMethod, 'real_space')
-        S.exxmethod = 1;
-    elseif strcmp(S.ExxMethod, '')
-        fprintf("Default setting: Solving Exact Exchange in Fourier Space.\n");
-        S.exxmethod = 0;
-        S.ExxMethod = 'FOURIER_SPACE';
-    else
-        error('Please provide correct method for solving Exact Exchange, fourier_space or real_space.\n');
-    end
-end
-
 % calculate Nelectron
 S.Nelectron = 0;
 for ityp = 1:S.n_typ
@@ -763,6 +734,40 @@ fprintf(' Done. (%.3f sec)\n', toc(t1));
 
 % Estimate memory usage
 S.memory_usage = estimate_memory(S);
+
+if S.usefock == 1
+    if S.MAXIT_FOCK < 0
+        S.MAXIT_FOCK = 20;
+    end
+    if S.FOCK_TOL < 0
+        S.FOCK_TOL = 1e-4;
+    end
+    if S.xc == 40
+        if S.hyb_mixing == 0.0
+            S.hyb_mixing = 1.0;
+        end
+    elseif S.xc == 41
+        if S.hyb_mixing == 0.0
+            S.hyb_mixing = 0.25;
+        end
+    end
+    if strcmp(S.ExxMethod, 'FOURIER_SPACE') || strcmp(S.ExxMethod, 'fourier_space')
+        S.exxmethod = 0;
+    elseif strcmp(S.ExxMethod, 'REAL_SPACE') || strcmp(S.ExxMethod, 'real_space')
+        S.exxmethod = 1;
+    elseif strcmp(S.ExxMethod, '')
+        fprintf("Default setting: Solving Exact Exchange in Fourier Space.\n");
+        S.exxmethod = 0;
+        S.ExxMethod = 'FOURIER_SPACE';
+    else
+        error('Please provide correct method for solving Exact Exchange, fourier_space or real_space.\n');
+    end
+    S = const_for_FFT(S);
+    S = create_r(S);
+    if S.isgamma == 0 && S.ACEFlag == 1
+        S.ACEFlag = 0;
+    end
+end
 
 end
 
@@ -1597,7 +1602,8 @@ function [S] = Generate_kpts(S)
 	end
 
 	% Monkhorst-pack grid for Brillouin zone sampling
-	MPG_typ1 = @(nkpt) (2*(1:nkpt) - nkpt - 1)/2; % MP grid points for infinite group order
+% 	MPG_typ1 = @(nkpt) (2*(1:nkpt) - nkpt - 1)/2; % MP grid points for infinite group order
+    MPG_typ1 = @(nkpt) (-floor((nkpt - 1)/2):(-floor((nkpt - 1)/2)+nkpt-1));
 	MPG_typ2 = @(nkpt) (0:nkpt-1); % MP grid points for finite group order
 
 	if S.cell_typ < 3
@@ -1624,8 +1630,13 @@ function [S] = Generate_kpts(S)
 		sumx = 0;
 		sumy = nkpt(2); 
 		sumz = 0;
-	end    
-	
+    end
+    
+    [kptgrid_X, kptgrid_Y, kptgrid_Z] = ndgrid(kptgrid_x,kptgrid_y,kptgrid_z);
+	kptgrid = [reshape(kptgrid_X,[],1),reshape(kptgrid_Y,[],1),reshape(kptgrid_Z,[],1)];
+    disp(' reduced kpoint grid before symmetry:');
+	disp(kptgrid);
+    
 	% Scale kpoints
 	kptgrid_x = (2*pi/S.L1) * kptgrid_x;
 	kptgrid_y = (2*pi/S.L2) * kptgrid_y;
@@ -1638,6 +1649,16 @@ function [S] = Generate_kpts(S)
 	
 	tnkpt = prod(nkpt);
 	wkpt = ones(tnkpt,1)/tnkpt;% weights for k-points
+    
+    S.isgamma = 0;
+    if tnkpt == 1 && sum(kptgrid == [0,0,0])==3
+        S.isgamma = 1;
+    end
+    % no symmetry reduce in Hartree Fock exact exchange 
+    S.kptgridhf = kptgrid;
+	S.tnkpthf   = tnkpt;
+	S.wkpthf    = wkpt;
+    
 	TOL = 1e-8;
 	% Time-Reversal Symmetry to reduce k-points
 	if S.TimeRevSym == 1
@@ -1666,3 +1687,71 @@ function [S] = Generate_kpts(S)
 	S.tnkpt   = tnkpt;
 	S.wkpt    = wkpt;
 end
+
+
+function S = const_for_FFT(S)
+N1 = S.Nx;
+N2 = S.Ny;
+N3 = S.Nz;
+L1 = S.L1;
+L2 = S.L2;
+L3 = S.L3;
+
+tnkpt = S.tnkpt;
+shift = zeros(tnkpt*tnkpt,3);
+count = 1;
+for k_index = 1:tnkpt
+    for q_index = 1:tnkpt
+        k = S.kptgrid(k_index,:);
+        q = S.kptgrid(q_index,:);
+        shift(count,:) = k - q;
+        count = count + 1;
+    end
+end
+S.k_shift = unique(shift,'rows');
+S.num_shift = size(S.k_shift,1);
+
+S.const_by_alpha = zeros(S.num_shift,N1,N2,N3);
+for ind = 1:S.num_shift
+    % FD approximationi of d_hat = G^2
+    % alpha follows conjugate even space
+    count = 1;
+    Gpkmq2 = zeros(N1,N2,N3);
+    for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
+        for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
+            for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
+                G = [(k1-1)*2*pi/L1, (k2-1)*2*pi/L2, (k3-1)*2*pi/L3];
+                Gpkmq = G + S.k_shift(ind,:);
+                Gpkmq2(count) = (Gpkmq(1))^2 + (Gpkmq(2))^2 + (Gpkmq(3))^2;
+                count = count + 1;
+            end
+        end
+    end
+    iszero = Gpkmq2 < 1e-4;
+    V = S.L1*S.L2*S.L3*S.tnkpthf;
+    R_c = (3*V/(4*pi))^(1/3);
+    Gpkmq2(iszero) = 2/R_c^2;
+    const = 1 - cos(R_c*sqrt(Gpkmq2));
+    const(iszero) = 1;
+
+    S.const_by_alpha(ind,:,:,:) = -1*const./Gpkmq2;
+end
+end
+
+
+function S = create_r(S)
+r = zeros(S.N,3);
+count = 1;
+for k = 0:S.Nz-1
+    for j = 0:S.Ny-1
+        for i = 0:S.Nx-1
+            r(count,1) = i/S.Nx*S.L1;
+            r(count,2) = j/S.Ny*S.L2;
+            r(count,3) = k/S.Nz*S.L3;
+            count = count + 1;
+        end
+    end
+end
+S.r = r;
+end
+

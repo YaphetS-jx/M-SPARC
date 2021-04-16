@@ -4,18 +4,25 @@ if S.ACEFlag == 0
     V_guess = rand(S.N,1);
     for i = 1:S.Nev
         for j = 1:S.Nev
-            rhs = conj(S.psi_outer(:,i)).*S.psi(:,j);
+            for k_ind = 1:S.tnkpt
+                for q_ind = 1:S.tnkpt
+                    rhs = conj(S.psi_outer(:,i,q_ind)).*S.psi(:,j,k_ind);
 
-            if S.exxmethod == 0             % solving in fourier space
-                gij = poissonSolve_FFT(S,rhs);
-            else                            % solving in real space
-                f = poisson_RHS(S,rhs);
-                [gij, flag] = pcg(-S.Lap_std,-f,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
-                assert(flag==0);
-                V_guess = gij;    
+                    if S.exxmethod == 0             % solving in fourier space
+                        k = S.kptgrid(k_ind,:);
+                        q = S.kptgrid(q_ind,:);
+                        k_shift = k - q;
+                        gij = poissonSolve_FFT(S,rhs,k_shift);
+                    else                            % solving in real space
+                        f = poisson_RHS(S,rhs);
+                        [gij, flag] = pcg(-S.Lap_std,-f,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
+                        assert(flag==0);
+                        V_guess = gij;    
+                    end
+
+                    S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpt(q_ind)*S.occ_outer(i)*S.occ_outer(j)*real(sum(conj(rhs).*gij.*S.W));
+                end
             end
-
-            S.Eex = S.Eex + S.occ_outer(i)*S.occ_outer(j)*sum(conj(rhs).*gij.*S.W);
         end
     end
 else
@@ -35,15 +42,24 @@ fprintf(fileID,' Etot = %.8f\n', S.Etotal);
 fclose(fileID);
 end
 
-function [V] = poissonSolve_FFT(S,rhs)
+function [V] = poissonSolve_FFT(S,rhs,k_shift)
+sihft_ind = find(ismember(S.k_shift,k_shift,'rows'))+0;
 % t1 = tic;
 f = -4 * pi * rhs;
-f = reshape(f,S.Nx,S.Ny,S.Nz);
-g_hat = fftn(f);
-V = ifftn(g_hat.*S.const_by_alpha);
-V = real(V(:));
+u = f .* exp(-1i*S.r*k_shift');
+u = reshape(u,S.Nx,S.Ny,S.Nz);
+u_hat = fftn(u);
+const_by_alpha = zeros(S.Nx,S.Ny,S.Nz);
+const_by_alpha(:) = S.const_by_alpha(sihft_ind,:,:,:);
+V = ifftn(u_hat.*const_by_alpha);
+V = V(:) .* exp(1i*S.r*k_shift');
+if S.isgamma
+    V = real(V(:));
+end
 % fprintf(' Poisson problem solved by FFT took %fs\n',toc(t1));
 end
+
+
 
 % copied from poissonSolve.m
 function f = poisson_RHS(S,rhs)

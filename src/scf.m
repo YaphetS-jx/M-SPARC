@@ -101,7 +101,7 @@ S = scf_loop(S,scf_tol_init);
 % Exact exchange potential 
 if S.usefock == 1
     S.usefock = S.usefock+1;
-    S = const_for_FFT(S);
+%     S = const_for_FFT(S);
 else
     return;
 end
@@ -170,6 +170,7 @@ function S = scf_loop(varargin)
 
 S = varargin{1};
 scf_tol = varargin{2};
+count_Exx = -1;
 
 if nargin == 3
 	count_Exx = varargin{3};
@@ -187,6 +188,11 @@ max_scf_iter = S.MAXIT_SCF;
 min_scf_iter = S.MINIT_SCF;
 if max_scf_iter < min_scf_iter
 	min_scf_iter = max_scf_iter;
+end 
+
+if count_Exx > 0
+    min_scf_iter = 1;
+    max_count_first_relax = 1;
 end
     
 % Spectrum bounds and filter cutoff for Chebyshev filtering
@@ -432,56 +438,4 @@ end
 fprintf(fileID,'Total number of SCF: %-6d\n',count_SCF-1);
 fclose(fileID);
 
-end
-
-
-function S = const_for_FFT(S)
-w2 = S.w2;
-FDn = S.FDn;
-N1 = S.Nx;
-N2 = S.Ny;
-N3 = S.Nz;
-dx = S.dx;
-dy = S.dy;
-dz = S.dz;
-
-dx2 = dx*dx; dy2 = dy*dy; dz2 = dz*dz;
-
-w2_x = w2 / dx2;
-w2_y = w2 / dy2;
-w2_z = w2 / dz2;
-
-% FD approximationi of d_hat = G^2
-% alpha follows conjugate even space
-count = 1;
-d_hat = zeros(N1,N2,N3);
-% G2 = zeros(N1,N2,N3);
-w2_diag = w2_x(1) + w2_y(1) +w2_z(1);
-for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
-    for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
-        for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
-% 			G2(count) = ((k1-1)*2*pi/L1)^2 + ((k2-1)*2*pi/L2)^2 + ((k3-1)*2*pi/L3)^2;
-			d_hat(count) = -w2_diag;
-            for p = 1:FDn
-                d_hat(count) = d_hat(count) - 2 * ...
-                    (  cos(2*pi*(k1-1)*p/N1)*w2_x(p+1) ...
-                     + cos(2*pi*(k2-1)*p/N2)*w2_y(p+1) ...
-                     + cos(2*pi*(k3-1)*p/N3)*w2_z(p+1));
-            end
-            count = count + 1;
-        end
-    end
-end
-% alpha = -d_hat;
-
-V = S.L1*S.L2*S.L3;
-R_c = (3*V/(4*pi))^(1/3);
-% alpha(1,1,1) = -2/R_c^2;
-d_hat(1,1,1) = 2/R_c^2;
-
-% const = 1 - cos(R_c*sqrt(-1*alpha));
-const = 1 - cos(R_c*sqrt(d_hat));
-const(1,1,1) = 1;
-% S.const_by_alpha = const./alpha;
-S.const_by_alpha = -1*const./d_hat;
 end
