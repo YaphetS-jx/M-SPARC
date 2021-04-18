@@ -1658,30 +1658,31 @@ function [S] = Generate_kpts(S)
     S.kptgridhf = kptgrid;
 	S.tnkpthf   = tnkpt;
 	S.wkpthf    = wkpt;
-    
-	TOL = 1e-8;
-	% Time-Reversal Symmetry to reduce k-points
-	if S.TimeRevSym == 1
-		Ikpt = zeros(tnkpt,1);
-		Ikpt_rev = zeros(tnkpt,1);
-		for ii = 1:tnkpt
-			for jj = ii+1:tnkpt
-				if (abs(kptgrid(ii,1) + kptgrid(jj,1) - sumx) < TOL) && (abs(kptgrid(ii,2) + kptgrid(jj,2) - sumy) < TOL) && (abs(kptgrid(ii,3) + kptgrid(jj,3) - sumz) < TOL)
-					Ikpt(ii) = 1;
-					Ikpt_rev(jj) = 1;
-				end
-			end
-		end
-		Ikpt = Ikpt>0.5;
-		Ikpt_rev = Ikpt_rev>0.5;
-		wkpt(Ikpt_rev) = 2*wkpt(Ikpt_rev);
-		kptgrid = kptgrid(~Ikpt,:);
-		wkpt = wkpt(~Ikpt);
-		tnkpt = size(wkpt,1);
-	end
 
-	disp(' kpoint grid after symmetry:');	
-	disp(kptgrid);
+    %     test: no reduce of kpoints
+% 	TOL = 1e-8;
+% 	% Time-Reversal Symmetry to reduce k-points
+% 	if S.TimeRevSym == 1
+% 		Ikpt = zeros(tnkpt,1);
+% 		Ikpt_rev = zeros(tnkpt,1);
+% 		for ii = 1:tnkpt
+% 			for jj = ii+1:tnkpt
+% 				if (abs(kptgrid(ii,1) + kptgrid(jj,1) - sumx) < TOL) && (abs(kptgrid(ii,2) + kptgrid(jj,2) - sumy) < TOL) && (abs(kptgrid(ii,3) + kptgrid(jj,3) - sumz) < TOL)
+% 					Ikpt(ii) = 1;
+% 					Ikpt_rev(jj) = 1;
+% 				end
+% 			end
+% 		end
+% 		Ikpt = Ikpt>0.5;
+% 		Ikpt_rev = Ikpt_rev>0.5;
+% 		wkpt(Ikpt_rev) = 2*wkpt(Ikpt_rev);
+% 		kptgrid = kptgrid(~Ikpt,:);
+% 		wkpt = wkpt(~Ikpt);
+% 		tnkpt = size(wkpt,1);
+% 	end
+% 
+% 	disp(' kpoint grid after symmetry:');	
+% 	disp(kptgrid);
 	% Store into the structure
 	S.kptgrid = kptgrid;
 	S.tnkpt   = tnkpt;
