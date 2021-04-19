@@ -4,13 +4,35 @@ if S.ACEFlag == 0
     V_guess = rand(S.N,1);
     for i = 1:S.Nev
         for j = 1:S.Nev
-            for k_ind = 1:S.tnkpt
-                for q_ind = 1:S.tnkpt
-                    rhs = conj(S.psi_outer(:,i,q_ind)).*S.psi(:,j,k_ind);
+            for k_ind = 1:S.tnkpthf
+                for q_ind = 1:S.tnkpthf
+                    % k_ind_rd, q_ind_rd are the index in reduced kptgrid
+                    k_ind_rd = S.kpthf_ind(k_ind,1);
+                    q_ind_rd = S.kpthf_ind(q_ind,1);
+                    
+                    if S.kpthf_ind(q_ind,2)
+                        psiq = S.psi_outer(:,i,q_ind_rd);
+                    else
+                        psiq = conj(S.psi_outer(:,i,q_ind_rd));
+                    end
+                    if S.kpthf_ind(k_ind,2)
+                        psik = S.psi(:,i,k_ind_rd);
+                    else
+                        psik = conj(S.psi(:,i,k_ind_rd));
+                    end
+                    
+                    rhs = conj(psiq) .* psik;
+%                     rhs = conj(S.psi_outer(:,i,q_ind)).*S.psi(:,j,k_ind);
 
                     if S.exxmethod == 0             % solving in fourier space
-                        k = S.kptgrid(k_ind,:);
-                        q = S.kptgrid(q_ind,:);
+                        k = S.kptgrid(k_ind_rd,:);
+                        q = S.kptgrid(q_ind_rd,:);
+                        if S.kpthf_ind(k_ind,2) == 0
+                            k = -k;
+                        end
+                        if S.kpthf_ind(q_ind,2) == 0
+                            q = -q;
+                        end
                         k_shift = k - q;
                         gij = poissonSolve_FFT(S,rhs,k_shift);
                     else                            % solving in real space
@@ -20,7 +42,7 @@ if S.ACEFlag == 0
                         V_guess = gij;    
                     end
 
-                    S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpt(q_ind)*S.occ_outer(i,q_ind)*S.occ_outer(j,k_ind)*real(sum(conj(rhs).*gij.*S.W));
+                    S.Eex = S.Eex + S.wkpthf(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd)*S.occ_outer(j,k_ind_rd)*real(sum(conj(rhs).*gij.*S.W));
                 end
             end
         end
@@ -43,7 +65,7 @@ fclose(fileID);
 end
 
 function [V] = poissonSolve_FFT(S,rhs,k_shift)
-shift_ind = find(ismember(S.k_shift,k_shift,'rows'))+0;
+shift_ind = find(ismembertol(S.k_shift,k_shift,1e-8,'ByRows',true))+0;
 % t1 = tic;
 f = -4 * pi * rhs;
 u = f .* S.neg_phase(:,shift_ind);

@@ -3,12 +3,23 @@ Vexx = zeros(S.N,size(X,2));
 V_guess = rand(S.N,1);
 for i = 1:size(X,2)
     for j = 1:S.Nev
-        for q_ind = 1:S.tnkpt
-            rhs = conj(S.psi_outer(:,j,q_ind)).*X(:,i);
-
+        for q_ind = 1:S.tnkpthf
+            % q_ind_rd is the index in reduced kptgrid
+            q_ind_rd = S.kpthf_ind(q_ind,1);
+            if S.kpthf_ind(q_ind,2)
+                psiq = S.psi_outer(:,j,q_ind_rd);
+            else
+                psiq = conj(S.psi_outer(:,j,q_ind_rd));
+            end
+            
+            rhs = conj(psiq).*X(:,i);
             if S.exxmethod == 0             % solving in fourier space
-                q = S.kptgrid(q_ind,:);
-                k_shift = kptvec - q;
+                q = S.kptgrid(q_ind_rd,:);
+                if S.kpthf_ind(q_ind,2)
+                    k_shift = kptvec - q;
+                else
+                    k_shift = kptvec + q;
+                end
                 V_ji = poissonSolve_FFT(S,rhs,k_shift);
             else                            % solving in real space
                 f = poisson_RHS(S,rhs);
@@ -17,14 +28,14 @@ for i = 1:size(X,2)
                 V_guess = V_ji;
             end
 
-            Vexx(:,i) = Vexx(:,i) - S.wkpt(q_ind)*S.occ_outer(j,q_ind)*V_ji.*S.psi_outer(:,j,q_ind);
+            Vexx(:,i) = Vexx(:,i) - S.wkpthf(q_ind)*S.occ_outer(j,q_ind_rd)*V_ji.*psiq;
         end
     end
 end
 end
 
 function [V] = poissonSolve_FFT(S,rhs,k_shift)
-shift_ind = find(ismember(S.k_shift,k_shift,'rows'))+0;
+shift_ind = find(ismembertol(S.k_shift,k_shift,1e-8,'ByRows',true))+0;
 % t1 = tic;
 f = -4 * pi * rhs;
 u = f .* S.neg_phase(:,shift_ind);

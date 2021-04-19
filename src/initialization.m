@@ -1654,35 +1654,34 @@ function [S] = Generate_kpts(S)
     if tnkpt == 1 && sum(kptgrid == [0,0,0])==3
         S.isgamma = 1;
     end
-    % no symmetry reduce in Hartree Fock exact exchange 
+    % save all kpoints in full BZ for Hartree Fock exact exchange 
     S.kptgridhf = kptgrid;
 	S.tnkpthf   = tnkpt;
 	S.wkpthf    = wkpt;
 
-    %     test: no reduce of kpoints
-% 	TOL = 1e-8;
-% 	% Time-Reversal Symmetry to reduce k-points
-% 	if S.TimeRevSym == 1
-% 		Ikpt = zeros(tnkpt,1);
-% 		Ikpt_rev = zeros(tnkpt,1);
-% 		for ii = 1:tnkpt
-% 			for jj = ii+1:tnkpt
-% 				if (abs(kptgrid(ii,1) + kptgrid(jj,1) - sumx) < TOL) && (abs(kptgrid(ii,2) + kptgrid(jj,2) - sumy) < TOL) && (abs(kptgrid(ii,3) + kptgrid(jj,3) - sumz) < TOL)
-% 					Ikpt(ii) = 1;
-% 					Ikpt_rev(jj) = 1;
-% 				end
-% 			end
-% 		end
-% 		Ikpt = Ikpt>0.5;
-% 		Ikpt_rev = Ikpt_rev>0.5;
-% 		wkpt(Ikpt_rev) = 2*wkpt(Ikpt_rev);
-% 		kptgrid = kptgrid(~Ikpt,:);
-% 		wkpt = wkpt(~Ikpt);
-% 		tnkpt = size(wkpt,1);
-% 	end
-% 
-% 	disp(' kpoint grid after symmetry:');	
-% 	disp(kptgrid);
+	TOL = 1e-8;
+	% Time-Reversal Symmetry to reduce k-points
+	if S.TimeRevSym == 1
+		Ikpt = zeros(tnkpt,1);
+		Ikpt_rev = zeros(tnkpt,1);
+		for ii = 1:tnkpt
+			for jj = ii+1:tnkpt
+				if (abs(kptgrid(ii,1) + kptgrid(jj,1) - sumx) < TOL) && (abs(kptgrid(ii,2) + kptgrid(jj,2) - sumy) < TOL) && (abs(kptgrid(ii,3) + kptgrid(jj,3) - sumz) < TOL)
+					Ikpt(ii) = 1;
+					Ikpt_rev(jj) = 1;
+				end
+			end
+		end
+		Ikpt = Ikpt>0.5;
+		Ikpt_rev = Ikpt_rev>0.5;
+		wkpt(Ikpt_rev) = 2*wkpt(Ikpt_rev);
+		kptgrid = kptgrid(~Ikpt,:);
+		wkpt = wkpt(~Ikpt);
+		tnkpt = size(wkpt,1);
+	end
+
+	disp(' kpoint grid after symmetry:');	
+	disp(kptgrid);
 	% Store into the structure
 	S.kptgrid = kptgrid;
 	S.tnkpt   = tnkpt;
@@ -1697,19 +1696,51 @@ N3 = S.Nz;
 L1 = S.L1;
 L2 = S.L2;
 L3 = S.L3;
-
+tnkpthf = S.tnkpthf;
 tnkpt = S.tnkpt;
-shift = zeros(tnkpt*tnkpt,3);
+TOL = 1e-8;
+
+if S.cell_typ < 3
+    sumx = 0;
+    sumy = 0; 
+    sumz = 0;
+end
+
+S.kpthf_ind = zeros(tnkpthf,2);
+% 1 -> k, 0 -> -k
+% find the index of kptgridhf in reduced kptgrid
+for i = 1:tnkpthf
+    for j = 1:tnkpt
+        if (abs(S.kptgridhf(i,1) - S.kptgrid(j,1)) < TOL && abs(S.kptgridhf(i,2) - S.kptgrid(j,2)) < TOL && abs(S.kptgridhf(i,3) - S.kptgrid(j,3)) < TOL)
+            S.kpthf_ind(i,1) = j;
+            S.kpthf_ind(i,2) = 1;
+            break;
+        end
+    end
+    if S.kpthf_ind(i,2)
+        continue;
+    end
+    for j = 1:tnkpt
+        if (abs(S.kptgridhf(i,1) + S.kptgrid(j,1) - sumx) < TOL && abs(S.kptgridhf(i,2) + S.kptgrid(j,2) - sumy) < TOL && abs(S.kptgridhf(i,3) + S.kptgrid(j,3) - sumz) < TOL)
+            S.kpthf_ind(i,1) = j;
+            break;
+        end
+    end
+end
+
+
+% find unique kpoint shift
+shift = zeros(tnkpthf*tnkpthf,3);
 count = 1;
-for k_index = 1:tnkpt
-    for q_index = 1:tnkpt
-        k = S.kptgrid(k_index,:);
-        q = S.kptgrid(q_index,:);
+for k_index = 1:tnkpthf
+    for q_index = 1:tnkpthf
+        k = S.kptgridhf(k_index,:);
+        q = S.kptgridhf(q_index,:);
         shift(count,:) = k - q;
         count = count + 1;
     end
 end
-S.k_shift = unique(shift,'rows');
+S.k_shift = uniquetol(shift,TOL,'ByRows',true);
 S.num_shift = size(S.k_shift,1);
 
 S.const_by_alpha = zeros(S.num_shift,N1,N2,N3);
