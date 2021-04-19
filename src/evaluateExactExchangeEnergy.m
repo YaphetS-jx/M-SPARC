@@ -11,17 +11,17 @@ if S.ACEFlag == 0
                     q_ind_rd = S.kpthf_ind(q_ind,1);
                     
                     if S.kpthf_ind(q_ind,2)
-                        psiq = S.psi_outer(:,i,q_ind_rd);
+                        psiqi = S.psi_outer(:,i,q_ind_rd);
                     else
-                        psiq = conj(S.psi_outer(:,i,q_ind_rd));
+                        psiqi = conj(S.psi_outer(:,i,q_ind_rd));
                     end
                     if S.kpthf_ind(k_ind,2)
-                        psik = S.psi(:,i,k_ind_rd);
+                        psikj = S.psi(:,j,k_ind_rd);
                     else
-                        psik = conj(S.psi(:,i,k_ind_rd));
+                        psikj = conj(S.psi(:,j,k_ind_rd));
                     end
                     
-                    rhs = conj(psiq) .* psik;
+                    rhs = conj(psiqi) .* psikj;
 %                     rhs = conj(S.psi_outer(:,i,q_ind)).*S.psi(:,j,k_ind);
 
                     if S.exxmethod == 0             % solving in fourier space
