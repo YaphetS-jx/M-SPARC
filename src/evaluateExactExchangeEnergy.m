@@ -48,8 +48,16 @@ if S.ACEFlag == 0
         end
     end
 else
-    psi_times_Xi = transpose(S.psi)*S.Xi;
-    S.Eex = (transpose(S.occ_outer)*sum(psi_times_Xi.*psi_times_Xi,2))*(S.dx*S.dy*S.dz)^2;
+    if S.isgamma == 1
+        psi_times_Xi = transpose(S.psi)*S.Xi;
+        S.Eex = (transpose(S.occ_outer)*sum(psi_times_Xi.*psi_times_Xi,2))*(S.dx*S.dy*S.dz)^2;
+    else
+        for k_ind = 1:S.tnkpt
+            psi_k = S.psi(:,:,k_ind);
+            psi_times_Xi = psi_k'*S.Xi(:,:,k_ind);
+            S.Eex = S.Eex + S.wkpt(k_ind)*(transpose(S.occ_outer(:,k_ind))*sum(conj(psi_times_Xi).*psi_times_Xi,2))*(S.dx*S.dy*S.dz)^2;
+        end
+    end 
 end
 
 
@@ -64,23 +72,33 @@ fprintf(fileID,' Etot = %.8f\n', S.Etotal);
 fclose(fileID);
 end
 
+
+
 function [V] = poissonSolve_FFT(S,rhs,k_shift)
 shift_ind = find(ismembertol(S.k_shift,k_shift,1e-8,'ByRows',true))+0;
 % t1 = tic;
 f = -4 * pi * rhs;
-u = f .* S.neg_phase(:,shift_ind);
+if shift_ind < S.num_shift
+    u = f .* S.neg_phase(:,shift_ind);
+else
+    u = f;
+end
 u = reshape(u,S.Nx,S.Ny,S.Nz);
 u_hat = fftn(u);
 const_by_alpha = zeros(S.Nx,S.Ny,S.Nz);
 const_by_alpha(:) = S.const_by_alpha(shift_ind,:,:,:);
 V = ifftn(u_hat.*const_by_alpha);
-V = V(:) .* S.pos_phase(:,shift_ind);
+if shift_ind < S.num_shift
+    V = V(:) .* S.pos_phase(:,shift_ind);
+else
+    V = V(:);
+end
+
 if S.isgamma
     V = real(V(:));
 end
 % fprintf(' Poisson problem solved by FFT took %fs\n',toc(t1));
 end
-
 
 
 % copied from poissonSolve.m

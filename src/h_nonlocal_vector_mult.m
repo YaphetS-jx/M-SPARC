@@ -21,12 +21,7 @@ function  Hnlx = h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,Veff,X,S,kptv
 Hnlx = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,X,S)) + bsxfun(@times,Veff,X);
 
 if (mod(S.usefock,2) == 0 && S.usefock > 1)
-    if S.ACEFlag == 0
-        Vexx = evaluateExactExchangePotential(S,X,kptvec);
-    else 
-        Xi_times_psi = (transpose(S.Xi)*X)*S.dx*S.dy*S.dz;
-        Vexx = -S.Xi*Xi_times_psi;
-    end
+    Vexx = evaluateExactExchangePotential(S,X,kptvec);
     Hnlx = Hnlx + S.hyb_mixing*Vexx;
 end
 

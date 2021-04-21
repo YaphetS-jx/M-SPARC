@@ -764,8 +764,9 @@ if S.usefock == 1
     end
     S = const_for_FFT(S);
     S = kshift_phasefactor(S);
-    if S.isgamma == 0 && S.ACEFlag == 1
-        S.ACEFlag = 0;
+    if S.isgamma == 0
+%         S.ACEFlag = 0;
+        S.exxmethod = 0;
     end
 end
 
@@ -1742,6 +1743,9 @@ for k_index = 1:tnkpthf
 end
 S.k_shift = uniquetol(shift,TOL,'ByRows',true);
 S.num_shift = size(S.k_shift,1);
+% always put zero shift in the end of list 
+zero_ind = find(ismembertol(S.k_shift,[0,0,0],1e-8,'ByRows',true))+0;
+S.k_shift([zero_ind,S.num_shift],:) = S.k_shift([S.num_shift,zero_ind],:);
 
 S.const_by_alpha = zeros(S.num_shift,N1,N2,N3);
 for ind = 1:S.num_shift
@@ -1785,9 +1789,9 @@ for k = 0:S.Nz-1
     end
 end
 
-neg_phase = zeros(S.N,S.num_shift);
-pos_phase = zeros(S.N,S.num_shift);
-for i = 1:S.num_shift
+neg_phase = zeros(S.N,S.num_shift-1);
+pos_phase = zeros(S.N,S.num_shift-1);
+for i = 1:S.num_shift-1
     k_shift = S.k_shift(i,:);
     neg_phase(:,i) = exp(-1i*r*k_shift');
     pos_phase(:,i) = exp(1i*r*k_shift');
