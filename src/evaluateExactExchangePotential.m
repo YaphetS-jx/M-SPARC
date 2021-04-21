@@ -46,14 +46,13 @@ end
     
 end
 
+
 function [V] = poissonSolve_FFT(S,rhs,k_shift)
 shift_ind = find(ismembertol(S.k_shift,k_shift,1e-8,'ByRows',true))+0;
-% t1 = tic;
-f = -4 * pi * rhs;
 if shift_ind < S.num_shift
-    u = f .* S.neg_phase(:,shift_ind);
+    u = rhs .* S.neg_phase(:,shift_ind);
 else
-    u = f;
+    u = rhs;
 end
 u = reshape(u,S.Nx,S.Ny,S.Nz);
 u_hat = fftn(u);
@@ -69,8 +68,8 @@ end
 if S.isgamma
     V = real(V(:));
 end
-% fprintf(' Poisson problem solved by FFT took %fs\n',toc(t1));
 end
+
 
 % copied from poissonSolve.m
 function f = poisson_RHS(S,rhs)

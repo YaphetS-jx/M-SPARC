@@ -1766,11 +1766,11 @@ for ind = 1:S.num_shift
     iszero = Gpkmq2 < 1e-4;
     V = S.L1*S.L2*S.L3*S.tnkpthf;
     R_c = (3*V/(4*pi))^(1/3);
-    Gpkmq2(iszero) = 2/R_c^2;
+    Gpkmq2(iszero) = 1;
     const = 1 - cos(R_c*sqrt(Gpkmq2));
-    const(iszero) = 1;
+    const(iszero) = R_c^2/2;
 
-    S.const_by_alpha(ind,:,:,:) = -1*const./Gpkmq2;
+    S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
 end
 end
 
