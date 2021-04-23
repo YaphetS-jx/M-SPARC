@@ -2,30 +2,22 @@ function [S] = evaluateExactExchangeEnergy(S)
 S.Eex = 0;
 if S.ACEFlag == 0
     V_guess = rand(S.N,1);
-    for i = 1:S.Nev
-        for j = 1:S.Nev
-            for k_ind = 1:S.tnkpthf
-                for q_ind = 1:S.tnkpthf
-                    % k_ind_rd, q_ind_rd are the index in reduced kptgrid
-                    k_ind_rd = S.kpthf_ind(k_ind,1);
-                    q_ind_rd = S.kpthf_ind(q_ind,1);
-                    
+    for k_ind = 1:S.tnkpt
+        for q_ind = 1:S.tnkpthf
+            % q_ind_rd is the index in reduced kptgrid
+            q_ind_rd = S.kpthf_ind(q_ind,1);
+            for i = 1:S.Nev
+                for j = 1:S.Nev
                     if S.kpthf_ind(q_ind,2)
                         psiqi = S.psi_outer(:,i,q_ind_rd);
                     else
                         psiqi = conj(S.psi_outer(:,i,q_ind_rd));
                     end
-                    if S.kpthf_ind(k_ind,2)
-                        psikj = S.psi(:,j,k_ind_rd);
-                    else
-                        psikj = conj(S.psi(:,j,k_ind_rd));
-                    end
-                    
+                    psikj = S.psi(:,j,k_ind);
                     rhs = conj(psiqi) .* psikj;
-%                     rhs = conj(S.psi_outer(:,i,q_ind)).*S.psi(:,j,k_ind);
 
                     if S.exxmethod == 0             % solving in fourier space
-                        k = S.kptgrid(k_ind_rd,:);
+                        k = S.kptgrid(k_ind,:);
                         q = S.kptgrid(q_ind_rd,:);
                         if S.kpthf_ind(k_ind,2) == 0
                             k = -k;
@@ -41,8 +33,8 @@ if S.ACEFlag == 0
                         assert(flag==0);
                         V_guess = gij;    
                     end
-
-                    S.Eex = S.Eex + S.wkpthf(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd)*S.occ_outer(j,k_ind_rd)*real(sum(conj(rhs).*gij.*S.W));
+                    
+                    S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd)*S.occ_outer(j,k_ind)*real(sum(conj(rhs).*gij.*S.W));
                 end
             end
         end
@@ -71,7 +63,6 @@ fprintf(fileID,' Eex = %.8f\n', S.Eex);
 fprintf(fileID,' Etot = %.8f\n', S.Etotal);
 fclose(fileID);
 end
-
 
 
 function [V] = poissonSolve_FFT(S,rhs,k_shift)

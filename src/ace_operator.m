@@ -4,7 +4,7 @@ if S.exxmethod == 1
 end
 
 if S.isgamma == 1
-    Ns = sum(S.occ_outer>1e-6);
+    Ns = min(sum(S.occ_outer>1e-6)+S.EXXACEVal_state,S.Nev);
     S.Xi = zeros(S.N,Ns);    % For storage of W and Xi
     rhs = zeros(S.N,Ns);
     for i = 1:Ns
@@ -29,9 +29,10 @@ if S.isgamma == 1
     M = (transpose(S.psi_outer(:,1:Ns))*S.Xi)*S.dx*S.dy*S.dz;
     L = chol(-M); 
     S.Xi = S.Xi * inv(L); % Do it efficiently
-
 else
     Ns = S.Nev;
+    % TODO: add EXXACEVal_state option
+    % Ns = min(sum(S.occ_outer(:,q_ind)>1e-6)+S.EXXACEVal_state,S.Nev);
     S.Xi = zeros(S.N,Ns,S.tnkpt);    % For storage of W and Xi
     for k_ind = 1:S.tnkpt
         for q_ind = 1:S.tnkpthf

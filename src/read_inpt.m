@@ -583,9 +583,9 @@ while(~feof(fid1))
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
 		S.ACEFlag = char(C_param{:});
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
-    elseif (strcmp(str,'HYB_MIXING:'))	  
+    elseif (strcmp(str,'EXX_ACE_VALENCE_STATES:'))	  
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
-		S.hyb_mixing = C_param{1};
+		S.EXXACEVal_state = C_param{1};
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
 	else 
 		error('\nCannot recognize input variable identifier: "%s"\n',str);

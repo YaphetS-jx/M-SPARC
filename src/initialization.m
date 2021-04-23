@@ -765,8 +765,11 @@ if S.usefock == 1
     S = const_for_FFT(S);
     S = kshift_phasefactor(S);
     if S.isgamma == 0
-%         S.ACEFlag = 0;
-        S.exxmethod = 0;
+        S.exxmethod = 0;    % only fourier space method is allowed
+    end
+    % ensure all occupied states are used. 
+    if S.EXXACEVal_state < 0
+        S.EXXACEVal_state = 0;
     end
 end
 
@@ -1102,6 +1105,7 @@ S.hyb_mixing = 0.0;
 S.ExxMethod = '';
 S.SCF_tol_init = 1e-4;
 S.ACEFlag = 0;
+S.EXXACEVal_state = 0;
 end
 
 
@@ -1133,7 +1137,7 @@ end
 
 start_time = fix(clock);
 fprintf(fileID,'***************************************************************************\n');
-fprintf(fileID,'*                      M-SPARC v1.0.0 (Oct 07, 2020)                      *\n');
+fprintf(fileID,'*                      M-SPARC v1.0.0 (Apr 23, 2021)                      *\n');
 fprintf(fileID,'*   Copyright (c) 2019 Material Physics & Mechanics Group, Georgia Tech   *\n');
 fprintf(fileID,'*           Distributed under GNU General Public License 3 (GPL)          *\n');
 fprintf(fileID,'*                Date: %s  Start time: %02d:%02d:%02d                  *\n',date,start_time(4),start_time(5),start_time(6));
@@ -1308,7 +1312,9 @@ if(S.usefock == 1)
     fprintf(fileID,'TOL_SCF_INIT: %.2E\n',S.SCF_tol_init);
     fprintf(fileID,'EXX_METHOD: %s\n',S.ExxMethod);
     fprintf(fileID,'ACE_FLAG: %d\n',S.ACEFlag);
-    fprintf(fileID,'HYB_MIXING: %f\n',S.hyb_mixing);
+    if S.isgamma == 1
+        fprintf(fileID,'EXX_ACE_VALENCE_STATES: %d\n',S.EXXACEVal_state);
+    end
 end
 
 fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);
