@@ -771,6 +771,18 @@ if S.usefock == 1
     if S.EXXACEVal_state < 0
         S.EXXACEVal_state = 0;
     end
+    if sum(S.exx_downsampling == [1,1,1]) ~= 3
+        if sum(S.exx_downsampling < 0) > 0
+            error('Please provide non-negative integer for EXX_DOWNSAMPLING.\n');
+        end
+        for i = 1:3
+            if S.exx_downsampling(i) ~= 0
+                if mod(S.nkpt(i),S.exx_downsampling(i))
+                    error("Number of kpoints should be divisible by EXX_DOWNSAMPLING.\n");
+                end
+            end
+        end
+    end
 end
 
 end
@@ -1106,6 +1118,7 @@ S.ExxMethod = '';
 S.SCF_tol_init = 1e-4;
 S.ACEFlag = 0;
 S.EXXACEVal_state = 0;
+S.exx_downsampling = [1 1 1];
 end
 
 
@@ -1315,6 +1328,7 @@ if(S.usefock == 1)
     if S.isgamma == 1
         fprintf(fileID,'EXX_ACE_VALENCE_STATES: %d\n',S.EXXACEVal_state);
     end
+    fprintf(fileID,'EXX_DOWNSAMPLING: %d %d %d\n',S.exx_downsampling);
 end
 
 fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);
@@ -1651,20 +1665,9 @@ function [S] = Generate_kpts(S)
 
 	[kptgrid_X, kptgrid_Y, kptgrid_Z] = ndgrid(kptgrid_x,kptgrid_y,kptgrid_z);
 	kptgrid = [reshape(kptgrid_X,[],1),reshape(kptgrid_Y,[],1),reshape(kptgrid_Z,[],1)];
-	disp(' kpoint grid before symmetry:');
-	disp(kptgrid);
 	
 	tnkpt = prod(nkpt);
 	wkpt = ones(tnkpt,1)/tnkpt;% weights for k-points
-    
-    S.isgamma = 0;
-    if tnkpt == 1 && sum(kptgrid == [0,0,0])==3
-        S.isgamma = 1;
-    end
-    % save all kpoints in full BZ for Hartree Fock exact exchange 
-    S.kptgridhf = kptgrid;
-	S.tnkpthf   = tnkpt;
-	S.wkpthf    = wkpt;
 
 	TOL = 1e-8;
 	% Time-Reversal Symmetry to reduce k-points
@@ -1687,12 +1690,58 @@ function [S] = Generate_kpts(S)
 		tnkpt = size(wkpt,1);
 	end
 
-	disp(' kpoint grid after symmetry:');	
-	disp(kptgrid);
+	disp(' reduced kpoint grid after symmetry:');	
+	disp(kptgrid*diag([S.L1/2/pi,S.L2/2/pi,S.L3/2/pi]));
 	% Store into the structure
 	S.kptgrid = kptgrid;
 	S.tnkpt   = tnkpt;
 	S.wkpt    = wkpt;
+    
+    % Generate kpoints grid for fock exchange
+    if S.usefock == 1
+        S.isgamma = 0;
+        if tnkpt == 1 && sum(kptgrid == [0,0,0])==3
+            S.isgamma = 1;
+        end
+        
+        % Use part of full k-point grid
+        if S.exx_downsampling(1) == 0
+            kptgrid_x_hf = 0;
+        else
+            range = S.exx_downsampling(1):S.exx_downsampling(1):nkpt(1);
+            kptgrid_x_hf = kptgrid_x(range);
+        end
+        
+        if S.exx_downsampling(2) == 0
+            kptgrid_y_hf = 0;
+        else
+            range = S.exx_downsampling(2):S.exx_downsampling(2):nkpt(2);
+            kptgrid_y_hf = kptgrid_y(range);
+        end
+        
+        if S.exx_downsampling(3) == 0
+            kptgrid_z_hf = 0;
+        else
+            range = S.exx_downsampling(3):S.exx_downsampling(3):nkpt(3);
+            kptgrid_z_hf = kptgrid_z(range);
+        end
+        
+        if sum(S.exx_downsampling == [0 0 0]) == 3
+            ind = find(ismembertol(S.kptgrid,[0 0 0],1e-8,'ByRows',true));
+            if sum(ind) == 0
+                error("Gamma point is not one of the k-vectors. Please use positive EXX_DOWNSAMPLING or change k-point grid.");
+            end
+        end
+        
+        [kptgrid_X_HF, kptgrid_Y_HF, kptgrid_Z_HF] = ndgrid(kptgrid_x_hf,kptgrid_y_hf,kptgrid_z_hf);
+        kptgrid_HF = [reshape(kptgrid_X_HF,[],1),reshape(kptgrid_Y_HF,[],1),reshape(kptgrid_Z_HF,[],1)];
+        disp(' reduced kpoint grid for Fock Exchange operator.');
+        disp(kptgrid_HF*diag([S.L1/2/pi,S.L2/2/pi,S.L3/2/pi]));
+        
+        S.kptgridhf = kptgrid_HF;
+        S.tnkpthf   = length(kptgrid_x_hf)*length(kptgrid_y_hf)*length(kptgrid_z_hf);
+        S.wkpthf    = ones(S.tnkpthf,1)/S.tnkpthf;
+    end
 end
 
 
@@ -1741,11 +1790,11 @@ end
 
 
 % find unique kpoint shift
-shift = zeros(tnkpthf*tnkpthf,3);
+shift = zeros(tnkpthf*tnkpt,3);
 count = 1;
-for k_index = 1:tnkpthf
+for k_index = 1:tnkpt
     for q_index = 1:tnkpthf
-        k = S.kptgridhf(k_index,:);
+        k = S.kptgrid(k_index,:);
         q = S.kptgridhf(q_index,:);
         shift(count,:) = k - q;
         count = count + 1;

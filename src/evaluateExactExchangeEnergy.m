@@ -18,13 +18,7 @@ if S.ACEFlag == 0
 
                     if S.exxmethod == 0             % solving in fourier space
                         k = S.kptgrid(k_ind,:);
-                        q = S.kptgrid(q_ind_rd,:);
-                        if S.kpthf_ind(k_ind,2) == 0
-                            k = -k;
-                        end
-                        if S.kpthf_ind(q_ind,2) == 0
-                            q = -q;
-                        end
+                        q = S.kptgridhf(q_ind,:);
                         k_shift = k - q;
                         gij = poissonSolve_FFT(S,rhs,k_shift);
                     else                            % solving in real space

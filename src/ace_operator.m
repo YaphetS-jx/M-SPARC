@@ -40,13 +40,11 @@ else
             q_ind_rd = S.kpthf_ind(q_ind,1);
             
             k = S.kptgrid(k_ind,:);
-            
+            q = S.kptgridhf(q_ind,:);
             if S.kpthf_ind(q_ind,2)
                 psi_q_set = S.psi_outer(:,1:Ns,q_ind_rd);
-                q = S.kptgrid(q_ind_rd,:);
             else
                 psi_q_set = conj(S.psi_outer(:,1:Ns,q_ind_rd));
-                q = -S.kptgrid(q_ind_rd,:);
             end
             
             for i = 1:Ns
