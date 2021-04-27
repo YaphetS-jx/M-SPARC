@@ -16,11 +16,7 @@ if S.ACEFlag == 0
                 rhs = conj(psiq).*X(:,i);
                 if S.exxmethod == 0             % solving in fourier space
                     q = S.kptgridhf(q_ind,:);
-%                     if S.kpthf_ind(q_ind,2)
-                        k_shift = kptvec - q;
-%                     else
-%                         k_shift = kptvec + q;
-%                     end
+                    k_shift = kptvec - q;
                     V_ji = poissonSolve_FFT(S,rhs,k_shift);
                 else                            % solving in real space
                     f = poisson_RHS(S,rhs);
