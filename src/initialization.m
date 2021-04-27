@@ -1707,6 +1707,10 @@ tnkpthf = S.tnkpthf;
 tnkpt = S.tnkpt;
 TOL = 1e-8;
 
+gmet = S.grad_T * S.grad_T' ;
+ucvol = S.L1*S.L2*S.L3*S.Jacb*S.tnkpthf;
+R_c = (3*ucvol/(4*pi))^(1/3);
+    
 if S.cell_typ < 3
     sumx = 0;
     sumy = 0; 
@@ -1764,14 +1768,12 @@ for ind = 1:S.num_shift
             for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
                 G = [(k1-1)*2*pi/L1, (k2-1)*2*pi/L2, (k3-1)*2*pi/L3];
                 Gpkmq = G + S.k_shift(ind,:);
-                Gpkmq2(count) = (Gpkmq(1))^2 + (Gpkmq(2))^2 + (Gpkmq(3))^2;
+                Gpkmq2(count) = Gpkmq * (gmet * Gpkmq');
                 count = count + 1;
             end
         end
     end
     iszero = Gpkmq2 < 1e-4;
-    V = S.L1*S.L2*S.L3*S.tnkpthf;
-    R_c = (3*V/(4*pi))^(1/3);
     Gpkmq2(iszero) = 1;
     const = 1 - cos(R_c*sqrt(Gpkmq2));
     const(iszero) = R_c^2/2;
@@ -1782,6 +1784,9 @@ end
 
 
 function S = kshift_phasefactor(S)
+if S.num_shift == 1
+    return;
+end
 r = zeros(S.N,3);
 count = 1;
 for k = 0:S.Nz-1

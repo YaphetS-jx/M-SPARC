@@ -35,11 +35,11 @@ if S.ACEFlag == 0
     end
 else 
     if S.isgamma == 1
-        Xi_times_psi = (transpose(S.Xi)*X)*S.dx*S.dy*S.dz;
+        Xi_times_psi = (transpose(S.Xi)*X)*S.dV;
         Vexx = -S.Xi*Xi_times_psi;
     else
         k_ind = find(ismembertol(S.kptgrid,kptvec,1e-8,'ByRows',true))+0;
-        Xi_times_psi = S.Xi(:,:,k_ind)'*X*(S.dx*S.dy*S.dz);
+        Xi_times_psi = S.Xi(:,:,k_ind)'*X*(S.dV);
         Vexx = - S.Xi(:,:,k_ind)*Xi_times_psi;
     end
 end

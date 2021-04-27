@@ -70,7 +70,7 @@ else
                 S.Xi(:,i,k_ind) = S.Xi(:,i,k_ind) - S.wkpthf(q_ind)*(psi_q_set.*V_i)*S.occ_outer(:,q_ind_rd);
             end
         end
-        M = S.psi_outer(:,:,k_ind)'*S.Xi(:,:,k_ind)*S.dx*S.dy*S.dz;
+        M = S.psi_outer(:,:,k_ind)'*S.Xi(:,:,k_ind)*S.dV;
         % to ensure M is hermitian
         M = 0.5*(M+M');
         L = chol(-M);

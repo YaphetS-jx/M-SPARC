@@ -42,12 +42,12 @@ if S.ACEFlag == 0
 else
     if S.isgamma == 1
         psi_times_Xi = transpose(S.psi)*S.Xi;
-        S.Eex = (transpose(S.occ_outer)*sum(psi_times_Xi.*psi_times_Xi,2))*(S.dx*S.dy*S.dz)^2;
+        S.Eex = (transpose(S.occ_outer)*sum(psi_times_Xi.*psi_times_Xi,2))*(S.dV)^2;
     else
         for k_ind = 1:S.tnkpt
             psi_k = S.psi(:,:,k_ind);
             psi_times_Xi = psi_k'*S.Xi(:,:,k_ind);
-            S.Eex = S.Eex + S.wkpt(k_ind)*(transpose(S.occ_outer(:,k_ind))*sum(conj(psi_times_Xi).*psi_times_Xi,2))*(S.dx*S.dy*S.dz)^2;
+            S.Eex = S.Eex + S.wkpt(k_ind)*(transpose(S.occ_outer(:,k_ind))*sum(conj(psi_times_Xi).*psi_times_Xi,2))*(S.dV)^2;
         end
     end 
 end
