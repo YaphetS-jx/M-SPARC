@@ -1707,6 +1707,9 @@ function [S] = Generate_kpts(S)
         % Use part of full k-point grid
         if S.exx_downsampling(1) == 0
             kptgrid_x_hf = 0;
+            if sum(find(ismembertol(kptgrid_x,0,1e-8))) == 0
+                error("Gamma point is not one of the k-vectors. Please use positive EXX_DOWNSAMPLING or change k-point grid in first direction.");
+            end
         else
             range = S.exx_downsampling(1):S.exx_downsampling(1):nkpt(1);
             kptgrid_x_hf = kptgrid_x(range);
@@ -1714,6 +1717,9 @@ function [S] = Generate_kpts(S)
         
         if S.exx_downsampling(2) == 0
             kptgrid_y_hf = 0;
+            if sum(find(ismembertol(kptgrid_y,0,1e-8))) == 0
+                error("Gamma point is not one of the k-vectors. Please use positive EXX_DOWNSAMPLING or change k-point grid in second direction.");
+            end
         else
             range = S.exx_downsampling(2):S.exx_downsampling(2):nkpt(2);
             kptgrid_y_hf = kptgrid_y(range);
@@ -1721,16 +1727,12 @@ function [S] = Generate_kpts(S)
         
         if S.exx_downsampling(3) == 0
             kptgrid_z_hf = 0;
+            if sum(find(ismembertol(kptgrid_z,0,1e-8))) == 0
+                error("Gamma point is not one of the k-vectors. Please use positive EXX_DOWNSAMPLING or change k-point grid in third direction.");
+            end
         else
             range = S.exx_downsampling(3):S.exx_downsampling(3):nkpt(3);
             kptgrid_z_hf = kptgrid_z(range);
-        end
-        
-        if sum(S.exx_downsampling == [0 0 0]) == 3
-            ind = find(ismembertol(S.kptgrid,[0 0 0],1e-8,'ByRows',true));
-            if sum(ind) == 0
-                error("Gamma point is not one of the k-vectors. Please use positive EXX_DOWNSAMPLING or change k-point grid.");
-            end
         end
         
         [kptgrid_X_HF, kptgrid_Y_HF, kptgrid_Z_HF] = ndgrid(kptgrid_x_hf,kptgrid_y_hf,kptgrid_z_hf);
