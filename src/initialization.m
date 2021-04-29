@@ -1771,6 +1771,7 @@ end
 S.kpthf_ind = zeros(tnkpthf,2);
 % 1 -> k, 0 -> -k
 % find the index of kptgridhf in reduced kptgrid
+% TODO: use ismembertol
 for i = 1:tnkpthf
     for j = 1:tnkpt
         if (abs(S.kptgridhf(i,1) - S.kptgrid(j,1)) < TOL && abs(S.kptgridhf(i,2) - S.kptgrid(j,2)) < TOL && abs(S.kptgridhf(i,3) - S.kptgrid(j,3)) < TOL)
