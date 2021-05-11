@@ -108,24 +108,7 @@ S = exchangeCorrelationPotential(S);
 % Effective potential
 S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
 
-if S.nspin == 1
-	if S.MixingVariable == 1
-		% for potential mixing, we store the mean-0 part only
-		if S.BC == 2
-			Veff_mean = mean(S.Veff);
-		else
-			Veff_mean = 0.0;
-		end
-		S.mixing_hist_xkm1 = S.Veff - Veff_mean;
-	end
-else
-	if S.MixingVariable == 1
-		VEFF_temp = vertcat(S.Veff(:,1),S.Veff(:,2));
-		% for potential mixing, we store the mean-0 part only
-		VEFF_temp_mean = mean(VEFF_temp);
-		S.mixing_hist_xkm1 = VEFF_temp - VEFF_temp_mean;
-	end
-end
+% Note: No need to update mixing_hist_xk. Done in mixing of first iteration.
 
 % Exact exchange potential parameters
 Eband_prev = S.Eband;
