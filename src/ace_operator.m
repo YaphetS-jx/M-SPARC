@@ -43,9 +43,9 @@ else
             k = S.kptgrid(k_ind,:);
             q = S.kptgridhf(q_ind,:);
             if S.kpthf_ind(q_ind,2)
-                psi_q_set = S.psi_outer(:,:,q_ind_rd);
+                psi_q_set = S.psi_outer(:,1:Ns,q_ind_rd);
             else
-                psi_q_set = conj(S.psi_outer(:,:,q_ind_rd));
+                psi_q_set = conj(S.psi_outer(:,1:Ns,q_ind_rd));
             end
             
             for i = 1:Ns
@@ -66,7 +66,7 @@ else
                     end
                 end
 
-                S.Xi(:,i,k_ind) = S.Xi(:,i,k_ind) - S.wkpthf(q_ind)*(psi_q_set.*V_i)*S.occ_outer(:,q_ind_rd);
+                S.Xi(:,i,k_ind) = S.Xi(:,i,k_ind) - S.wkpthf(q_ind)*(psi_q_set.*V_i)*S.occ_outer(1:Ns,q_ind_rd);
             end
         end
         M = S.psi_outer(:,1:Ns,k_ind)'*S.Xi(:,:,k_ind)*S.dV;
