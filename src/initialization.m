@@ -736,6 +736,9 @@ fprintf(' Done. (%.3f sec)\n', toc(t1));
 S.memory_usage = estimate_memory(S);
 
 if S.usefock == 1
+    if S.BC ~= 1 && S.BC ~= 2
+        error('Hybrid functionals are only availavble for molecule simulation and bulk simulation.\n');
+    end
     if S.MAXIT_FOCK < 0
         S.MAXIT_FOCK = 20;
     end
@@ -755,6 +758,9 @@ if S.usefock == 1
         S.exxmethod = 0;
     elseif strcmp(S.ExxMethod, 'REAL_SPACE') || strcmp(S.ExxMethod, 'real_space')
         S.exxmethod = 1;
+        if S.BC ~= 1
+            error('Real space solver is only available in molecule simulation.\n');
+        end
     elseif strcmp(S.ExxMethod, '')
         fprintf("Default setting: Solving Exact Exchange in Fourier Space.\n");
         S.exxmethod = 0;
@@ -762,8 +768,7 @@ if S.usefock == 1
     else
         error('Please provide correct method for solving Exact Exchange, fourier_space or real_space.\n');
     end
-    S = const_for_FFT(S);
-    S = kshift_phasefactor(S);
+    
     if S.isgamma == 0
         S.exxmethod = 0;    % only fourier space method is allowed
     end
@@ -783,6 +788,8 @@ if S.usefock == 1
             end
         end
     end
+    S = const_for_FFT(S);
+    S = kshift_phasefactor(S);
 end
 
 end
@@ -1325,10 +1332,12 @@ if(S.usefock == 1)
     fprintf(fileID,'TOL_SCF_INIT: %.2E\n',S.SCF_tol_init);
     fprintf(fileID,'EXX_METHOD: %s\n',S.ExxMethod);
     fprintf(fileID,'ACE_FLAG: %d\n',S.ACEFlag);
-    if S.isgamma == 1
+    if S.ACEFlag == 1
         fprintf(fileID,'EXX_ACE_VALENCE_STATES: %d\n',S.EXXACEVal_state);
     end
-    fprintf(fileID,'EXX_DOWNSAMPLING: %d %d %d\n',S.exx_downsampling);
+    if S.BC == 2
+        fprintf(fileID,'EXX_DOWNSAMPLING: %d %d %d\n',S.exx_downsampling);
+    end
 end
 
 fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);

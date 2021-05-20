@@ -35,13 +35,15 @@ if S.ACEFlag == 0
     end
 else
     if S.isgamma == 1
-        psi_times_Xi = transpose(S.psi)*S.Xi;
-        S.Eex = (transpose(S.occ_outer)*sum(psi_times_Xi.*psi_times_Xi,2))*(S.dV)^2;
+        Ns = S.Ns_occ;
+        psi_times_Xi = transpose(S.psi(:,1:Ns))*S.Xi;
+        S.Eex = (transpose(S.occ_outer(1:Ns))*sum(psi_times_Xi.*psi_times_Xi,2))*(S.dV)^2;
     else
+        Ns = S.Ns_occ;
         for k_ind = 1:S.tnkpt
-            psi_k = S.psi(:,:,k_ind);
+            psi_k = S.psi(:,1:Ns,k_ind);
             psi_times_Xi = psi_k'*S.Xi(:,:,k_ind);
-            S.Eex = S.Eex + S.wkpt(k_ind)*(transpose(S.occ_outer(:,k_ind))*sum(conj(psi_times_Xi).*psi_times_Xi,2))*(S.dV)^2;
+            S.Eex = S.Eex + S.wkpt(k_ind)*(transpose(S.occ_outer(1:Ns,k_ind))*sum(conj(psi_times_Xi).*psi_times_Xi,2))*(S.dV)^2;
         end
     end 
 end

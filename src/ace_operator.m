@@ -4,7 +4,8 @@ if S.exxmethod == 1
 end
 
 if S.isgamma == 1
-    Ns = min(sum(S.occ_outer>1e-6)+S.EXXACEVal_state,S.Nev);
+    S.Ns_occ = min(sum(S.occ_outer>1e-6)+S.EXXACEVal_state,S.Nev);
+    Ns = S.Ns_occ;
     S.Xi = zeros(S.N,Ns);    % For storage of W and Xi
     rhs = zeros(S.N,Ns);
     for i = 1:Ns
@@ -30,9 +31,9 @@ if S.isgamma == 1
     L = chol(-M); 
     S.Xi = S.Xi * inv(L); % Do it efficiently
 else
-    Ns = S.Nev;
+    S.Ns_occ = min(max(sum(S.occ_outer > 1e-6))+S.EXXACEVal_state,S.Nev);
+    Ns = S.Ns_occ;
     % TODO: add EXXACEVal_state option
-    % Ns = min(sum(S.occ_outer(:,q_ind)>1e-6)+S.EXXACEVal_state,S.Nev);
     S.Xi = zeros(S.N,Ns,S.tnkpt);    % For storage of W and Xi
     for k_ind = 1:S.tnkpt
         for q_ind = 1:S.tnkpthf
@@ -42,9 +43,9 @@ else
             k = S.kptgrid(k_ind,:);
             q = S.kptgridhf(q_ind,:);
             if S.kpthf_ind(q_ind,2)
-                psi_q_set = S.psi_outer(:,1:Ns,q_ind_rd);
+                psi_q_set = S.psi_outer(:,:,q_ind_rd);
             else
-                psi_q_set = conj(S.psi_outer(:,1:Ns,q_ind_rd));
+                psi_q_set = conj(S.psi_outer(:,:,q_ind_rd));
             end
             
             for i = 1:Ns
@@ -68,7 +69,7 @@ else
                 S.Xi(:,i,k_ind) = S.Xi(:,i,k_ind) - S.wkpthf(q_ind)*(psi_q_set.*V_i)*S.occ_outer(:,q_ind_rd);
             end
         end
-        M = S.psi_outer(:,:,k_ind)'*S.Xi(:,:,k_ind)*S.dV;
+        M = S.psi_outer(:,1:Ns,k_ind)'*S.Xi(:,:,k_ind)*S.dV;
         % to ensure M is hermitian
         M = 0.5*(M+M');
         L = chol(-M);
