@@ -1760,15 +1760,17 @@ function S = const_for_FFT(S)
 N1 = S.Nx;
 N2 = S.Ny;
 N3 = S.Nz;
-L1 = S.L1;
-L2 = S.L2;
-L3 = S.L3;
+
+L1 = N1 * S.dx;
+L2 = N2 * S.dy;
+L3 = N3 * S.dz;
+
 tnkpthf = S.tnkpthf;
 tnkpt = S.tnkpt;
 TOL = 1e-8;
 
 gmet = S.grad_T * S.grad_T' ;
-ucvol = S.L1*S.L2*S.L3*S.Jacb*S.tnkpthf;
+ucvol = L1*L2*L3*S.Jacb*S.tnkpthf;
 R_c = (3*ucvol/(4*pi))^(1/3);
     
 if S.cell_typ < 3

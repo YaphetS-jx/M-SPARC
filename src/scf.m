@@ -310,7 +310,7 @@ while (err > scf_tol && count_SCF <= max_scf_iter || count_SCF <= min_scf_iter)
 		fprintf(' Error in SCF iteration: %.4e \n',err) ;
 
 		% Mixing to accelerate SCF convergence
-		if (err > scf_tol || count_SCF < S.MINIT_SCF)
+		if (err > scf_tol || count_SCF < min_scf_iter)
 			if S.nspin == 1
 				if S.MixingVariable == 1 % potential mixing
 					% shift Veff and Veff_temp so they have mean 0
