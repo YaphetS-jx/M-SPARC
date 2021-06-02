@@ -54,7 +54,7 @@ Eelec = 0.5*sum((S.b+S.rho(:,1)).*S.phi.*S.W);
 
 Et1 = S.ofdft_Cf*sum(rho.^(5/3))*S.dV;
 
-[DL11,DL22,DL33,DG1,DG2,DG3] = blochLaplacian_1d(S,S.kptgrid(1,:));
+[DL11,DL22,DL33,DG1,DG2,DG3] = blochLaplacian_1d(S,[0,0,0]);
 Hu = lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S);
 Et2 = -0.5 * dot(u,Hu) * S.dV;
 Et = Et1 + S.ofdft_lambda * Et2;

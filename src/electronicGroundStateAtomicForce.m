@@ -52,6 +52,7 @@ if S.OFDFTFlag
     u = sqrt(abs(S.rho));
     u = abs(u);
     S = ofdft_NLCG_Teter(S,u);
+    S.rhoG = reshape(fftn(reshape(S.rho,S.Nx,S.Ny,S.Nz)),S.N,1);
 else
     % Calculate nonlocal projectors	
     S.Atom = calculate_nloc_projector(S);
