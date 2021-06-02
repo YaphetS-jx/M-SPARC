@@ -52,7 +52,6 @@ if S.OFDFTFlag
     u = sqrt(abs(S.rho));
     u = abs(u);
     S = ofdft_NLCG_Teter(S,u);
-    S.rhoG = reshape(fftn(reshape(S.rho,S.Nx,S.Ny,S.Nz)),S.N,1);
 else
     % Calculate nonlocal projectors	
     S.Atom = calculate_nloc_projector(S);
@@ -60,7 +59,10 @@ else
     % Self-consistent Field (SCF) method
     S = scf(S);
 end
-	
+
+% save rhoG in fourier space
+S.rhoG = reshape(fftn(reshape(S.rho,S.Nx,S.Ny,S.Nz)),S.N,1);
+
 %save('rho.mat','-struct','S','rho');
 S.S_Debug.relax(S.Relax_iter).Eself = S.Eself;
 S.S_Debug.relax(S.Relax_iter).Eself_ref = S.Eself_ref;
