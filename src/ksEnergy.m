@@ -1,9 +1,9 @@
-function Eks = ksEnergy(S, nk)
+function Eks = ksEnergy(S)
 %% Calculating Kohn-Sham energy using electron density from OFDFT
 % Please change the variables before using
 
 S.Nev = round(floor(S.Nelectron / 2) * 1.2 + 5);
-S.nkpt = [nk, nk, nk];
+S.nkpt = [1 1 1];
 S.kptshift = [0 0 0];
 
 
