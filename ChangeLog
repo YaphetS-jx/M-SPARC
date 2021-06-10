@@ -1,7 +1,15 @@
+----------------
+Jun 10, 2021
+Name: Xin Jing
+* Remove psp files in Pseudopotentials folders
+* Add In, Mg, Si ofdft psp file
+
+
+----------------
 Jun 2, 2021
 Name: Xin Jing
 * Add S.rhoG
-# Add ksEnergy calculating Kohn-Sham energy using electron density
+* Add ksEnergy calculating Kohn-Sham energy using electron density
 
 
 ----------------
