@@ -16,7 +16,7 @@
 
 ATOM_TYPE: Al               # atom type followed with valence charge
 N_TYPE_ATOM: 4               # number of atoms of this type
-PSEUDO_POT: Al_goodwin.psp8
+PSEUDO_POT: ../../../Pseudopotentials/OFDFT_Al_goodwin.psp8
 COORD:                     # coordinates follows
  0     0     0
  4     0     4
