@@ -1,7 +1,7 @@
-function [Etot] = ofdftEnergy(S)
+function [Etot,Et,Exc,Eelec] = ofdftEnergy(S)
 rho = S.rho;
 u = sqrt(rho);
-S.ofdft_lambda = 0.2;
+% S.ofdft_lambda = 0.2;
 S.ofdft_Cf = 0.3*((3*pi*pi)^(2/3));
 % Exchange-correlation energy
 % Check if density is too small

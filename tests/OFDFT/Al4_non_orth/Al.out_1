@@ -1,0 +1,97 @@
+***************************************************************************
+*                      M-SPARC v1.0.0 (Mar 29, 2021)                      *
+*   Copyright (c) 2019 Material Physics & Mechanics Group, Georgia Tech   *
+*           Distributed under GNU General Public License 3 (GPL)          *
+*                Date: 10-Jun-2021  Start time: 23:50:15                  *
+***************************************************************************
+                           Input parameters                                
+***************************************************************************
+CELL: 5.656854 5.656854 5.656854 
+LATVEC:
+0.500000000000000 0.500000000000000 0.000000000000000 
+0.000000000000000 0.500000000000000 0.500000000000000 
+0.500000000000000 0.000000000000000 0.500000000000000 
+FD_GRID: 14 14 14
+FD_ORDER: 12
+BC: P P P
+KPOINT_GRID: 1 1 1
+KPOINT_SHIFT: 0 0 0
+EXCHANGE_CORRELATION: LDA_PZ
+OFDFT_FLAG: 1
+OFDFT_LAMBDA: 0.200000
+TOL_OFDFT: 1.00E-03
+CALC_STRESS: 0
+CALC_PRES: 0
+TOL_PSEUDOCHARGE: 1.00E-06
+REFERENCE_CUTOFF: 0.50
+FIX_RAND: 0
+PRINT_FORCES: 1
+PRINT_ATOMS: 1
+PRINT_DENSITY: 0
+NSCENERGY_FLAG: 1
+OUTPUT_FILE: ../tests/OFDFT/Al4_non_orth/Al.out_1
+***************************************************************************
+                             Initialization                                
+***************************************************************************
+Mesh spacing                       :  0.404061 (Bohr)
+Number of symmetry adapted k-points:  1
+Output printed to                  :  ../tests/OFDFT/Al4_non_orth/Al.out_1
+Total number of atom types         :  1
+Total number of atoms              :  1
+Total number of electrons          :  3
+Atom type 1  (valence electrons)   :  Al 3
+Pseudopotential                    :  ../../../Pseudopotentials/OFDFT_Al_goodwin.psp8
+lloc                               :  0
+Pseudocharge radii of atom type 1  :  11.72 11.72 11.72
+Number of atoms of type 1          :  1
+Estimated total memory usage       :  8.16 MB
+=====================================================================
+                Orbital-Free DFT NLCG (OFDFT-NLCG#1)                
+=====================================================================
+Iteration      Free Energy (Ha/atom)   NLCG Error        Timing (sec)
+1              -2.2104465837E+00       1.688E-02         0.011
+2              -2.2113116391E+00       1.280E-02         0.008
+3              -2.2124358094E+00       9.887E-03         0.008
+4              -2.2129090223E+00       6.031E-03         0.008
+5              -2.2130262075E+00       2.159E-03         0.008
+6              -2.2130463803E+00       1.712E-03         0.008
+7              -2.2130600483E+00       1.163E-03         0.007
+8              -2.2130665707E+00       6.801E-04         0.008
+====================================================================
+                                Energy                              
+====================================================================
+Free energy per atom               : -2.2130665707E+00 (Ha/atom)
+Total free energy                  : -2.2130665707E+00 (Ha)
+Kinetic energy                     :  8.2594851609E-01 (Ha)
+Exchange correlation energy        : -7.8636599598E-01 (Ha)
+Self and correction energy         : -4.1011450596E+00 (Ha)
+Average force                      :  0.0000000000E+00 (Ha/Bohr)
+Maximum force                      :  0.0000000000E+00 (Ha/Bohr)
+Time for force calculation         :  1.135 (sec)
+***************************************************************************
+                               Timing info                                 
+***************************************************************************
+Total walltime                     :  2.884 sec
+___________________________________________________________________________
+
+***************************************************************************
+*             Material Physics & Mechanics Group, Georgia Tech            *
+*                       PI: Phanish Suryanarayana                         *
+*                Main Developers: Qimen Xu, Abhiraj Sharma                *
+*     Acknowledgements: U.S. DOE (DE-SC0019410); NSF (1333500,1553212)    *
+***************************************************************************
+                                                                           
+====================================================================
+          Non Self-Consistent Kohn-Sham Energy Calculation          
+====================================================================
+NSCKPOINT_GRID                     : 1 1 1
+NSCKPOINT_SHIFT                    : 0 0 0
+Free energy per atom               : -1.9815672080E+00 (Ha/atom)
+Total free energy                  : -1.9815672080E+00 (Ha)
+Band structure energy              : -1.8634840761E-01 (Ha)
+Exchange correlation energy        : -7.8636599598E-01 (Ha)
+Self and correction energy         : -4.1011450596E+00 (Ha)
+Entropy*kb*T                       : -7.7155695449E-03 (Ha)
+
+Time for NSC Energy Calculation    :0.800 sec
+====================================================================

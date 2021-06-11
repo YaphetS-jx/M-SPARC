@@ -1,6 +1,13 @@
 ----------------
 Jun 10, 2021
 Name: Xin Jing
+* NSCENERGY_FLAG option 
+* Add NSCKPOINT_GRID and NSCKPOINT_SHIFT options
+
+
+----------------
+Jun 10, 2021
+Name: Xin Jing
 * Remove psp files in Pseudopotentials folders
 * Add In, Mg, Si ofdft psp file
 
