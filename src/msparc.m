@@ -117,7 +117,7 @@ if S.nscenergy_flag == 1
         fprintf(fileID,'====================================================================\n');
         fclose(fileID);
         t1 = tic;
-        [S.ksEtot,S.ksEband,S.ksExc,S.ksExc_dc,S.ksEelec_dc,S.ksEent] = ksEnergy(S);
+        [S.ksEtot,S.ksEband,S.ksExc,S.ksExc_dc,S.ksEelec_dc,S.ksEent,S.EigVal,S.occ] = ksEnergy(S);
         t2 = toc(t1);
         fileID = fopen(S.outfname,'a');
         fprintf(fileID,'NSCKPOINT_GRID                     : %d %d %d\n',S.nsc_nkpt);

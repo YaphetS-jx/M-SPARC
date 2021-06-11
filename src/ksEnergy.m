@@ -1,4 +1,4 @@
-function [Etot,Eband,Exc,Exc_dc,Eelec_dc,Eent] = ksEnergy(S)
+function [Etot,Eband,Exc,Exc_dc,Eelec_dc,Eent,EigVal,occ] = ksEnergy(S)
 %% Calculating Kohn-Sham energy using electron density from OFDFT
 % Please change the variables before using
 
@@ -41,6 +41,8 @@ end
 S = occupations(S);
 
 [Etot,Eband,Exc,Exc_dc,Eelec_dc,Eent] = evaluateTotalEnergy(S);
+EigVal = S.EigVal;
+occ = S.occ;
 end
 
 
