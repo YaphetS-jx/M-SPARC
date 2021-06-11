@@ -1065,7 +1065,10 @@ S.alph = 0.0;
 % OFDFT
 S.OFDFTFlag = 0;
 S.ofdft_tol = -1;
-S.ofdft_lambda = -1;
+S.ofdft_lambda = 0.2;
+S.nscenergy_flag = 0;
+S.nsc_nkpt = [1 1 1];
+S.nsc_kptshift = [0 0 0];
 end
 
 

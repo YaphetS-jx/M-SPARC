@@ -575,6 +575,18 @@ while(~feof(fid1))
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
 		S.ofdft_lambda = C_param{1};
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+    elseif(strcmp(str,'NSCENERGY_FLAG:'))
+		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.nscenergy_flag = C_param{1};
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line    
+    elseif (strcmp(str,'NSCKPOINT_GRID:'))
+		C_param = textscan(fid1,'%f %f %f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.nsc_nkpt = cell2mat(C_param);
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+	elseif (strcmp(str,'NSCKPOINT_SHIFT:'))	
+		C_param = textscan(fid1,'%f %f %f',1,'delimiter',' ','MultipleDelimsAsOne',1);	
+		S.nsc_kptshift = cell2mat(C_param);	
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line    
 	else 
 		error('\nCannot recognize input variable identifier: "%s"\n',str);
 		%fprintf('\nCannot recognize input flag in .inpt file: "%s"\n',str);
@@ -624,8 +636,7 @@ if S.OFDFTFlag
     if S.spin_typ
         error('Polarized calculation is not supported in OFDFT!');
     end
-    if sum(S.kptgrid ~= [0.0 0.0 0.0]) ...
-            || sum(S.kptshift ~= [0.0 0.0 0.0])
+    if sum(S.kptgrid ~= [0.0 0.0 0.0]) || sum(S.kptshift ~= [0.0 0.0 0.0])
         error('Only Gamma-point is supported in OFDFT!');
     end
     if S.Calc_stress || S.Calc_pres 

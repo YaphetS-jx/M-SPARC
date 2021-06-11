@@ -108,6 +108,56 @@ fprintf(fileID,'****************************************************************
 fprintf(fileID,'                                                                           \n');
 fclose(fileID);
 
+if S.nscenergy_flag == 1
+    if S.OFDFTFlag == 1
+        fprintf('\n Starts Non Self-Consistent Kohn-Sham Energy Calculation.\n');
+        fileID = fopen(S.outfname,'a');
+        fprintf(fileID,'====================================================================\n');
+        fprintf(fileID,'          Non Self-Consistent Kohn-Sham Energy Calculation          \n');
+        fprintf(fileID,'====================================================================\n');
+        fclose(fileID);
+        t1 = tic;
+        [S.ksEtot,S.ksEband,S.ksExc,S.ksExc_dc,S.ksEelec_dc,S.ksEent] = ksEnergy(S);
+        t2 = toc(t1);
+        fileID = fopen(S.outfname,'a');
+        fprintf(fileID,'KPOINT_GRID                        : %d %d %d\n',S.nsc_nkpt);
+        fprintf(fileID,'KPOINT_SHIFT                       : %d %d %d\n',S.nsc_kptshift);
+        fprintf(fileID,'Free energy per atom               :%18.10E (Ha/atom)\n', S.ksEtot / S.n_atm);
+        fprintf(fileID,'Total free energy                  :%18.10E (Ha)\n', S.ksEtot);
+        fprintf(fileID,'Band structure energy              :%18.10E (Ha)\n', S.ksEband);
+        fprintf(fileID,'Exchange correlation energy        :%18.10E (Ha)\n', S.ksExc);
+        fprintf(fileID,'Self and correction energy         :%18.10E (Ha)\n', S.E_corr-S.Eself);
+        fprintf(fileID,'Entropy*kb*T                       :%18.10E (Ha)\n', S.ksEent);
+        fprintf(fileID,'\n');
+        fprintf(fileID,'Time for NSC Energy Calculation    :%.3f sec\n', t2);
+        fprintf(fileID,'====================================================================\n');
+        fclose(fileID);
+        fprintf(' Done!\n');
+    else 
+        fprintf('\n Starts Non Self-Consistent OFDFT Energy Calculation.\n');
+        fileID = fopen(S.outfname,'a');
+        fprintf(fileID,'====================================================================\n');
+        fprintf(fileID,'            Non Self-Consistent OFDFT Energy Calculation            \n');
+        fprintf(fileID,'====================================================================\n');
+        fclose(fileID);
+        t1 = tic;
+        [S.ofdftEtot,S.ofdftEt,S.ofdftExc,S.ofdftEelec] = ofdftEnergy(S);
+        t2 = toc(t1);
+        fileID = fopen(S.outfname,'a');
+        fprintf(fileID,'OFDFT_LAMBDA                       : %.6f\n',S.ofdft_lambda);
+        fprintf(fileID,'Free energy per atom               :%18.10E (Ha/atom)\n', S.ofdftEtot / S.n_atm);
+        fprintf(fileID,'Total free energy                  :%18.10E (Ha)\n', S.ofdftEtot);
+        fprintf(fileID,'Kinetic energy                     :%18.10E (Ha)\n', S.ofdftEt);
+        fprintf(fileID,'Exchange correlation energy        :%18.10E (Ha)\n', S.ofdftExc);
+        fprintf(fileID,'Self and correction energy         :%18.10E (Ha)\n', S.E_corr-S.Eself);
+        fprintf(fileID,'\n');
+        fprintf(fileID,'Time for NSC Energy Calculation    :%.3f sec\n', t2);
+        fprintf(fileID,'====================================================================\n');
+        fclose(fileID);
+        fprintf(' Done!\n');
+    end
+end
+
 % Program run-time
 fprintf('\n Run-time of the program: %f seconds\n', t_wall);
 
