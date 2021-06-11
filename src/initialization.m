@@ -1271,7 +1271,7 @@ else
     if(S.RelaxFlag == 1)
         fprintf(fileID,'PRINT_RELAXOUT: %d\n',S.PrintRelaxout);
     end
-
+    fprintf(fileID,'NSCENERGY_FLAG: %d\n',S.nscenergy_flag);
     fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);
     if (S.RestartFlag == 1)
         fprintf(fileID,'RESTART_FLAG: %d\n',S.RestartFlag);
@@ -1808,5 +1808,5 @@ end
 if(S.RelaxFlag == 1)
 	fprintf(fileID,'PRINT_RELAXOUT: %d\n',S.PrintRelaxout);
 end
-
+fprintf(fileID,'NSCENERGY_FLAG: %d\n',S.nscenergy_flag);
 end

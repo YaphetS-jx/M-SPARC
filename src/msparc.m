@@ -120,8 +120,8 @@ if S.nscenergy_flag == 1
         [S.ksEtot,S.ksEband,S.ksExc,S.ksExc_dc,S.ksEelec_dc,S.ksEent] = ksEnergy(S);
         t2 = toc(t1);
         fileID = fopen(S.outfname,'a');
-        fprintf(fileID,'KPOINT_GRID                        : %d %d %d\n',S.nsc_nkpt);
-        fprintf(fileID,'KPOINT_SHIFT                       : %d %d %d\n',S.nsc_kptshift);
+        fprintf(fileID,'NSCKPOINT_GRID                     : %d %d %d\n',S.nsc_nkpt);
+        fprintf(fileID,'NSCKPOINT_SHIFT                    : %d %d %d\n',S.nsc_kptshift);
         fprintf(fileID,'Free energy per atom               :%18.10E (Ha/atom)\n', S.ksEtot / S.n_atm);
         fprintf(fileID,'Total free energy                  :%18.10E (Ha)\n', S.ksEtot);
         fprintf(fileID,'Band structure energy              :%18.10E (Ha)\n', S.ksEband);
