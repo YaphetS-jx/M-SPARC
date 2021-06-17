@@ -117,7 +117,7 @@ if S.nscenergy_flag == 1
         fprintf(fileID,'====================================================================\n');
         fclose(fileID);
         t1 = tic;
-        [S.ksEtot,S.ksEband,S.ksExc,S.ksExc_dc,S.ksEelec_dc,S.ksEent,S.EigVal,S.occ] = ksEnergy(S);
+        [S.ksEtot,S.ksEband,S.ksExc,S.ksExc_dc,S.ksEelec_dc,S.ksEent,S.Escc,S.EigVal,S.occ] = ksEnergy(S);
         t2 = toc(t1);
         fileID = fopen(S.outfname,'a');
         fprintf(fileID,'NSCKPOINT_GRID                     : %d %d %d\n',S.nsc_nkpt);
@@ -128,6 +128,7 @@ if S.nscenergy_flag == 1
         fprintf(fileID,'Exchange correlation energy        :%18.10E (Ha)\n', S.ksExc);
         fprintf(fileID,'Self and correction energy         :%18.10E (Ha)\n', S.E_corr-S.Eself);
         fprintf(fileID,'Entropy*kb*T                       :%18.10E (Ha)\n', S.ksEent);
+        fprintf(fileID,'Escc                               :%18.10E (Ha)\n', S.Escc);
         fprintf(fileID,'\n');
         fprintf(fileID,'Time for NSC Energy Calculation    :%.3f sec\n', t2);
         fprintf(fileID,'====================================================================\n');

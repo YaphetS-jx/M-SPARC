@@ -1,4 +1,4 @@
-function [Etot,Eband,Exc,Exc_dc,Eelec_dc,Eent,EigVal,occ] = ksEnergy(S)
+function [Etot,Eband,Exc,Exc_dc,Eelec_dc,Eent,Escc,EigVal,occ] = ksEnergy(S)
 %% Calculating Kohn-Sham energy using electron density from OFDFT
 % Please change the variables before using
 
@@ -40,9 +40,27 @@ end
 
 S = occupations(S);
 
+Veff_in = S.Veff;
+
+S = electronDensity(S);
+
 [Etot,Eband,Exc,Exc_dc,Eelec_dc,Eent] = evaluateTotalEnergy(S);
 EigVal = S.EigVal;
 occ = S.occ;
+
+% Electrostatic potential
+S = poissonSolve(S, S.poisson_tol, 0);
+
+% Exchange-correlation potential
+S = exchangeCorrelationPotential(S);
+
+% Effective potential
+S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
+
+Escc = sum((S.Veff-Veff_in) .* S.rho .* S.W);
+
+fprintf("Escc %.6f\n", Escc);
+Etot = Etot + Escc;
 end
 
 
