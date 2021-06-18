@@ -139,7 +139,7 @@ if S.nscenergy_flag == 1
         fprintf(fileID,'Exchange correlation energy        :%18.10E (Ha)\n', S.NSCKS_Exc);
         fprintf(fileID,'Self and correction energy         :%18.10E (Ha)\n', S.E_corr-S.Eself);
         fprintf(fileID,'Entropy*kb*T                       :%18.10E (Ha)\n', S.NSCKS_Eent);
-        fprintf(fileID,'Escc                               :%18.10E (Ha)\n', S.NSCKS_Escc);
+        fprintf(fileID,'Self Consistency Correction        :%18.10E (Ha)\n', S.NSCKS_Escc);
         
         fprintf(fileID,'\n');
         fprintf(fileID,'Time for NSC Energy Calculation    :%.3f sec\n', t2);
