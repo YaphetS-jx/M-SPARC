@@ -1,4 +1,5 @@
-function [Etot,Eband,Exc,Exc_dc,Eelec_dc,Eent,Escc,EigVal,occ] = ksEnergy(S)
+function [NSCHF_Etot,NSCHF_Eband,NSCHF_Exc,NSCHF_Exc_dc,NSCHF_Eelec_dc,NSCHF_Eent,...
+          NSCKS_Etot,NSCKS_Eband,NSCKS_Exc,NSCKS_Exc_dc,NSCKS_Eelec_dc,NSCKS_Eent,NSCKS_Escc,EigVal,occ] = ksEnergy(S)
 %% Calculating Kohn-Sham energy using electron density from OFDFT
 % Please change the variables before using
 
@@ -40,13 +41,19 @@ end
 
 S = occupations(S);
 
+EigVal = S.EigVal;
+occ = S.occ;
+
+%% Harris Foulkes
+[NSCHF_Etot,NSCHF_Eband,NSCHF_Exc,NSCHF_Exc_dc,NSCHF_Eelec_dc,NSCHF_Eent] = evaluateTotalEnergy(S);
+
+
+%% Kohn-Sham
 Veff_in = S.Veff;
 
 S = electronDensity(S);
 
-[Etot,Eband,Exc,Exc_dc,Eelec_dc,Eent] = evaluateTotalEnergy(S);
-EigVal = S.EigVal;
-occ = S.occ;
+[NSCKS_Etot,NSCKS_Eband,NSCKS_Exc,NSCKS_Exc_dc,NSCKS_Eelec_dc,NSCKS_Eent] = evaluateTotalEnergy(S);
 
 % Electrostatic potential
 S = poissonSolve(S, S.poisson_tol, 0);
@@ -57,10 +64,10 @@ S = exchangeCorrelationPotential(S);
 % Effective potential
 S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
 
-Escc = sum((S.Veff-Veff_in) .* S.rho .* S.W);
+NSCKS_Escc = sum((S.Veff-Veff_in) .* S.rho .* S.W);
 
-fprintf("Escc %.6f\n", Escc);
-Etot = Etot + Escc;
+fprintf("Escc %.6f\n", NSCKS_Escc);
+NSCKS_Etot = NSCKS_Etot + NSCKS_Escc;
 end
 
 

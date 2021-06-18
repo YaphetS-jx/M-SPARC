@@ -113,22 +113,34 @@ if S.nscenergy_flag == 1
         fprintf('\n Starts Non Self-Consistent Kohn-Sham Energy Calculation.\n');
         fileID = fopen(S.outfname,'a');
         fprintf(fileID,'====================================================================\n');
-        fprintf(fileID,'          Non Self-Consistent Kohn-Sham Energy Calculation          \n');
+        fprintf(fileID,' Non Self-Consistent Harris Foulkes and Kohn-Sham Energy Calculation\n');
         fprintf(fileID,'====================================================================\n');
         fclose(fileID);
         t1 = tic;
-        [S.ksEtot,S.ksEband,S.ksExc,S.ksExc_dc,S.ksEelec_dc,S.ksEent,S.Escc,S.EigVal,S.occ] = ksEnergy(S);
+        [S.NSCHF_Etot,S.NSCHF_Eband,S.NSCHF_Exc,S.NSCHF_Exc_dc,S.NSCHF_Eelec_dc,S.NSCHF_Eent,...
+         S.NSCKS_Etot,S.NSCKS_Eband,S.NSCKS_Exc,S.NSCKS_Exc_dc,S.NSCKS_Eelec_dc,S.NSCKS_Eent,S.NSCKS_Escc,S.EigVal,S.occ] = ksEnergy(S);
         t2 = toc(t1);
         fileID = fopen(S.outfname,'a');
         fprintf(fileID,'NSCKPOINT_GRID                     : %d %d %d\n',S.nsc_nkpt);
         fprintf(fileID,'NSCKPOINT_SHIFT                    : %d %d %d\n',S.nsc_kptshift);
-        fprintf(fileID,'Free energy per atom               :%18.10E (Ha/atom)\n', S.ksEtot / S.n_atm);
-        fprintf(fileID,'Total free energy                  :%18.10E (Ha)\n', S.ksEtot);
-        fprintf(fileID,'Band structure energy              :%18.10E (Ha)\n', S.ksEband);
-        fprintf(fileID,'Exchange correlation energy        :%18.10E (Ha)\n', S.ksExc);
+        
+        fprintf(fileID,'\nHarris Foulkes Energy:\n');
+        fprintf(fileID,'Free energy per atom               :%18.10E (Ha/atom)\n', S.NSCHF_Etot / S.n_atm);
+        fprintf(fileID,'Total free energy                  :%18.10E (Ha)\n', S.NSCHF_Etot);
+        fprintf(fileID,'Band structure energy              :%18.10E (Ha)\n', S.NSCHF_Eband);
+        fprintf(fileID,'Exchange correlation energy        :%18.10E (Ha)\n', S.NSCHF_Exc);
         fprintf(fileID,'Self and correction energy         :%18.10E (Ha)\n', S.E_corr-S.Eself);
-        fprintf(fileID,'Entropy*kb*T                       :%18.10E (Ha)\n', S.ksEent);
-        fprintf(fileID,'Escc                               :%18.10E (Ha)\n', S.Escc);
+        fprintf(fileID,'Entropy*kb*T                       :%18.10E (Ha)\n', S.NSCHF_Eent);
+        
+        fprintf(fileID,'\nKohn-Sham Energy:\n');
+        fprintf(fileID,'Free energy per atom               :%18.10E (Ha/atom)\n', S.NSCKS_Etot / S.n_atm);
+        fprintf(fileID,'Total free energy                  :%18.10E (Ha)\n', S.NSCKS_Etot);
+        fprintf(fileID,'Band structure energy              :%18.10E (Ha)\n', S.NSCKS_Eband);
+        fprintf(fileID,'Exchange correlation energy        :%18.10E (Ha)\n', S.NSCKS_Exc);
+        fprintf(fileID,'Self and correction energy         :%18.10E (Ha)\n', S.E_corr-S.Eself);
+        fprintf(fileID,'Entropy*kb*T                       :%18.10E (Ha)\n', S.NSCKS_Eent);
+        fprintf(fileID,'Self Consistency Correction        :%18.10E (Ha)\n', S.NSCKS_Escc);
+        
         fprintf(fileID,'\n');
         fprintf(fileID,'Time for NSC Energy Calculation    :%.3f sec\n', t2);
         fprintf(fileID,'====================================================================\n');
