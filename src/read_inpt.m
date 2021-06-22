@@ -593,6 +593,10 @@ while(~feof(fid1))
 		S.exx_downsampling(2) = C_param{2};
 		S.exx_downsampling(3) = C_param{3};
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+    elseif (strcmp(str,'EXX_DIVERGENCE:'))
+		C_param = textscan(fid1,'%s',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.ExxDivMethod = char(C_param{:});
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
 	else 
 		error('\nCannot recognize input variable identifier: "%s"\n',str);
 		%fprintf('\nCannot recognize input flag in .inpt file: "%s"\n',str);

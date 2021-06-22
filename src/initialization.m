@@ -736,9 +736,6 @@ fprintf(' Done. (%.3f sec)\n', toc(t1));
 S.memory_usage = estimate_memory(S);
 
 if S.usefock == 1
-    if S.BC ~= 1 && S.BC ~= 2
-        error('Hybrid functionals are only availavble for molecule simulation and bulk simulation.\n');
-    end
     if S.MAXIT_FOCK < 0
         S.MAXIT_FOCK = 20;
     end
@@ -769,12 +766,30 @@ if S.usefock == 1
         error('Please provide correct method for solving Exact Exchange, fourier_space or real_space.\n');
     end
     
+    if strcmp(S.ExxDivMethod, 'SPHERICAL') || strcmp(S.ExxDivMethod, 'spherical')
+        S.exxdivmethod = 0;
+    elseif strcmp(S.ExxDivMethod, 'AUXILIARY') || strcmp(S.ExxDivMethod, 'auxiliary')
+        S.exxdivmethod = 1;
+    elseif strcmp(S.ExxDivMethod, '')
+        if S.BC <= 2
+            fprintf("Default setting: Using spherical truncation for singularity issue for bulk or molecule.\n");
+            S.exxdivmethod = 0;
+            S.EXXDivMethod = 'SPHERICAL';
+        else
+            fprintf("Default setting: Using auxiliary function method for singularity issue for slab and wire.\n");
+            S.exxdivmethod = 1;
+            S.EXXDivMethod = 'AUXILIARY';
+        end
+    else
+        error('Please provide correct method for singularity in Exact Exchange, spherical or auxiliary.\n');
+    end
+    
     if S.isgamma == 0
         S.exxmethod = 0;    % only fourier space method is allowed
     end
     % ensure all occupied states are used. 
     if S.EXXACEVal_state < 0
-        S.EXXACEVal_state = 0;
+        S.EXXACEVal_state = 3;
     end
     if sum(S.exx_downsampling == [1,1,1]) ~= 3
         if sum(S.exx_downsampling < 0) > 0
@@ -1124,8 +1139,9 @@ S.hyb_mixing = 0.0;
 S.ExxMethod = '';
 S.SCF_tol_init = 1e-4;
 S.ACEFlag = 0;
-S.EXXACEVal_state = 0;
+S.EXXACEVal_state = 3;
 S.exx_downsampling = [1 1 1];
+S.ExxDivMethod = '';
 end
 
 
@@ -1338,6 +1354,11 @@ if(S.usefock == 1)
     if S.BC == 2
         fprintf(fileID,'EXX_DOWNSAMPLING: %d %d %d\n',S.exx_downsampling);
     end
+    if S.exxdivmethod == 0
+        fprintf(fileID,'EXX_DIVERGENCE: SPHERICAL\n');
+    elseif S.exxdivmethod == 1
+        fprintf(fileID,'EXX_DIVERGENCE: AUXILIARY\n');
+    end 
 end
 
 fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);
@@ -1821,28 +1842,55 @@ zero_ind = find(ismembertol(S.k_shift,[0,0,0],1e-8,'ByRows',true))+0;
 S.k_shift([zero_ind,S.num_shift],:) = S.k_shift([S.num_shift,zero_ind],:);
 
 S.const_by_alpha = zeros(S.num_shift,N1,N2,N3);
-for ind = 1:S.num_shift
-    % FD approximationi of d_hat = G^2
-    % alpha follows conjugate even space
-    count = 1;
-    Gpkmq2 = zeros(N1,N2,N3);
-    for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
-        for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
-            for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
-                G = [(k1-1)*2*pi/L1, (k2-1)*2*pi/L2, (k3-1)*2*pi/L3];
-                Gpkmq = G + S.k_shift(ind,:);
-                Gpkmq2(count) = Gpkmq * (gmet * Gpkmq');
-                count = count + 1;
+
+if S.exxdivmethod == 0
+    % spherical truncation method by Spencer 
+    for ind = 1:S.num_shift
+        count = 1;
+        Gpkmq2 = zeros(N1,N2,N3);
+        for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
+            for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
+                for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
+                    G = [(k1-1)*2*pi/L1, (k2-1)*2*pi/L2, (k3-1)*2*pi/L3];
+                    Gpkmq = G + S.k_shift(ind,:);
+                    Gpkmq2(count) = Gpkmq * (gmet * Gpkmq');
+                    count = count + 1;
+                end
             end
         end
-    end
-    iszero = Gpkmq2 < 1e-4;
-    Gpkmq2(iszero) = 1;
-    const = 1 - cos(R_c*sqrt(Gpkmq2));
-    const(iszero) = R_c^2/2;
+        iszero = Gpkmq2 < 1e-4;
+        Gpkmq2(iszero) = 1;
+        const = 1 - cos(R_c*sqrt(Gpkmq2));
+        const(iszero) = R_c^2/2;
 
-    S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
+        S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
+    end
+    
+elseif S.exxdivmethod == 1
+    % auxiliary function method by Gygi
+    aux = exx_divergence(S);
+    for ind = 1:S.num_shift
+        count = 1;
+        Gpkmq2 = zeros(N1,N2,N3);
+        for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
+            for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
+                for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
+                    G = [(k1-1)*2*pi/L1, (k2-1)*2*pi/L2, (k3-1)*2*pi/L3];
+                    Gpkmq = G + S.k_shift(ind,:);
+                    Gpkmq2(count) = Gpkmq * (gmet * Gpkmq');
+                    count = count + 1;
+                end
+            end
+        end
+        iszero = Gpkmq2 < 1e-4;
+        Gpkmq2(iszero) = 1;
+        Gpkmq2 = 1./Gpkmq2;
+        Gpkmq2(iszero) = aux;
+
+        S.const_by_alpha(ind,:,:,:) = 4*pi.*Gpkmq2;
+    end
 end
+
 end
 
 
@@ -1873,4 +1921,53 @@ end
 S.neg_phase = neg_phase;
 S.pos_phase = pos_phase;
 end
+
+
+
+
+function c = exx_divergence(S)
+N1 = S.Nx;
+N2 = S.Ny;
+N3 = S.Nz;
+
+L1 = N1 * S.dx;
+L2 = N2 * S.dy;
+L3 = N3 * S.dz;
+gmet = S.grad_T * S.grad_T';
+
+% corresponding to ecutwfc = 200 Ry
+alpha = 0.05;
+
+sumfGq = 0;
+% Use QE's choice of q vector
+% Actually all q vectors by Monkhorst-pack grid also works
+for khf = 1:S.tnkpthf
+    xq = S.kptgridhf(khf,:)./[2*pi/L1,2*pi/L2,2*pi/L3];
+              
+    for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
+        for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
+            for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
+                G = [(k1-1), (k2-1), (k3-1)];
+
+                Gpq = (G+xq).*[2*pi/L1,2*pi/L2,2*pi/L3];
+                Gpq2 = Gpq * (gmet * Gpq');
+                if Gpq2 > 1e-8
+                    sumfGq = sumfGq + exp(-alpha*Gpq2)/Gpq2;
+                end
+            end
+        end
+    end
+end
+
+V = L1*L2*L3*S.Jacb;
+Nk = S.tnkpthf;
+scaled_intf = V*Nk/(4*pi*sqrt(pi*alpha));
+
+c = scaled_intf + alpha - sumfGq;
+fprintf(' The constant for zero G is %f\n',c);
+% exx_div = -c*2*4*pi in qe
+
+end
+
+
 
