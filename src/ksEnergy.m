@@ -8,6 +8,36 @@ S.nkpt = S.nsc_nkpt;
 S.kptshift = S.nsc_kptshift;
 
 [S] = Generate_kpts(S);
+
+%% parallel 
+if S.parallel == 1
+	% Set up the parallel environment
+	warning('off','MATLAB:maxNumCompThreads:Deprecated');
+	max_threads = 12; % Experiment with this
+	max_threads_default = maxNumCompThreads;
+	if(max_threads > max_threads_default)
+		max_threads = max_threads_default;
+	end
+	LASTN_all_comp = maxNumCompThreads(max_threads);
+	fprintf('\n \n Starting the Matlab pool ... \n');
+	tic_pool = tic;
+	num_worker_heuristic =  S.tnkpt;
+
+	% Get the default size as a safeguard
+	myCluster = parcluster();
+	if(myCluster.NumWorkers < num_worker_heuristic)
+		num_worker_heuristic = myCluster.NumWorkers;
+	end
+	
+	% Clean up older pools
+	delete(gcp('nocreate'));
+	
+	% Launch new pool
+	poolobj = parpool(num_worker_heuristic) ;
+	S.num_worker_heuristic = num_worker_heuristic;
+	fprintf('\n \n Pool set up in %f s. \n', toc(tic_pool));
+end
+
 %% codes
 S.Atom = calculate_nloc_projector(S);
 
@@ -34,9 +64,10 @@ a0 = zeros(S.tnkpt*S.nspin,1);
 lambda_cutoff = zeros(S.tnkpt*S.nspin,1);
 
 for count = 1:10
+	tcheb = tic;
     [S.upper_bound_guess_vecs,S.psi,S.EigVal,a0,bup,lambda_cutoff] = ...
         eigSolver(S,count,S.upper_bound_guess_vecs,S.psi,S.EigVal,a0,bup,lambda_cutoff);
-    fprintf("ChefSI %d done\n", count);
+    fprintf("ChefSI %d done using %f sec\n", count, toc(tcheb));
 end
 
 S = occupations(S);
@@ -68,6 +99,14 @@ NSCKS_Escc = sum((S.Veff-Veff_in) .* S.rho .* S.W);
 
 fprintf("Escc %.6f\n", NSCKS_Escc);
 NSCKS_Etot = NSCKS_Etot + NSCKS_Escc;
+
+if S.parallel == 1
+	fprintf('\n \n Closing the Matlab pool ... \n');
+	tic_pool = tic;
+	delete(poolobj);
+	fprintf('\n \n Pool closed in %f s. \n', toc(tic_pool));
+end
+
 end
 
 
