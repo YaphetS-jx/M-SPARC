@@ -39,6 +39,8 @@ if S.parallel == 1
 end
 
 %% codes
+rho_OFDFT = S.rho;
+
 S.Atom = calculate_nloc_projector(S);
 
 % Electrostatic potential
@@ -84,8 +86,6 @@ Veff_in = S.Veff;
 
 S = electronDensity(S);
 
-[NSCKS_Etot,NSCKS_Eband,NSCKS_Exc,NSCKS_Exc_dc,NSCKS_Eelec_dc,NSCKS_Eent] = evaluateTotalEnergy(S);
-
 % Electrostatic potential
 S = poissonSolve(S, S.poisson_tol, 0);
 
@@ -95,10 +95,15 @@ S = exchangeCorrelationPotential(S);
 % Effective potential
 S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
 
+[NSCKS_Etot,NSCKS_Eband,NSCKS_Exc,NSCKS_Exc_dc,NSCKS_Eelec_dc,NSCKS_Eent] = evaluateTotalEnergy(S);
+
 NSCKS_Escc = sum((S.Veff-Veff_in) .* S.rho .* S.W);
 
 fprintf("Escc %.6f\n", NSCKS_Escc);
 NSCKS_Etot = NSCKS_Etot + NSCKS_Escc;
+
+err = norm(S.rho -  rho_OFDFT)/norm(S.rho);
+fprintf('\nerror of NSC-KS is %.3E\n', err);
 
 if S.parallel == 1
 	fprintf('\n \n Closing the Matlab pool ... \n');
