@@ -791,16 +791,16 @@ if S.usefock == 1
             if S.xc == 427
                 fprintf("Default setting: Using simple erfc for singularity issue for bulk or molecule with hybrid functional.\n");
                 S.exxdivmethod = 2;
-                S.EXXDivMethod = 'ERFC';
+                S.ExxDivMethod = 'ERFC';
             else
                 fprintf("Default setting: Using spherical truncation for singularity issue for bulk or molecule with HSE.\n");
                 S.exxdivmethod = 0;
-                S.EXXDivMethod = 'SPHERICAL';
+                S.ExxDivMethod = 'SPHERICAL';
             end
         else
             fprintf("Default setting: Using auxiliary function method for singularity issue for slab and wire with hybrid functional.\n");
             S.exxdivmethod = 1;
-            S.EXXDivMethod = 'AUXILIARY';
+            S.ExxDivMethod = 'AUXILIARY';
         end
     else
         error('Please provide correct method for singularity in Exact Exchange, spherical, auxiliary or erfc.\n');
@@ -1379,7 +1379,7 @@ if(S.usefock == 1)
     if S.BC == 2
         fprintf(fileID,'EXX_DOWNSAMPLING: %d %d %d\n',S.exx_downsampling);
     end
-    fprintf(fileID,'EXX_DIVERGENCE: %s\n', S.EXXDivMethod);
+    fprintf(fileID,'EXX_DIVERGENCE: %s\n', S.ExxDivMethod);
     if S.xc == 427
         fprintf(fileID,'EXX_RANGE_FOCK: %.4f\n', S.hyb_range_fock);
         fprintf(fileID,'EXX_RANGE_PBE: %.4f\n', S.hyb_range_pbe);
