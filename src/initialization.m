@@ -1990,8 +1990,7 @@ gmet = S.grad_T * S.grad_T';
 % alpha is related to ecut
 ecut = ecut_estimate(S.dx,S.dy,S.dz);
 
-% alpha = 10/(ecut*2);
-alpha = 0.05;
+alpha = 10/(ecut*2);
 fprintf(' Ecut estimation is %.2f Ha (%.2f Ry) and alpha in auxiliary function is %.6f\n',ecut, ecut*2, alpha);
 
 sumfGq = 0;
