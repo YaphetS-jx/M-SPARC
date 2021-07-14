@@ -156,6 +156,9 @@ elseif strcmp(S.XC, 'HF')
 elseif strcmp(S.XC, 'PBE0')
 	S.xc = 41;
     S.usefock = 1;
+elseif strcmp(S.XC, 'HSE')
+    S.xc = 427;
+    S.usefock = 1;
 end
 
 % calculate Nelectron
@@ -743,13 +746,21 @@ if S.usefock == 1
         S.FOCK_TOL = 1e-4;
     end
     if S.xc == 40
-        if S.hyb_mixing == 0.0
-            S.hyb_mixing = 1.0;
-        end
+        S.hyb_mixing = 1.0;
     elseif S.xc == 41
-        if S.hyb_mixing == 0.0
-            S.hyb_mixing = 0.25;
+        S.hyb_mixing = 0.25;
+    elseif S.xc == 427
+        S.hyb_mixing_sr = 0.25;
+        if S.hyb_range_fock < 0
+            S.hyb_range_fock = 0.1587;          % VASP
         end
+        if S.hyb_range_pbe < 0
+            S.hyb_range_pbe = 0.1587;           % VASP
+        end
+        % S.hyb_range_fock = 0.15/sqrt(2);  % ABINIT
+        % S.hyb_range_pbe = 0.15*2^(1/3);   % ABINIT
+        % S.hyb_range_fock = 0.106;         % QE
+        % S.hyb_range_pbe = 0.106;          % QE
     end
     if strcmp(S.ExxMethod, 'FOURIER_SPACE') || strcmp(S.ExxMethod, 'fourier_space')
         S.exxmethod = 0;
@@ -770,18 +781,29 @@ if S.usefock == 1
         S.exxdivmethod = 0;
     elseif strcmp(S.ExxDivMethod, 'AUXILIARY') || strcmp(S.ExxDivMethod, 'auxiliary')
         S.exxdivmethod = 1;
+    elseif strcmp(S.ExxDivMethod, 'ERFC') || strcmp(S.ExxDivMethod, 'erfc')
+        S.exxdivmethod = 2;
+        if S.xc ~= 427
+            error('Error: ERFC method could only be used with HSE functional.\n');
+        end
     elseif strcmp(S.ExxDivMethod, '')
         if S.BC <= 2
-            fprintf("Default setting: Using spherical truncation for singularity issue for bulk or molecule.\n");
-            S.exxdivmethod = 0;
-            S.EXXDivMethod = 'SPHERICAL';
+            if S.xc == 427
+                fprintf("Default setting: Using simple erfc for singularity issue for bulk or molecule with hybrid functional.\n");
+                S.exxdivmethod = 2;
+                S.EXXDivMethod = 'ERFC';
+            else
+                fprintf("Default setting: Using spherical truncation for singularity issue for bulk or molecule with HSE.\n");
+                S.exxdivmethod = 0;
+                S.EXXDivMethod = 'SPHERICAL';
+            end
         else
-            fprintf("Default setting: Using auxiliary function method for singularity issue for slab and wire.\n");
+            fprintf("Default setting: Using auxiliary function method for singularity issue for slab and wire with hybrid functional.\n");
             S.exxdivmethod = 1;
             S.EXXDivMethod = 'AUXILIARY';
         end
     else
-        error('Please provide correct method for singularity in Exact Exchange, spherical or auxiliary.\n');
+        error('Please provide correct method for singularity in Exact Exchange, spherical, auxiliary or erfc.\n');
     end
     
     if S.isgamma == 0
@@ -1136,6 +1158,9 @@ S.usefock = 0;
 S.MAXIT_FOCK = -1;
 S.FOCK_TOL = -1;
 S.hyb_mixing = 0.0;
+S.hyb_mixing_sr = 0.0;
+S.hyb_range_fock = -1;
+S.hyb_range_pbe = -1;
 S.ExxMethod = '';
 S.SCF_tol_init = 1e-4;
 S.ACEFlag = 0;
@@ -1354,11 +1379,11 @@ if(S.usefock == 1)
     if S.BC == 2
         fprintf(fileID,'EXX_DOWNSAMPLING: %d %d %d\n',S.exx_downsampling);
     end
-    if S.exxdivmethod == 0
-        fprintf(fileID,'EXX_DIVERGENCE: SPHERICAL\n');
-    elseif S.exxdivmethod == 1
-        fprintf(fileID,'EXX_DIVERGENCE: AUXILIARY\n');
-    end 
+    fprintf(fileID,'EXX_DIVERGENCE: %s\n', S.EXXDivMethod);
+    if S.xc == 427
+        fprintf(fileID,'EXX_RANGE_FOCK: %.4f\n', S.hyb_range_fock);
+        fprintf(fileID,'EXX_RANGE_PBE: %.4f\n', S.hyb_range_pbe);
+    end
 end
 
 fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);
@@ -1862,7 +1887,6 @@ if S.exxdivmethod == 0
         Gpkmq2(iszero) = 1;
         const = 1 - cos(R_c*sqrt(Gpkmq2));
         const(iszero) = R_c^2/2;
-
         S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
     end
     
@@ -1884,10 +1908,38 @@ elseif S.exxdivmethod == 1
         end
         iszero = Gpkmq2 < 1e-4;
         Gpkmq2(iszero) = 1;
-        Gpkmq2 = 1./Gpkmq2;
-        Gpkmq2(iszero) = aux;
+        if S.hyb_range_fock > 0
+            Gpkmq2 = 1./Gpkmq2.*( 1 - exp(-0.25/S.hyb_range_fock^2*Gpkmq2) );
+            Gpkmq2(iszero) = aux + 0.25/S.hyb_range_fock^2;
+        else
+            Gpkmq2 = 1./Gpkmq2;
+            Gpkmq2(iszero) = aux;
+        end
 
         S.const_by_alpha(ind,:,:,:) = 4*pi.*Gpkmq2;
+    end
+    
+elseif S.exxdivmethod == 2
+    % Simple method by ERFC
+    for ind = 1:S.num_shift
+        count = 1;
+        Gpkmq2 = zeros(N1,N2,N3);
+        for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
+            for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
+                for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
+                    G = [(k1-1)*2*pi/L1, (k2-1)*2*pi/L2, (k3-1)*2*pi/L3];
+                    Gpkmq = G + S.k_shift(ind,:);
+                    Gpkmq2(count) = Gpkmq * (gmet * Gpkmq');
+                    count = count + 1;
+                end
+            end
+        end
+        iszero = Gpkmq2 < 1e-4;
+        Gpkmq2(iszero) = 1;
+        const = 1 - exp(-0.25/S.hyb_range_fock^2*Gpkmq2);
+        const(iszero) = 0.25/S.hyb_range_fock^2;
+        
+        S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
     end
 end
 
@@ -1935,8 +1987,12 @@ L2 = N2 * S.dy;
 L3 = N3 * S.dz;
 gmet = S.grad_T * S.grad_T';
 
-% corresponding to ecutwfc = 200 Ry
+% alpha is related to ecut
+ecut = ecut_estimate(S.dx,S.dy,S.dz);
+
+% alpha = 10/(ecut*2);
 alpha = 0.05;
+fprintf(' Ecut estimation is %.2f Ha (%.2f Ry) and alpha in auxiliary function is %.6f\n',ecut, ecut*2, alpha);
 
 sumfGq = 0;
 % Use QE's choice of q vector
@@ -1952,7 +2008,11 @@ for khf = 1:S.tnkpthf
                 Gpq = (G+xq).*[2*pi/L1,2*pi/L2,2*pi/L3];
                 Gpq2 = Gpq * (gmet * Gpq');
                 if Gpq2 > 1e-8
-                    sumfGq = sumfGq + exp(-alpha*Gpq2)/Gpq2;
+                    if S.hyb_range_fock > 0
+                        sumfGq = sumfGq + exp(-alpha*Gpq2)/Gpq2*(1-exp(-Gpq2/4/S.hyb_range_fock^2));
+                    else
+                        sumfGq = sumfGq + exp(-alpha*Gpq2)/Gpq2;
+                    end
                 end
             end
         end
@@ -1961,13 +2021,40 @@ end
 
 V = L1*L2*L3*S.Jacb;
 Nk = S.tnkpthf;
-scaled_intf = V*Nk/(4*pi*sqrt(pi*alpha));
 
-c = scaled_intf + alpha - sumfGq;
+if S.hyb_range_fock > 0
+    sumfGq = sumfGq + 1/4/S.hyb_range_fock^2;
+    
+    nqq = 100000;
+    dq = 5/sqrt(alpha)/nqq;
+    aa = 0;
+    for iq = 0:nqq
+        q_ = dq*(iq+0.5);
+        qq = q_*q_;
+        aa = aa - exp( -alpha * qq) * exp(-qq/4/S.hyb_range_fock^2)*dq;
+    end
+    aa = aa*2/pi + 1/sqrt(pi*alpha);
+    scaled_intf = V*Nk/(4*pi)*aa;
+    c = scaled_intf - sumfGq;
+else
+    
+    scaled_intf = V*Nk/(4*pi*sqrt(pi*alpha));
+    c = scaled_intf + alpha - sumfGq;
+end
+
 fprintf(' The constant for zero G is %f\n',c);
 % exx_div = -c*2*4*pi in qe
 
 end
 
 
+function ecut = ecut_estimate(hx,hy,hz)
+dx2_inv = 1/(hx * hx);
+dy2_inv = 1/(hy * hy);
+dz2_inv = 1/(hz * hz);
+h_eff = sqrt(3.0 / (dx2_inv + dy2_inv + dz2_inv));
 
+ecut = (pi/h_eff)^2/2;                      % ecut_rho
+ecut = ecut / 4;                            % ecut_psi
+ecut = ecut * 0.9;                          % by experience
+end

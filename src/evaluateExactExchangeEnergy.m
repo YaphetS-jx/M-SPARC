@@ -48,8 +48,11 @@ else
     end 
 end
 
-
-S.Etotal = S.Etotal + S.hyb_mixing * S.Eex;
+if S.xc == 40 || S.xc == 41
+    S.Etotal = S.Etotal + S.hyb_mixing * S.Eex;
+elseif S.xc == 427
+    S.Etotal = S.Etotal + S.hyb_mixing_sr * S.Eex;
+end
 fprintf(' Eex = %.8f\n', S.Eex);
 fprintf(' Etot = %.8f\n', S.Etotal);
 fprintf(2,' ------------------\n');
