@@ -119,9 +119,15 @@ for ityp = 1:S.n_typ
 		err_rb = abs(sum(sum(sum(W_temp(ii_rb-S.FDn,jj_rb-S.FDn,kk_rb-S.FDn).*b_temp(ii_rb,jj_rb,kk_rb))))*2 + S.Atm(ityp).Z);
 		fprintf(' rb = {%.3f %.3f %.3f}, int_b = %.15f, err_rb = %.3e\n',rb_x,rb_y,rb_z,2*sum(sum(sum(W_temp(ii_rb-S.FDn,jj_rb-S.FDn,kk_rb-S.FDn).*b_temp(ii_rb,jj_rb,kk_rb)))),err_rb);
 		count = count + 1;
-	end
+    end
 	
-	assert(rb_x<=rb_up_x && rb_y<=rb_up_y && rb_z<=rb_up_z,'Need to increase upper bound for rb!');
+	% assert(rb_x<=rb_up_x && rb_y<=rb_up_y && rb_z<=rb_up_z,'Need to increase upper bound for rb!');
+    if rb_x>rb_up_x || rb_y>rb_up_y || rb_z>rb_up_z || err_rb > S.pseudocharge_tol
+        fprintf("\n error = %.2e > TOL_PSEUDOCHARGE = %.2e\n",err_rb,S.pseudocharge_tol);
+        fprintf(" WARNING: upperbond for pseudocharge radius (Rbmax_?) is not big enough! Rbmax_x = %.1f, Rbmax_y = %.1f, Rbmax_z = %.1f\n\n",rb_up_x,rb_up_y,rb_up_z);
+        S.pseudocharge_tol = err_rb;
+    end
+    
 	S.Atm(ityp).rb_x = rb_x;
 	S.Atm(ityp).rb_y = rb_y;
 	S.Atm(ityp).rb_z = rb_z;
