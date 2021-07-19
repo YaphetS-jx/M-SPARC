@@ -789,11 +789,11 @@ if S.usefock == 1
     elseif strcmp(S.ExxDivMethod, '')
         if S.BC <= 2
             if S.xc == 427
-                fprintf("Default setting: Using simple erfc for singularity issue for bulk or molecule with hybrid functional.\n");
+                fprintf("Default setting: Using simple erfc for singularity issue for bulk or molecule with HSE.\n");
                 S.exxdivmethod = 2;
                 S.ExxDivMethod = 'ERFC';
             else
-                fprintf("Default setting: Using spherical truncation for singularity issue for bulk or molecule with HSE.\n");
+                fprintf("Default setting: Using spherical truncation for singularity issue for bulk or molecule with hybrid functional.\n");
                 S.exxdivmethod = 0;
                 S.ExxDivMethod = 'SPHERICAL';
             end

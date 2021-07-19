@@ -2,51 +2,63 @@ function [S] = evaluateExactExchangeEnergy(S)
 S.Eex = 0;
 if S.ACEFlag == 0
     V_guess = rand(S.N,1);
-    for k_ind = 1:S.tnkpt
-        for q_ind = 1:S.tnkpthf
-            % q_ind_rd is the index in reduced kptgrid
-            q_ind_rd = S.kpthf_ind(q_ind,1);
-            for i = 1:S.Nev
-                for j = 1:S.Nev
-                    if S.kpthf_ind(q_ind,2)
-                        psiqi = S.psi_outer(:,i,q_ind_rd);
-                    else
-                        psiqi = conj(S.psi_outer(:,i,q_ind_rd));
-                    end
-                    psikj = S.psi(:,j,k_ind);
-                    rhs = conj(psiqi) .* psikj;
+    for spin = 1:S.nspin
+        spin_shift = (spin-1)*S.tnkpt;
+        for k_ind = 1:S.tnkpt
+            for q_ind = 1:S.tnkpthf
+                % q_ind_rd is the index in reduced kptgrid
+                q_ind_rd = S.kpthf_ind(q_ind,1);
+                for i = 1:S.Nev
+                    for j = 1:S.Nev
+                        if S.kpthf_ind(q_ind,2)
+                            psiqi = S.psi_outer(:,i,q_ind_rd+spin_shift);
+                        else
+                            psiqi = conj(S.psi_outer(:,i,q_ind_rd+spin_shift));
+                        end
+                        psikj = S.psi(:,j,k_ind+spin_shift);
+                        rhs = conj(psiqi) .* psikj;
 
-                    if S.exxmethod == 0             % solving in fourier space
-                        k = S.kptgrid(k_ind,:);
-                        q = S.kptgridhf(q_ind,:);
-                        k_shift = k - q;
-                        gij = poissonSolve_FFT(S,rhs,k_shift);
-                    else                            % solving in real space
-                        f = poisson_RHS(S,rhs);
-                        [gij, flag] = pcg(-S.Lap_std,-f,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
-                        assert(flag==0);
-                        V_guess = gij;    
+                        if S.exxmethod == 0             % solving in fourier space
+                            k = S.kptgrid(k_ind,:);
+                            q = S.kptgridhf(q_ind,:);
+                            k_shift = k - q;
+                            gij = poissonSolve_FFT(S,rhs,k_shift);
+                        else                            % solving in real space
+                            f = poisson_RHS(S,rhs);
+                            [gij, flag] = pcg(-S.Lap_std,-f,1e-8,1000,S.LapPreconL,S.LapPreconU,V_guess);
+                            assert(flag==0);
+                            V_guess = gij;    
+                        end
+
+                        S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(conj(rhs).*gij.*S.W));
                     end
-                    
-                    S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd)*S.occ_outer(j,k_ind)*real(sum(conj(rhs).*gij.*S.W));
                 end
             end
         end
     end
 else
     if S.isgamma == 1
-        Ns = S.Ns_occ;
-        psi_times_Xi = transpose(S.psi(:,1:Ns))*S.Xi;
-        S.Eex = (transpose(S.occ_outer(1:Ns))*sum(psi_times_Xi.*psi_times_Xi,2))*(S.dV)^2;
+        for spin = 1:S.nspin
+            col = 1+(spin-1)*S.Ns_occ(1):S.Ns_occ(1)+(spin-1)*S.Ns_occ(2);
+            Ns = S.Ns_occ(spin);
+            psi_times_Xi = transpose(S.psi(:,1:Ns,spin))*S.Xi(:,col);
+            S.Eex = S.Eex + (transpose(S.occ_outer(1:Ns,spin))*sum(psi_times_Xi.*psi_times_Xi,2))*(S.dV)^2;
+        end
     else
-        Ns = S.Ns_occ;
-        for k_ind = 1:S.tnkpt
-            psi_k = S.psi(:,1:Ns,k_ind);
-            psi_times_Xi = psi_k'*S.Xi(:,:,k_ind);
-            S.Eex = S.Eex + S.wkpt(k_ind)*(transpose(S.occ_outer(1:Ns,k_ind))*sum(conj(psi_times_Xi).*psi_times_Xi,2))*(S.dV)^2;
+        for spin = 1:S.nspin
+            Ns = S.Ns_occ(spin);
+            col = 1+(spin-1)*S.Ns_occ(1):S.Ns_occ(1)+(spin-1)*S.Ns_occ(2);
+            spin_shift = (spin-1)*S.tnkpt;
+            for k_ind = 1:S.tnkpt
+                psi_k = S.psi(:,1:Ns,k_ind+spin_shift);
+                psi_times_Xi = psi_k'*S.Xi(:,col,k_ind);
+                S.Eex = S.Eex + S.wkpt(k_ind)*(transpose(S.occ_outer(1:Ns,k_ind+spin_shift))*sum(conj(psi_times_Xi).*psi_times_Xi,2))*(S.dV)^2;
+            end
         end
     end 
 end
+
+S.Eex = S.Eex/2*S.occfac;
 
 if S.xc == 40 || S.xc == 41
     S.Etotal = S.Etotal + S.hyb_mixing * S.Eex;

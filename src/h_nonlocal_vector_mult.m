@@ -1,4 +1,4 @@
-function  Hnlx = h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,Veff,X,S,kptvec)
+function  Hnlx = h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,X,S,kptvec,spin)
 % @brief   Calculates Hamiltonian vector product, where Vnl is the nonlocal
 %          pseudopotential to be determined using the info stored in S.
 %
@@ -18,10 +18,11 @@ function  Hnlx = h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,Veff,X,S,kptv
 
 % (-0.5*Lap + Veff) * X 
 %Hnlx = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,X,S)) + Veff * X;
+Veff = S.Veff(:,spin);
 Hnlx = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,X,S)) + bsxfun(@times,Veff,X);
 
 if (mod(S.usefock,2) == 0 && S.usefock > 1)
-    Vexx = evaluateExactExchangePotential(S,X,kptvec);
+    Vexx = evaluateExactExchangePotential(S,X,kptvec,spin);
     if S.xc == 40 || S.xc == 41
         Hnlx = Hnlx + S.hyb_mixing*Vexx;
     elseif S.xc == 427

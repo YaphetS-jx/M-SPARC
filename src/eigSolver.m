@@ -32,14 +32,14 @@ if S.parallel ~= 1
 			spin = 2;
 		end
 		% Heff = spdiags(S.Veff(:,spin),0,S.N,S.N);
-		Heff = S.Veff(:,spin);
+		% Heff = S.Veff(:,spin);
         rng('default'); % Initialize random number generator
 		rng(ks+1);
 		%opts = struct('maxit', 10000, 'tol', 1e-6, 'p', S.Nev+10, 'v0', rand(S.N,1), 'isreal', true);
 		opts = struct('maxit', 100, 'tol', S.TOL_LANCZOS, 'v0', rand(S.N,1));
 		kpt_vec = S.kptgrid(kpt,:);
 		[DL11,DL22,DL33,DG1,DG2,DG3] = blochLaplacian_1d(S,kpt_vec);
-		Hfun = @(x) h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,Heff,x,S,kpt_vec);
+		Hfun = @(x) h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,x,S,kpt_vec,spin);
 		if ~(isreal(DL11) && isreal(DL22) && isreal(DL33))
 			opts.isreal = false;
 		end
@@ -95,13 +95,13 @@ if S.parallel ~= 1
 		
 		% fprintf('filter cutoff = %f, lower bound = %f, upper bound = %f\n',lambda_cutoff(ks),a0(ks),bup(ks));
 		% Chebyshev filtering
-		psi(:,:,ks) = chebyshev_filter(psi(:,:,ks),S.npl,lambda_cutoff(ks),bup(ks),a0(ks),DL11,DL22,DL33,DG1,DG2,DG3,Heff,S,kpt_vec);
+		psi(:,:,ks) = chebyshev_filter(psi(:,:,ks),S.npl,lambda_cutoff(ks),bup(ks),a0(ks),DL11,DL22,DL33,DG1,DG2,DG3,S,kpt_vec,spin);
 		psi(:,:,ks) = orth(psi(:,:,ks));
 		Nev1 = size(psi(:,:,ks),2);    % WARNING: ORTH(psi) might change the size of psi, that's why we update Nev
 		assert(Nev1 == S.Nev,'Number of states have changed within SCF');
 
 		% Subspace Hamiltonian
-		Hs = psi(:,:,ks)' * h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,Heff,psi(:,:,ks),S,kpt_vec);
+		Hs = psi(:,:,ks)' * h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,psi(:,:,ks),S,kpt_vec,spin);
 
 		% Solve subspace eigenproblem,
 		if S.cell_typ < 3
@@ -130,14 +130,14 @@ else
 			spin = 2;
 		end
 		% Heff = spdiags(S.Veff(:,spin),0,S.N,S.N);
-		Heff = S.Veff(:,spin);
+		% Heff = S.Veff(:,spin);
         rng('default'); % Initialize random number generator
 		rng(ks+1);
 		%opts = struct('maxit', 10000, 'tol', 1e-6, 'p', S.Nev+10, 'v0', rand(S.N,1), 'isreal', true);
 		opts = struct('maxit', 100, 'tol', S.TOL_LANCZOS, 'v0', rand(S.N,1));
 		kpt_vec = S.kptgrid(kpt,:);
 		[DL11,DL22,DL33,DG1,DG2,DG3] = blochLaplacian_1d(S,kpt_vec);
-		Hfun = @(x) h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,Heff,x,S,kpt_vec);
+		Hfun = @(x) h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,x,S,kpt_vec,spin);
 		if ~(isreal(DL11) && isreal(DL22) && isreal(DL33))
 			opts.isreal = false;
 		end
@@ -193,13 +193,13 @@ else
 		
 		% fprintf('filter cutoff = %f, lower bound = %f, upper bound = %f\n',lambda_cutoff(ks),a0(ks),bup(ks));
 		% Chebyshev filtering
-		psi(:,:,ks) = chebyshev_filter(psi(:,:,ks),S.npl,lambda_cutoff(ks),bup(ks),a0(ks),DL11,DL22,DL33,DG1,DG2,DG3,Heff,S,kpt_vec);
+		psi(:,:,ks) = chebyshev_filter(psi(:,:,ks),S.npl,lambda_cutoff(ks),bup(ks),a0(ks),DL11,DL22,DL33,DG1,DG2,DG3,S,kpt_vec,spin);
 		psi(:,:,ks) = orth(psi(:,:,ks));
 		Nev1 = size(psi(:,:,ks),2);    % WARNING: ORTH(psi) might change the size of psi, that's why we update Nev
 		assert(Nev1 == S.Nev,'Number of states have changed within SCF');
 
 		% Subspace Hamiltonian
-		Hs = psi(:,:,ks)' * h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,Heff,psi(:,:,ks),S,kpt_vec);
+		Hs = psi(:,:,ks)' * h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,psi(:,:,ks),S,kpt_vec,spin);
 
 		% Solve subspace eigenproblem,
 		if S.cell_typ < 3

@@ -97,7 +97,6 @@ S = scf_loop(S,scf_tol_init);
 % Exact exchange potential 
 if S.usefock == 1
     S.usefock = S.usefock+1;
-%     S = const_for_FFT(S);
 else
     return;
 end
@@ -208,8 +207,11 @@ if S.nspin == 1
 	end
 else
 	if S.MixingVariable == 0
+        RHO_temp = vertcat(S.rho(:,2),S.rho(:,3));
 		rho_temp = S.rho;
     else
+        VEFF_temp = vertcat(S.Veff(:,1),S.Veff(:,2));
+		% for potential mixing, we store the mean-0 part only
 		Veff_temp = S.Veff;
 	end
 end
