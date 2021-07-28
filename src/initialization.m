@@ -535,14 +535,22 @@ end
 % poisson_tol
 if S.poisson_tol < 0
 	fprintf('## Poisson tolerance not provided, choosing poisson_tol ...\n')
-	S.poisson_tol = S.SCF_tol * 0.01; 
-	fprintf('## poisson_tol is set to: %.3e\n',S.poisson_tol);
+    if S.OFDFTFlag
+        S.poisson_tol = S.ofdft_tol * 0.01; 
+    else
+        S.poisson_tol = S.SCF_tol * 0.01; 
+    end
+    fprintf('## poisson_tol is set to: %.3e\n',S.poisson_tol);
 end
 
 % pseudocharge_tol
 if S.pseudocharge_tol < 0
 	fprintf('## Pseudocharge tolerance not provided, choosing pseudocharge_tol ...\n')
-	S.pseudocharge_tol = S.SCF_tol * 0.01;
+    if S.OFDFTFlag
+        S.pseudocharge_tol = S.ofdft_tol * 0.01; 
+    else
+        S.pseudocharge_tol = S.SCF_tol * 0.01;
+    end
 	fprintf('## pseudocharge_tol is set to: %.3e\n',S.pseudocharge_tol);
 end
 
