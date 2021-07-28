@@ -536,7 +536,11 @@ end
 if S.poisson_tol < 0
 	fprintf('## Poisson tolerance not provided, choosing poisson_tol ...\n')
     if S.OFDFTFlag
-        S.poisson_tol = max(S.ofdft_tol * 0.01, 1E-5); 
+        if S.ofdft_tol < 0
+            S.poisson_tol = 1E-5;
+        else
+            S.poisson_tol = S.ofdft_tol * 0.01; 
+        end
     else
         S.poisson_tol = S.SCF_tol * 0.01; 
     end
@@ -547,7 +551,11 @@ end
 if S.pseudocharge_tol < 0
 	fprintf('## Pseudocharge tolerance not provided, choosing pseudocharge_tol ...\n')
     if S.OFDFTFlag
-        S.pseudocharge_tol = max(S.ofdft_tol * 0.01, 1E-5); 
+        if S.ofdft_tol < 0
+            S.pseudocharge_tol = 1E-5;
+        else
+            S.pseudocharge_tol = S.ofdft_tol * 0.01; 
+        end
     else
         S.pseudocharge_tol = S.SCF_tol * 0.01;
     end
