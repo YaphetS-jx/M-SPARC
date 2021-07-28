@@ -532,15 +532,16 @@ if S.SCF_tol < 0
 	fprintf('## Based on the desired accuracy, SCF_tol is set to: %.3e\n',S.SCF_tol);
 end
 
+% default OFDFT tol if not specified
+if S.OFDFTFlag && S.ofdft_tol < 0
+    S.ofdft_tol = 1E-3;
+end
+
 % poisson_tol
 if S.poisson_tol < 0
 	fprintf('## Poisson tolerance not provided, choosing poisson_tol ...\n')
-    if S.OFDFTFlag
-        if S.ofdft_tol < 0
-            S.poisson_tol = 1E-5;
-        else
-            S.poisson_tol = S.ofdft_tol * 0.01; 
-        end
+    if S.OFDFTFlag        
+        S.poisson_tol = S.ofdft_tol * 0.01; 
     else
         S.poisson_tol = S.SCF_tol * 0.01; 
     end
@@ -551,11 +552,7 @@ end
 if S.pseudocharge_tol < 0
 	fprintf('## Pseudocharge tolerance not provided, choosing pseudocharge_tol ...\n')
     if S.OFDFTFlag
-        if S.ofdft_tol < 0
-            S.pseudocharge_tol = 1E-5;
-        else
-            S.pseudocharge_tol = S.ofdft_tol * 0.01; 
-        end
+        S.pseudocharge_tol = S.ofdft_tol * 0.01; 
     else
         S.pseudocharge_tol = S.SCF_tol * 0.01;
     end
@@ -756,9 +753,6 @@ if S.OFDFTFlag
         S.ofdft_lambda = 0.2;
     end
     S.ofdft_Cf = 0.3*((3*pi*pi)^(2/3));
-    if S.ofdft_tol < 0
-        S.ofdft_tol = 1E-3;
-    end
 end
 end
 
