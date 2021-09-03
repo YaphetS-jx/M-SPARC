@@ -5,12 +5,6 @@ end
 
 S.Ns_occ = zeros(1,2);
 
-if S.xc == 40 || S.xc == 41
-    hyb_mixing = S.hyb_mixing;
-elseif S.xc == 427
-    hyb_mixing = S.hyb_mixing_sr;
-end
-
 if S.isgamma == 1
     
     for spin = 1:S.nspin

@@ -750,7 +750,7 @@ if S.usefock == 1
     elseif S.xc == 41
         S.hyb_mixing = 0.25*ones(S.N,1);
     elseif S.xc == 427
-        S.hyb_mixing_sr = 0.25*ones(S.N,1);
+        S.hyb_mixing = 0.25*ones(S.N,1);
         if S.hyb_range_fock < 0
             S.hyb_range_fock = 0.1587;          % VASP
         end
@@ -1182,7 +1182,6 @@ S.usefock = 0;
 S.MAXIT_FOCK = -1;
 S.FOCK_TOL = -1;
 S.hyb_mixing = zeros(S.N,1);
-S.hyb_mixing_sr = zeros(S.N,1);
 S.hyb_range_fock = -1;
 S.hyb_range_pbe = -1;
 S.ExxMethod = '';

@@ -2,12 +2,6 @@ function Vexx = evaluateExactExchangePotential(S,X,kptvec,spin)
 spin_shift = (spin-1)*S.tnkpt;
 Vexx = zeros(S.N,size(X,2));
 
-if S.xc == 40 || S.xc == 41
-    hyb_mixing = S.hyb_mixing;
-elseif S.xc == 427
-    hyb_mixing = S.hyb_mixing_sr;
-end
-
 if S.exxdev == 1
     for i = 1:size(X,2)
         for ind = 1:S.Nd_subd
@@ -24,7 +18,6 @@ if S.exxdev == 1
             end
         end
     end
-    Vexx = hyb_mixing.*Vexx;
     return;
 end
 
@@ -57,17 +50,16 @@ if S.ACEFlag == 0
             end
         end
     end
-    Vexx = hyb_mixing.*Vexx;
 else 
     if S.isgamma == 1
         row = 1+(spin-1)*S.Ns_occ(1):S.Ns_occ(1)+(spin-1)*S.Ns_occ(2);
         Xi_times_psi = (transpose(S.Xi(:,row))*X)*S.dV;
-        Vexx = -hyb_mixing.*S.Xi(:,row)*Xi_times_psi;
+        Vexx = -S.Xi(:,row)*Xi_times_psi;
     else
         row = 1+(spin-1)*S.Ns_occ(1):S.Ns_occ(1)+(spin-1)*S.Ns_occ(2);
         k_ind = find(ismembertol(S.kptgrid,kptvec,1e-8,'ByRows',true))+0;
         Xi_times_psi = S.Xi(:,row,k_ind)'*X*(S.dV);
-        Vexx = - hyb_mixing.*S.Xi(:,row,k_ind)*Xi_times_psi;
+        Vexx = -S.Xi(:,row,k_ind)*Xi_times_psi;
     end
 end
 end

@@ -1,10 +1,5 @@
 function [S] = evaluateExactExchangeEnergy(S)
 S.Eex = 0;
-if S.xc == 40 || S.xc == 41
-    hyb_mixing = S.hyb_mixing;
-elseif S.xc == 427
-    hyb_mixing = S.hyb_mixing_sr;
-end
 
 if S.exxdev == 1
     for spin = 1:S.nspin
@@ -22,7 +17,7 @@ if S.exxdev == 1
                     dsnq = density_matrix_row(S.psi_outer(:,:,q_ind_rd+spin_shift),S.occ_outer(:,q_ind_rd+spin_shift),nd);
                     rhs = conj(dsnk).*dsnq;
                     v = poissonSolve_FFT(S,rhs,k_shift);
-                    S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*real(v(nd))*hyb_mixing(nd)*S.dV;
+                    S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*real(v(nd))*S.hyb_mixing(nd)*S.dV;
                 end
             end
         end
@@ -59,7 +54,7 @@ if S.ACEFlag == 0
                         end
 
                         % S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(conj(rhs).*gij.*S.W));
-                        S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(hyb_mixing.*conj(rhs).*gij.*S.W));
+                        S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*conj(rhs).*gij.*S.W));
                     end
                 end
             end
@@ -72,7 +67,7 @@ else
             Ns = S.Ns_occ(spin);
             psi = S.psi(:,1:Ns,spin);
             psi_times_Xi = transpose(psi)*S.Xi(:,col);        
-            alpha_psi_times_Xi = transpose(hyb_mixing.*psi)*S.Xi(:,col);
+            alpha_psi_times_Xi = transpose(S.hyb_mixing.*psi)*S.Xi(:,col);
             S.Eex = S.Eex + (transpose(S.occ_outer(1:Ns,spin))*sum(alpha_psi_times_Xi.*psi_times_Xi,2))*(S.dV)^2;
         end
     else
@@ -83,7 +78,7 @@ else
             for k_ind = 1:S.tnkpt
                 psi_k = S.psi(:,1:Ns,k_ind+spin_shift);
                 psi_times_Xi = psi_k'*S.Xi(:,col,k_ind);
-                alpha_psi_times_Xi = (hyb_mixing.*psi_k)'*S.Xi(:,col,k_ind);
+                alpha_psi_times_Xi = (S.hyb_mixing.*psi_k)'*S.Xi(:,col,k_ind);
                 S.Eex = S.Eex + S.wkpt(k_ind)*(transpose(S.occ_outer(1:Ns,k_ind+spin_shift))*sum(conj(psi_times_Xi).*alpha_psi_times_Xi,2))*(S.dV)^2;
             end
         end
