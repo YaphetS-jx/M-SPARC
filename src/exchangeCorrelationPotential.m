@@ -227,17 +227,17 @@ function [S] = GGA_PBE(S,XC)
 
     % For hybrid functionals
     if (mod(S.usefock,2) == 0 && S.usefock > 1 && S.xc == 41)
-        S.e_xc = (1-S.hyb_mixing) * S.e_xc;
-        v_xc = (1-S.hyb_mixing) * v_xc;
-        dvxcdgrho1 = (1-S.hyb_mixing) * dvxcdgrho1;
+        S.e_xc = (1-S.hyb_mixing) .* S.e_xc;
+        v_xc = (1-S.hyb_mixing) .* v_xc;
+        dvxcdgrho1 = (1-S.hyb_mixing) .* dvxcdgrho1;
     end
     
     if (mod(S.usefock,2) == 0 && S.usefock > 1 && S.xc == 427)
         sigma(sigma < S.xc_rhotol) = S.xc_rhotol;
         [sxsr,v1xsr,v2xsr] = pbexsr(rho,sigma,S.hyb_range_pbe);
-        S.e_xc = S.e_xc - S.hyb_mixing_sr * sxsr./rho;
-        v_xc = v_xc - S.hyb_mixing_sr * v1xsr;
-        dvxcdgrho1 = dvxcdgrho1 - 2*S.hyb_mixing_sr * v2xsr;
+        S.e_xc = S.e_xc - S.hyb_mixing_sr .* sxsr./rho;
+        v_xc = v_xc - S.hyb_mixing_sr .* v1xsr;
+        dvxcdgrho1 = dvxcdgrho1 - 2*S.hyb_mixing_sr .* v2xsr;
     end
 
 	%        -----------------------------------------------------------------------------

@@ -1,5 +1,33 @@
 function [S] = evaluateExactExchangeEnergy(S)
 S.Eex = 0;
+if S.xc == 40 || S.xc == 41
+    hyb_mixing = S.hyb_mixing;
+elseif S.xc == 427
+    hyb_mixing = S.hyb_mixing_sr;
+end
+
+if S.exxdev == 1
+    for spin = 1:S.nspin
+        spin_shift = (spin-1)*S.tnkpt;
+        for k_ind = 1:S.tnkpt
+            k = S.kptgrid(k_ind,:);
+            for q_ind = 1:S.tnkpthf
+                % q_ind_rd is the index in reduced kptgrid
+                q_ind_rd = S.kpthf_ind(q_ind,1);
+                q = S.kptgridhf(q_ind,:);
+                k_shift = k - q;
+                for ind = 1:S.Nd_subd
+                    nd = S.subd_ind(ind);
+                    dsnk = density_matrix_row(S.psi(:,:,k_ind+spin_shift),S.occ_outer(:,k_ind+spin_shift),nd);
+                    dsnq = density_matrix_row(S.psi_outer(:,:,q_ind_rd+spin_shift),S.occ_outer(:,q_ind_rd+spin_shift),nd);
+                    rhs = conj(dsnk).*dsnq;
+                    v = poissonSolve_FFT(S,rhs,k_shift);
+                    S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*real(v(nd))*hyb_mixing(nd)*S.dV;
+                end
+            end
+        end
+    end
+else
 if S.ACEFlag == 0
     V_guess = rand(S.N,1);
     for spin = 1:S.nspin
@@ -30,7 +58,8 @@ if S.ACEFlag == 0
                             V_guess = gij;    
                         end
 
-                        S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(conj(rhs).*gij.*S.W));
+                        % S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(conj(rhs).*gij.*S.W));
+                        S.Eex = S.Eex + S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(hyb_mixing.*conj(rhs).*gij.*S.W));
                     end
                 end
             end
@@ -41,8 +70,10 @@ else
         for spin = 1:S.nspin
             col = 1+(spin-1)*S.Ns_occ(1):S.Ns_occ(1)+(spin-1)*S.Ns_occ(2);
             Ns = S.Ns_occ(spin);
-            psi_times_Xi = transpose(S.psi(:,1:Ns,spin))*S.Xi(:,col);
-            S.Eex = S.Eex + (transpose(S.occ_outer(1:Ns,spin))*sum(psi_times_Xi.*psi_times_Xi,2))*(S.dV)^2;
+            psi = S.psi(:,1:Ns,spin);
+            psi_times_Xi = transpose(psi)*S.Xi(:,col);        
+            alpha_psi_times_Xi = transpose(hyb_mixing.*psi)*S.Xi(:,col);
+            S.Eex = S.Eex + (transpose(S.occ_outer(1:Ns,spin))*sum(alpha_psi_times_Xi.*psi_times_Xi,2))*(S.dV)^2;
         end
     else
         for spin = 1:S.nspin
@@ -52,19 +83,18 @@ else
             for k_ind = 1:S.tnkpt
                 psi_k = S.psi(:,1:Ns,k_ind+spin_shift);
                 psi_times_Xi = psi_k'*S.Xi(:,col,k_ind);
-                S.Eex = S.Eex + S.wkpt(k_ind)*(transpose(S.occ_outer(1:Ns,k_ind+spin_shift))*sum(conj(psi_times_Xi).*psi_times_Xi,2))*(S.dV)^2;
+                alpha_psi_times_Xi = (hyb_mixing.*psi_k)'*S.Xi(:,col,k_ind);
+                S.Eex = S.Eex + S.wkpt(k_ind)*(transpose(S.occ_outer(1:Ns,k_ind+spin_shift))*sum(conj(psi_times_Xi).*alpha_psi_times_Xi,2))*(S.dV)^2;
             end
         end
     end 
 end
+end
 
 S.Eex = S.Eex/2*S.occfac;
 
-if S.xc == 40 || S.xc == 41
-    S.Etotal = S.Etotal + S.hyb_mixing * S.Eex;
-elseif S.xc == 427
-    S.Etotal = S.Etotal + S.hyb_mixing_sr * S.Eex;
-end
+S.Etotal = S.Etotal +  S.Eex;
+
 fprintf(' Eex = %.8f\n', S.Eex);
 fprintf(' Etot = %.8f\n', S.Etotal);
 fprintf(2,' ------------------\n');
@@ -73,6 +103,14 @@ fileID = fopen(S.outfname,'a');
 fprintf(fileID,' Eex = %.8f\n', S.Eex);
 fprintf(fileID,' Etot = %.8f\n', S.Etotal);
 fclose(fileID);
+end
+
+
+function dsn = density_matrix_row(psi,occ,n)
+    % row r of density matrix
+    dsn = (occ'.*psi(n,:))* psi';
+    % return as a column vector
+    dsn = transpose(dsn);
 end
 
 

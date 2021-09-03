@@ -23,11 +23,7 @@ Hnlx = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,X,S)) + bsxfun(@times,Veff,X);
 
 if (mod(S.usefock,2) == 0 && S.usefock > 1)
     Vexx = evaluateExactExchangePotential(S,X,kptvec,spin);
-    if S.xc == 40 || S.xc == 41
-        Hnlx = Hnlx + S.hyb_mixing*Vexx;
-    elseif S.xc == 427
-        Hnlx = Hnlx + S.hyb_mixing_sr*Vexx;
-    end
+    Hnlx = Hnlx + Vexx;
 end
 
 % Vnl * X

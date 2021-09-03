@@ -746,11 +746,11 @@ if S.usefock == 1
         S.FOCK_TOL = 1e-4;
     end
     if S.xc == 40
-        S.hyb_mixing = 1.0;
+        S.hyb_mixing = ones(S.N,1);
     elseif S.xc == 41
-        S.hyb_mixing = 0.25;
+        S.hyb_mixing = 0.25*ones(S.N,1);
     elseif S.xc == 427
-        S.hyb_mixing_sr = 0.25;
+        S.hyb_mixing_sr = 0.25*ones(S.N,1);
         if S.hyb_range_fock < 0
             S.hyb_range_fock = 0.1587;          % VASP
         end
@@ -827,6 +827,30 @@ if S.usefock == 1
     end
     S = const_for_FFT(S);
     S = kshift_phasefactor(S);
+    
+    % develop
+    S.exxdev = 0;
+    
+%     subd = [8,S.Nx-8,8,S.Ny-8,8,S.Nz-8];
+%     subd = [1,S.Nx,1,S.Ny,1,S.Nz];
+    subd = [13,14,13,14,13,14];
+    S.Nd_subd = (subd(2)-subd(1)+1)*(subd(4)-subd(3)+1)*(subd(6)-subd(5)+1);
+    assert(S.Nd_subd > 0);
+    S.subd_ind = zeros(S.Nd_subd,1);
+    nd = 1;
+    for n = subd(5):subd(6)
+        for m = subd(3):subd(4)
+            for l = subd(1):subd(2)
+                S.subd_ind(nd) = l + (m-1)*S.Nx + (n-1) *S.Nx*S.Ny;
+                nd = nd + 1;
+            end
+        end
+    end
+
+    % modify hyb_mixing here
+    S.hyb_mixing = 0 * S.hyb_mixing;
+    S.hyb_mixing(S.subd_ind) = 0.25;
+    
 end
 
 end
@@ -1157,8 +1181,8 @@ S.alph = 0.0;
 S.usefock = 0;
 S.MAXIT_FOCK = -1;
 S.FOCK_TOL = -1;
-S.hyb_mixing = 0.0;
-S.hyb_mixing_sr = 0.0;
+S.hyb_mixing = zeros(S.N,1);
+S.hyb_mixing_sr = zeros(S.N,1);
 S.hyb_range_fock = -1;
 S.hyb_range_pbe = -1;
 S.ExxMethod = '';
