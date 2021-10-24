@@ -70,6 +70,10 @@ else
 	Exc_dc = sum(sum(S.Vxc.*rho(:,2:3),2).*S.W) ;
 end
 
+if (mod(S.usefock,2) == 0 && S.usefock > 1)
+    Exc = Exc + S.Eex;
+end
+
 % Electrostatic energy double counting correction
 Eelec_dc = 0.5*sum((S.b-S.rho(:,1)).*S.phi.*S.W);
 

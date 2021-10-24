@@ -1,4 +1,10 @@
 ----------------
+Oct 24, 2021
+Name: Xin Jing
+* Add Exx estimation and make free energy continuous
+* change Exx error by Eband / atm
+
+----------------
 Jul 13, 2021
 Name: Xin Jing
 * Add HSE implementation

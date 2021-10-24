@@ -88,16 +88,7 @@ end
 
 S.Eex = S.Eex/2*S.occfac;
 
-S.Etotal = S.Etotal +  S.Eex;
-
-fprintf(' Eex = %.8f\n', S.Eex);
-fprintf(' Etot = %.8f\n', S.Etotal);
-fprintf(2,' ------------------\n');
-
-fileID = fopen(S.outfname,'a');
-fprintf(fileID,' Eex = %.8f\n', S.Eex);
-fprintf(fileID,' Etot = %.8f\n', S.Etotal);
-fclose(fileID);
+fprintf(' Eex = %.8f\n', -S.Eex);
 end
 
 

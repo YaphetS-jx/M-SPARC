@@ -111,7 +111,7 @@ S.Veff = real(bsxfun(@plus,S.phi,S.Vxc));
 
 % Exact exchange potential parameters
 Eband_prev = S.Eband;
-err_Exx = 10;
+err_Exx = S.FOCK_TOL+1;
 count_Exx = 1;
 
 S.lambda_f = 0.0;
@@ -128,12 +128,13 @@ while(err_Exx > S.FOCK_TOL && count_Exx <= S.MAXIT_FOCK)
     fprintf(fileID, 'No.%d Exx outer loop:\n', count_Exx);
     fclose(fileID);
     
-    % Start SCF with hybrid functional
-    S = scf_loop(S,S.SCF_tol,count_Exx);
-    % Calculate Exact Exchange energy
+    % Calculate estimation of Exact Exchange energy
     S = evaluateExactExchangeEnergy(S);
     
-    err_Exx = abs(S.Eband - Eband_prev);
+    % Start SCF with hybrid functional
+    S = scf_loop(S,S.SCF_tol,count_Exx);
+    
+    err_Exx = abs(S.Eband - Eband_prev)/S.n_atm;
     fprintf(' Error in outer loop: %.4e \n',err_Exx) ;
     Eband_prev = S.Eband;
     count_Exx = count_Exx + 1;
@@ -141,6 +142,14 @@ end % end of Vxx loop
 
 fprintf('\n Finished outer loop in %d steps!\n', (count_Exx - 1));
 fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
+
+S.Etotal = S.Etotal - S.Eex;
+S.Exc = S.Exc - S.Eex;
+% Calculate accurate Exact Exchange energy
+S = evaluateExactExchangeEnergy(S);
+% update exact exchange energy
+S.Etotal = S.Etotal + S.Eex;
+S.Exc = S.Exc + S.Eex;
 
 if count_Exx > S.MAXIT_FOCK && err_Exx > S.FOCK_TOL
     disp(' Exact Exchange outer loop did not converge. Maximum iterations reached!');
@@ -150,13 +159,14 @@ if count_Exx > S.MAXIT_FOCK && err_Exx > S.FOCK_TOL
     fclose(fileID);
 end
 
-staticfname = S.staticfname;
-fileID = fopen(staticfname,'a');
-fprintf(fileID, 'Eigenvalues:\n');
-fprintf(fileID, '%f\n', S.EigVal);
-fprintf(fileID, 'Occupations:\n');
-fprintf(fileID, '%f\n', S.occ);
-fclose(fileID);
+% print out eigenvalues and occupations
+% staticfname = S.staticfname;
+% fileID = fopen(staticfname,'a');
+% fprintf(fileID, 'Eigenvalues:\n');
+% fprintf(fileID, '%f\n', S.EigVal);
+% fprintf(fileID, 'Occupations:\n');
+% fprintf(fileID, '%f\n', S.occ);
+% fclose(fileID);
 
 % make sure next scf starts with normal scf
 S.usefock = S.usefock+1;
