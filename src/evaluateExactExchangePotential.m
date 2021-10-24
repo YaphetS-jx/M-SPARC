@@ -2,7 +2,7 @@ function Vexx = evaluateExactExchangePotential(S,X,kptvec,spin)
 spin_shift = (spin-1)*S.tnkpt;
 Vexx = zeros(S.N,size(X,2));
 
-if S.exxdev == 1
+if S.exxdev == 1 && S.ACEFlag == 0
     for i = 1:size(X,2)
         for ind = 1:S.Nd_subd
             nd = S.subd_ind(ind);

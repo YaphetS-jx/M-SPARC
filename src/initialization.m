@@ -830,27 +830,30 @@ if S.usefock == 1
     
     % develop
     S.exxdev = 0;
-    
-%     subd = [8,S.Nx-8,8,S.Ny-8,8,S.Nz-8];
-%     subd = [1,S.Nx,1,S.Ny,1,S.Nz];
-    subd = [13,14,13,14,13,14];
-    S.Nd_subd = (subd(2)-subd(1)+1)*(subd(4)-subd(3)+1)*(subd(6)-subd(5)+1);
-    assert(S.Nd_subd > 0);
-    S.subd_ind = zeros(S.Nd_subd,1);
-    nd = 1;
-    for n = subd(5):subd(6)
-        for m = subd(3):subd(4)
-            for l = subd(1):subd(2)
-                S.subd_ind(nd) = l + (m-1)*S.Nx + (n-1) *S.Nx*S.Ny;
-                nd = nd + 1;
+    if S.exxdev == 1
+        % write code to determine several blocks of subdomain
+    %     subd = [8,S.Nx-8,8,S.Ny-8,8,S.Nz-8];
+    %     subd = [1,S.Nx,1,S.Ny,1,S.Nz];
+        subd = [1,3,1,3,1,3];
+    %     subd = [13,14,13,14,13,14];
+        S.Nd_subd = (subd(2)-subd(1)+1)*(subd(4)-subd(3)+1)*(subd(6)-subd(5)+1);
+        assert(S.Nd_subd > 0);
+        S.subd_ind = zeros(S.Nd_subd,1);
+        nd = 1;
+        for n = subd(5):subd(6)
+            for m = subd(3):subd(4)
+                for l = subd(1):subd(2)
+                    S.subd_ind(nd) = l + (m-1)*S.Nx + (n-1) *S.Nx*S.Ny;
+                    nd = nd + 1;
+                end
             end
         end
+        
+        isntIn = ones(S.N,1);
+        isntIn(S.subd_ind) = 0;
+        isntIn = (isntIn == 1);
+        S.hyb_mixing(isntIn) = 0;
     end
-
-    % modify hyb_mixing here
-    S.hyb_mixing = 0 * S.hyb_mixing;
-    S.hyb_mixing(S.subd_ind) = 0.25;
-    
 end
 
 end
@@ -1407,6 +1410,7 @@ if(S.usefock == 1)
         fprintf(fileID,'EXX_RANGE_FOCK: %.4f\n', S.hyb_range_fock);
         fprintf(fileID,'EXX_RANGE_PBE: %.4f\n', S.hyb_range_pbe);
     end
+    fprintf(fileID,'EXX_DEV: %d\n',S.exxdev);
 end
 
 fprintf(fileID,'OUTPUT_FILE: %s\n',outfname);
