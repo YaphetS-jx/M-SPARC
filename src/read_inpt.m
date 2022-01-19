@@ -40,6 +40,8 @@ Flag_accuracy = 0;
 Flag_ionT = 0;
 Flag_eqT = 0;
 %Flag_ionT_end = 0;
+Flag_cell = 0;
+Flag_latvec_scale = 0;
 
 while(~feof(fid1))
 	C_inpt = textscan(fid1,'%s',1,'delimiter',' ','MultipleDelimsAsOne',1);
@@ -69,10 +71,19 @@ while(~feof(fid1))
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line           
 	elseif (strcmp(str,'CELL:'))
 		C_param = textscan(fid1,'%f %f %f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+        Flag_cell = 1;
 		S.L1 = C_param{1};
 		S.L2 = C_param{2};
 		S.L3 = C_param{3};
-		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line           
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line       
+    elseif (strcmp(str,'LATVEC_SCALE:'))
+		C_param = textscan(fid1,'%f %f %f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+        Flag_latvec_scale = 1;
+        S.Flag_latvec_scale = 1;
+		S.latvec_scale_x = C_param{1};
+		S.latvec_scale_y = C_param{2};
+		S.latvec_scale_z = C_param{3};
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line       
 	elseif (strcmp(str,'TWIST_ANGLE:'))
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
 		S.alph = C_param{1}; % in radian/Bohr
@@ -627,6 +638,18 @@ end
 if(S.MDFlag == 1 && S.ion_elec_eqT == 1)
 	S.Temp = S.ion_T;
 	S.bet = 1 / (S.kB * S.Temp);
+end
+
+% check CELL and LATVEC_SCALE
+if Flag_cell == 1 && Flag_latvec_scale == 1
+    error('\nCELL and LATVEC_SCALE cannot be specified simultaneously!\n');
+end
+
+% LACVEC_SCALE takes into account the length of the LATVEC's, so we'll scale the cell lengths
+if Flag_latvec_scale == 1
+    S.L1 = S.latvec_scale_x * norm(S.lat_vec(1,:));
+    S.L2 = S.latvec_scale_y * norm(S.lat_vec(2,:));
+    S.L3 = S.latvec_scale_z * norm(S.lat_vec(3,:));
 end
 
 if S.OFDFTFlag

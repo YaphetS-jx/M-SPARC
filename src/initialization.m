@@ -1070,6 +1070,12 @@ S.PrintRelaxout = 1;          % Flag for printing relax output in a .relax file
 S.Printrestart = 1;           % Flag for printing output needed for restarting a simulation
 S.Printrestart_fq = 1;        % Steps after which the output is written in the restart file
 
+% Cell option
+S.Flag_latvec_scale = 0;
+S.latvec_scale_x = 0.0;
+S.latvec_scale_y = 0.0;
+S.latvec_scale_z = 0.0;
+
 % Origin of the unit cell wrt some global origin
 S.xin = 0;  
 S.yin = 0;
@@ -1127,8 +1133,14 @@ fprintf(fileID,'****************************************************************
 if S.OFDFTFlag
     write_output_ofdft(S,fileID);
 else
-    fprintf(fileID,'CELL: %f %f %f \n',S.L1,S.L2,S.L3);
-    if max(max(abs(S.lat_vec - eye(3)))) > 1e-14
+    if S.Flag_latvec_scale == 0
+        fprintf(fileID,'CELL: %f %f %f \n',S.L1,S.L2,S.L3);
+        fprintf(fileID,'LATVEC:\n');
+        fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_uvec(1,:));
+        fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_uvec(2,:));
+        fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_uvec(3,:));
+    else
+        fprintf(fileID,'LATVEC_SCALE: %f %f %f \n',S.latvec_scale_x,S.latvec_scale_y,S.latvec_scale_z); 
         fprintf(fileID,'LATVEC:\n');
         fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(1,:));
         fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(2,:));
@@ -1719,9 +1731,15 @@ end
 
 
 function write_output_ofdft(S,fileID)
-fprintf(fileID,'CELL: %f %f %f \n',S.L1,S.L2,S.L3);
-if max(max(abs(S.lat_vec - eye(3)))) > 1e-14
-	fprintf(fileID,'LATVEC:\n');
+if S.Flag_latvec_scale == 0
+    fprintf(fileID,'CELL: %f %f %f \n',S.L1,S.L2,S.L3);
+    fprintf(fileID,'LATVEC:\n');
+	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_uvec(1,:));
+	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_uvec(2,:));
+	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_uvec(3,:));
+else
+    fprintf(fileID,'LATVEC_SCALE: %f %f %f \n',S.latvec_scale_x,S.latvec_scale_y,S.latvec_scale_z); 
+    fprintf(fileID,'LATVEC:\n');
 	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(1,:));
 	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(2,:));
 	fprintf(fileID,'%.15f %.15f %.15f \n',S.lat_vec(3,:));
