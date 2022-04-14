@@ -37,7 +37,7 @@ if S.isgamma == 1
         end
         
         col = 1+(spin-1)*S.Ns_occ(1):S.Ns_occ(1)+(spin-1)*S.Ns_occ(2);
-        M = (transpose(S.psi_outer(:,1:Ns,spin))*S.Xi(:,col))*S.dx*S.dy*S.dz;
+        M = (transpose(S.psi_outer(:,1:Ns,spin))*S.Xi(:,col))*S.dV;
         L = chol(-M); 
         S.Xi(:,col) = S.Xi(:,col) * inv(L); % Do it efficiently
     end

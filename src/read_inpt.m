@@ -581,7 +581,7 @@ while(~feof(fid1))
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
     elseif (strcmp(str,'ACE_FLAG:'))	  
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
-		S.ACEFlag = char(C_param{:});
+		S.ACEFlag = C_param{1};
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
     elseif (strcmp(str,'EXX_ACE_VALENCE_STATES:'))	  
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);

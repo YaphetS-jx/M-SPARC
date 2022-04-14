@@ -60,7 +60,7 @@ if S.nspin == 1
 	elseif S.xc == 2 || S.xc == 41 || S.xc == 427 % For PBE_GGA and PBE0
 		S = GGA_PBE(S,XC);
     elseif S.xc == 40                   % For Hartree Fock
-        if mod(S.usefock,2) == 1    % For the first SCF without fock
+        if S.usefock == 1    % For the first SCF without fock
             S = GGA_PBE(S,XC);
         else
             S.e_xc = 0.0*S.e_xc;
@@ -77,8 +77,8 @@ else
 	elseif S.xc == 2 || S.xc == 41 || S.xc == 427 % For PBE_GGA and PBE0
 		S = GSGA_PBE(S,XC);
 	elseif S.xc == 40                   % For Hartree Fock
-        if mod(S.usefock,2) == 1    % For the first SCF without fock
-            S = GGA_PBE(S,XC);
+        if S.usefock == 1    % For the first SCF without fock
+            S = GSGA_PBE(S,XC);
         else
             S.e_xc = 0.0*S.e_xc;
             S.Vxc = 0.0*S.Vxc;
@@ -226,13 +226,13 @@ function [S] = GGA_PBE(S,XC)
 	S.e_xc = exc .* rhotot_inv;
 
     % For hybrid functionals
-    if (mod(S.usefock,2) == 0 && S.usefock > 1 && S.xc == 41)
+    if S.usefock > 1 && S.xc == 41
         S.e_xc = (1-S.hyb_mixing) .* S.e_xc;
         v_xc = (1-S.hyb_mixing) .* v_xc;
         dvxcdgrho1 = (1-S.hyb_mixing) .* dvxcdgrho1;
     end
     
-    if (mod(S.usefock,2) == 0 && S.usefock > 1 && S.xc == 427)
+    if S.usefock > 1 && S.xc == 427
         sigma(sigma < S.xc_rhotol) = S.xc_rhotol;
         [sxsr,v1xsr,v2xsr] = pbexsr(rho,sigma,S.hyb_range_pbe);
         S.e_xc = S.e_xc - S.hyb_mixing .* sxsr./rho;
@@ -509,13 +509,13 @@ function [S] = GSGA_PBE(S,XC)
 	S.e_xc = exc .* rhotot_inv;
 
     % For hybrid functionals
-    if (mod(S.usefock,2) == 0 && S.usefock > 1 && S.xc == 41)
+    if S.usefock > 1 && S.xc == 41
         S.e_xc = (1-S.hyb_mixing) .* S.e_xc;
         v_xc = (1-S.hyb_mixing) .* v_xc;
         dvxcdgrho1 = (1-S.hyb_mixing) .* dvxcdgrho1;
     end
     
-    if (mod(S.usefock,2) == 0 && S.usefock > 1 && S.xc == 427)
+    if S.usefock > 1 && S.xc == 427
         sigma(sigma < S.xc_rhotol) = S.xc_rhotol;
         [sxsr,v1xsr,v2xsr] = pbexsr(rho,sigma,S.hyb_range_pbe);
         S.e_xc = S.e_xc - S.hyb_mixing .* sxsr./rho;

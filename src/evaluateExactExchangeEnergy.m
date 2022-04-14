@@ -86,9 +86,9 @@ else
 end
 end
 
-S.Eex = S.Eex/2*S.occfac;
+S.Eex = -S.Eex/2*S.occfac;
 
-fprintf(' Eex = %.8f\n', -S.Eex);
+fprintf(' Eex = %.8f\n', S.Eex);
 end
 
 

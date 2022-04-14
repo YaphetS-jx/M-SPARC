@@ -1896,6 +1896,10 @@ S.k_shift([zero_ind,S.num_shift],:) = S.k_shift([S.num_shift,zero_ind],:);
 S.const_by_alpha = zeros(S.num_shift,N1,N2,N3);
 
 if S.exxdivmethod == 0
+    if S.Calc_stress == 1
+        S.const_stress_1 = zeros(S.num_shift,N1,N2,N3);
+        S.const_stress_2 = zeros(S.num_shift,N1,N2,N3);
+    end
     % spherical truncation method by Spencer 
     for ind = 1:S.num_shift
         count = 1;
@@ -1915,6 +1919,18 @@ if S.exxdivmethod == 0
         const = 1 - cos(R_c*sqrt(Gpkmq2));
         const(iszero) = R_c^2/2;
         S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
+        
+        if S.Calc_stress == 1
+            x = R_c*sqrt(Gpkmq2);
+            const = 1 - cos(x) - x/2.*sin(x);
+            const(iszero) = R_c^4/24;
+            S.const_stress(ind,:,:,:) = 4*pi*const./(Gpkmq2.^2);
+            
+            % 1/3 factor copied from ABINIT. Not make sense to me.
+            const = 0.5*x.*sin(x);
+            const(iszero) = R_c^2/2;
+            S.const_stress_2(ind,:,:,:) = 4*pi*const./Gpkmq2/3;
+        end
     end
     
 elseif S.exxdivmethod == 1

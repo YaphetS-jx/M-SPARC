@@ -70,10 +70,6 @@ else
 	Exc_dc = sum(sum(S.Vxc.*rho(:,2:3),2).*S.W) ;
 end
 
-if (mod(S.usefock,2) == 0 && S.usefock > 1)
-    Exc = Exc + S.Eex;
-end
-
 % Electrostatic energy double counting correction
 Eelec_dc = 0.5*sum((S.b-S.rho(:,1)).*S.phi.*S.W);
 
@@ -93,8 +89,14 @@ for spin = 1:S.nspin
 	end
 end
 
-% Total free energy
-Etot = Eband + Exc - Exc_dc + Eelec_dc - S.Eself + S.E_corr + Eent;
+if S.usefock < 2
+    % Total free energy
+    Etot = Eband + Exc - Exc_dc + Eelec_dc - S.Eself + S.E_corr + Eent;
+else
+    Exc = Exc + S.Eex;
+    % Total free energy
+    Etot = Eband + Exc - Exc_dc + Eelec_dc - S.Eself + S.E_corr + Eent - 2*S.Eex;
+end
 
 fprintf(2,' ------------------\n');
 fprintf(' Eband = %.8f\n', Eband);
@@ -104,6 +106,9 @@ fprintf(' Eelec_dc = %.8f\n', Eelec_dc);
 fprintf(' Eent = %.8f\n', Eent);
 fprintf(' E_corr = %.8f\n', S.E_corr);
 fprintf(' Eself = %.8f\n', S.Eself);
+if S.usefock > 1
+fprintf(' Eex = %.8f\n', S.Eex);
+end
 fprintf(' Etot = %.8f\n', Etot);
 fprintf(2,' ------------------\n');
 end

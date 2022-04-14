@@ -95,7 +95,7 @@ S = scf_loop(S,scf_tol_init);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Exact exchange potential 
-if S.usefock == 1
+if S.usefock > 0
     S.usefock = S.usefock+1;
 else
     return;
@@ -143,12 +143,12 @@ end % end of Vxx loop
 fprintf('\n Finished outer loop in %d steps!\n', (count_Exx - 1));
 fprintf(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n');
 
-S.Etotal = S.Etotal - S.Eex;
+S.Etotal = S.Etotal + 2*S.Eex;
 S.Exc = S.Exc - S.Eex;
 % Calculate accurate Exact Exchange energy
 S = evaluateExactExchangeEnergy(S);
 % update exact exchange energy
-S.Etotal = S.Etotal + S.Eex;
+S.Etotal = S.Etotal - 2*S.Eex;
 S.Exc = S.Exc + S.Eex;
 
 if count_Exx > S.MAXIT_FOCK && err_Exx > S.FOCK_TOL
@@ -232,14 +232,14 @@ while (err > scf_tol && count_SCF <= max_scf_iter || count_SCF <= min_scf_iter)
 	tic_cheb = tic;
 	if(count_SCF > 1)
 		fprintf(' ========================= \n');
-        if (mod(S.usefock,2) == 0 && S.usefock > 1)
+        if S.usefock > 1
             fprintf(' Outer loop iteration number: %2d\n', count_Exx);
         end
 		fprintf(' Relaxation iteration: %2d \n SCF iteration number: %2d \n',S.Relax_iter,count_SCF);
 		fprintf(' ========================= \n');
 	else
 		fprintf(' ============================================= \n');
-        if (mod(S.usefock,2) == 0 && S.usefock > 1)
+        if S.usefock > 1
             fprintf(' Outer loop iteration number: %2d\n', count_Exx);
         end
 		fprintf(' Relaxation iteration: %2d\n SCF iteration number:  1, Chebyshev cycle: %d \n',S.Relax_iter,count);
@@ -254,7 +254,7 @@ while (err > scf_tol && count_SCF <= max_scf_iter || count_SCF <= min_scf_iter)
 	
 	if (((S.ForceCount == 1) && (count >= max_count_first_relax)) ...
 			|| ((S.ForceCount > 1) && (count >= max_count_gen_relax)) ...
-            || (mod(S.usefock,2) == 0 && S.usefock > 1 && count >= max_count_gen_relax))
+            || (S.usefock > 1 && count >= max_count_gen_relax))
 		% for density mixing, can estimate energy based on input rho and
 		% input veff, will recalculate energy once scf is converged
 		if S.MixingVariable == 0

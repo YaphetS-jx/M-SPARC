@@ -21,7 +21,7 @@ function  Hnlx = h_nonlocal_vector_mult(DL11,DL22,DL33,DG1,DG2,DG3,X,S,kptvec,sp
 Veff = S.Veff(:,spin);
 Hnlx = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,X,S)) + bsxfun(@times,Veff,X);
 
-if (mod(S.usefock,2) == 0 && S.usefock > 1)
+if S.usefock > 1
     Vexx = evaluateExactExchangePotential(S,X,kptvec,spin);
     Hnlx = Hnlx + S.hyb_mixing.*Vexx;
 end
