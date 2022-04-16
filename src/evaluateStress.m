@@ -487,24 +487,16 @@ if S.usefock > 0
                         Dphi_y = blochGradient(S,kpt_vec,2)*phi1;
                         Dphi_z = blochGradient(S,kpt_vec,3)*phi1;
 
-                        TDphi_1 = S.grad_T(1,1)*Dphi_x + S.grad_T(2,1)*Dphi_y + S.grad_T(3,1)*Dphi_z;
-                        TDphi_2 = S.grad_T(1,2)*Dphi_x + S.grad_T(2,2)*Dphi_y + S.grad_T(3,2)*Dphi_z;
-                        TDphi_3 = S.grad_T(1,3)*Dphi_x + S.grad_T(2,3)*Dphi_y + S.grad_T(3,3)*Dphi_z;
-        
-                        Drho_x = blochGradient(S,kpt_vec,1)*rhs;
-                        Drho_y = blochGradient(S,kpt_vec,2)*rhs;
-                        Drho_z = blochGradient(S,kpt_vec,3)*rhs;
-                        
-                        TDcrho_1 = conj(S.grad_T(1,1)*Drho_x + S.grad_T(2,1)*Drho_y + S.grad_T(3,1)*Drho_z);
-                        TDcrho_2 = conj(S.grad_T(1,2)*Drho_x + S.grad_T(2,2)*Drho_y + S.grad_T(3,2)*Drho_z);
-                        TDcrho_3 = conj(S.grad_T(1,3)*Drho_x + S.grad_T(2,3)*Drho_y + S.grad_T(3,3)*Drho_z);
+                        Dcrho_x = conj(blochGradient(S,kpt_vec,1)*rhs);
+                        Dcrho_y = conj(blochGradient(S,kpt_vec,2)*rhs);
+                        Dcrho_z = conj(blochGradient(S,kpt_vec,3)*rhs);
 
-                        stress_exx(1,1) = stress_exx(1,1) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_1.*TDphi_1.*S.W));
-                        stress_exx(2,2) = stress_exx(2,2) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_2.*TDphi_2.*S.W));
-                        stress_exx(3,3) = stress_exx(3,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_3.*TDphi_3.*S.W));
-                        stress_exx(1,2) = stress_exx(1,2) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_1.*TDphi_2.*S.W));
-                        stress_exx(1,3) = stress_exx(1,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_1.*TDphi_3.*S.W));
-                        stress_exx(2,3) = stress_exx(2,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_2.*TDphi_3.*S.W));
+                        stress_exx(1,1) = stress_exx(1,1) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_x.*Dphi_x.*S.W));
+                        stress_exx(2,2) = stress_exx(2,2) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_y.*Dphi_y.*S.W));
+                        stress_exx(3,3) = stress_exx(3,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_z.*Dphi_z.*S.W));
+                        stress_exx(1,2) = stress_exx(1,2) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_x.*Dphi_y.*S.W));
+                        stress_exx(1,3) = stress_exx(1,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_x.*Dphi_z.*S.W));
+                        stress_exx(2,3) = stress_exx(2,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_y.*Dphi_z.*S.W));
                         diag_term = diag_term - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*conj(rhs).*phi2.*S.W));
                     end
                 end
