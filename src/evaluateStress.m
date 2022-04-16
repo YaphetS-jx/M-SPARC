@@ -452,13 +452,13 @@ end
 
 fprintf('\n[\b"nonlocal Stress in GPa"\n\n\n]\b');
 disp((stress-stress_temp)/(S.Jacb*S.L1*S.L2*S.L3)*2.94210119*(10^4));
-stress_temp = stress;
 
 %**********************************************************************
 %*                   Stress contribution from exact exchange          *
 %**********************************************************************
 if S.usefock > 0
     stress_exx = zeros(3,3);
+    diag_term = 0;
     
     for spin = 1:S.nspin
         spin_shift = (spin-1)*S.tnkpt;
@@ -471,9 +471,9 @@ if S.usefock > 0
                 for i = 1:S.Nev
                     for j = 1:S.Nev
                         if S.kpthf_ind(q_ind,2)
-                            psiqi = S.psi_outer(:,i,q_ind_rd+spin_shift);
+                            psiqi = S.psi(:,i,q_ind_rd+spin_shift);
                         else
-                            psiqi = conj(S.psi_outer(:,i,q_ind_rd+spin_shift));
+                            psiqi = conj(S.psi(:,i,q_ind_rd+spin_shift));
                         end
                         psikj = S.psi(:,j,k_ind+spin_shift);
                         rhs = conj(psiqi) .* psikj;
@@ -498,20 +498,14 @@ if S.usefock > 0
                         TDcrho_1 = conj(S.grad_T(1,1)*Drho_x + S.grad_T(2,1)*Drho_y + S.grad_T(3,1)*Drho_z);
                         TDcrho_2 = conj(S.grad_T(1,2)*Drho_x + S.grad_T(2,2)*Drho_y + S.grad_T(3,2)*Drho_z);
                         TDcrho_3 = conj(S.grad_T(1,3)*Drho_x + S.grad_T(2,3)*Drho_y + S.grad_T(3,3)*Drho_z);
-                        
 
                         stress_exx(1,1) = stress_exx(1,1) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_1.*TDphi_1.*S.W));
-                        stress_exx(1,1) = stress_exx(1,1) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*conj(rhs).*phi2.*S.W));
-
                         stress_exx(2,2) = stress_exx(2,2) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_2.*TDphi_2.*S.W));
-                        stress_exx(2,2) = stress_exx(2,2) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*conj(rhs).*phi2.*S.W));
-
                         stress_exx(3,3) = stress_exx(3,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_3.*TDphi_3.*S.W));
-                        stress_exx(3,3) = stress_exx(3,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*conj(rhs).*phi2.*S.W));
-
                         stress_exx(1,2) = stress_exx(1,2) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_1.*TDphi_2.*S.W));
                         stress_exx(1,3) = stress_exx(1,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_1.*TDphi_3.*S.W));
                         stress_exx(2,3) = stress_exx(2,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*TDcrho_2.*TDphi_3.*S.W));
+                        diag_term = diag_term - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*conj(rhs).*phi2.*S.W));
                     end
                 end
             end
@@ -522,11 +516,10 @@ if S.usefock > 0
     stress_exx(3,1) = stress_exx(1,3);
     stress_exx(3,2) = stress_exx(2,3);
     stress_exx = stress_exx/2*S.occfac;
-    
-%     stress_exx(1,1) = -stress_exx(1,1) - S.Eex;
-%     stress_exx(2,2) = -stress_exx(2,2) - S.Eex;
-%     stress_exx(3,3) = -stress_exx(3,3) - S.Eex;
-    stress_exx = -stress_exx - S.Eex*eye(3); 
+    % convert to cartesian coordinates
+    stress_exx = S.grad_T'*stress_exx*S.grad_T;
+    % compute final stress_exx
+    stress_exx = 2*stress_exx + (2*diag_term-2*S.Eex)*eye(3); 
     stress = stress + stress_exx;
     
     fprintf('\n[\b"exx Stress in GPa"\n\n\n]\b');
