@@ -463,8 +463,6 @@ if S.usefock > 0
     for spin = 1:S.nspin
         spin_shift = (spin-1)*S.tnkpt;
         for k_ind = 1:S.tnkpt
-            kpt_vec = S.kptgrid(k_ind,:);
-
             for q_ind = 1:S.tnkpthf
                 % q_ind_rd is the index in reduced kptgrid
                 q_ind_rd = S.kpthf_ind(q_ind,1);
@@ -483,13 +481,13 @@ if S.usefock > 0
                         k_shift = k - q;
                         [phi1, phi2] = exx_FFT_stress(S,rhs,k_shift);
 
-                        Dphi_x = blochGradient(S,kpt_vec,1)*phi1;
-                        Dphi_y = blochGradient(S,kpt_vec,2)*phi1;
-                        Dphi_z = blochGradient(S,kpt_vec,3)*phi1;
+                        Dphi_x = blochGradient(S,k_shift,1)*phi1;
+                        Dphi_y = blochGradient(S,k_shift,2)*phi1;
+                        Dphi_z = blochGradient(S,k_shift,3)*phi1;
 
-                        Dcrho_x = conj(blochGradient(S,kpt_vec,1)*rhs);
-                        Dcrho_y = conj(blochGradient(S,kpt_vec,2)*rhs);
-                        Dcrho_z = conj(blochGradient(S,kpt_vec,3)*rhs);
+                        Dcrho_x = conj(blochGradient(S,k_shift,1)*rhs);
+                        Dcrho_y = conj(blochGradient(S,k_shift,2)*rhs);
+                        Dcrho_z = conj(blochGradient(S,k_shift,3)*rhs);
 
                         stress_exx(1,1) = stress_exx(1,1) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_x.*Dphi_x.*S.W));
                         stress_exx(2,2) = stress_exx(2,2) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_y.*Dphi_y.*S.W));
