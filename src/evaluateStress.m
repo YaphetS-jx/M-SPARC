@@ -521,7 +521,7 @@ if S.usefock > 0
     fprintf('\n[\b"exx Stress first in GPa"\n\n\n]\b');
 	disp(stress_exx/(S.Jacb*S.L1*S.L2*S.L3)*2.94210119*(10^4));
     
-%     trace(stress_exx+diag_term)/S.Eex
+    trace(stress_exx+diag_term)/S.Eex
     
     % compute final stress_exx
     stress_exx = 2*stress_exx + (2*diag_term-2*S.Eex)*eye(3); 

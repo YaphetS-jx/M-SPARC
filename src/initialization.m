@@ -1899,7 +1899,7 @@ S.k_shift([zero_ind,S.num_shift],:) = S.k_shift([S.num_shift,zero_ind],:);
 S.const_by_alpha = zeros(S.num_shift,N1,N2,N3);
 
 if S.exxdivmethod == 0
-    if S.Calc_stress == 1
+    if S.Calc_stress
         S.const_stress = zeros(S.num_shift,N1,N2,N3);
         S.const_stress_2 = zeros(S.num_shift,N1,N2,N3);
     end
@@ -1923,7 +1923,7 @@ if S.exxdivmethod == 0
         const(iszero) = R_c^2/2;
         S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
         
-        if S.Calc_stress == 1
+        if S.Calc_stress
             x = R_c*sqrt(Gpkmq2);
             const = 1 - cos(x) - x/2.*sin(x);
             const(iszero) = R_c^4/24;
@@ -1937,8 +1937,10 @@ if S.exxdivmethod == 0
     end
     
 elseif S.exxdivmethod == 1
-    if S.Calc_stress == 1
+    if S.Calc_stress
         S.const_stress = zeros(S.num_shift,N1,N2,N3);
+    elseif S.Calc_pres
+        S.const_press = zeros(S.num_shift,N1,N2,N3);
     end
     % auxiliary function method by Gygi
     aux = exx_divergence(S);
@@ -1967,7 +1969,7 @@ elseif S.exxdivmethod == 1
 
         S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
         
-        if S.Calc_stress == 1
+        if S.Calc_stress
             if S.hyb_range_fock > 0
                 x = -0.25/S.hyb_range_fock^2*Gpkmq2;
                 const = 1 - exp(x).*(1-x);
@@ -1981,12 +1983,29 @@ elseif S.exxdivmethod == 1
             
             % for consistency of stress formula
             S.const_stress(ind,:,:,:) = S.const_stress(ind,:,:,:)/4;
+            
+        elseif S.Calc_pres
+            if S.hyb_range_fock > 0
+                x = -0.25/S.hyb_range_fock^2*Gpkmq2;
+                const = 1 - exp(x).*(1-x);
+                const(iszero) = 0;
+                S.const_press(ind,:,:,:) = 4*pi*const./Gpkmq2;
+            else
+                const = ones(N1,N2,N3);
+                const(iszero) = 0;
+                S.const_press(ind,:,:,:) = 4*pi*const./Gpkmq2;
+            end
+            
+            % for consistency of pressure formula
+            S.const_press(ind,:,:,:) = S.const_press(ind,:,:,:)/4;
         end
     end
     
 elseif S.exxdivmethod == 2
-    if S.Calc_stress == 1
+    if S.Calc_stress
         S.const_stress = zeros(S.num_shift,N1,N2,N3);
+    elseif S.Calc_pres
+        S.const_press = zeros(S.num_shift,N1,N2,N3);
     end
     % Simple method by ERFC
     for ind = 1:S.num_shift
@@ -2009,11 +2028,16 @@ elseif S.exxdivmethod == 2
         
         S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
         
-        if S.Calc_stress == 1
+        if S.Calc_stress
             x = -0.25/S.hyb_range_fock^2*Gpkmq2;
             const = 1 - exp(x).*(1-x);
             const(iszero) = 0;
             S.const_stress(ind,:,:,:) = 4*pi*const./(Gpkmq2.^2);
+        elseif S.Calc_pres
+            x = -0.25/S.hyb_range_fock^2*Gpkmq2;
+            const = 1 - exp(x).*(1-x);
+            const(iszero) = 0;
+            S.const_press(ind,:,:,:) = 4*pi*const./Gpkmq2;
         end
     end
 end
