@@ -459,6 +459,9 @@ disp((stress-stress_temp)/(S.Jacb*S.L1*S.L2*S.L3)*2.94210119*(10^4));
 if S.usefock > 0
     stress_exx = zeros(3,3);
     diag_term = 0;
+    if S.exxdivmethod == 1
+        diag_term = S.Eex/4;
+    end
     
     for spin = 1:S.nspin
         spin_shift = (spin-1)*S.tnkpt;
@@ -479,7 +482,10 @@ if S.usefock > 0
                         k = S.kptgrid(k_ind,:);
                         q = S.kptgridhf(q_ind,:);
                         k_shift = k - q;
-                        [phi1, phi2] = exx_FFT_stress(S,rhs,k_shift);
+                        phi1 = poissonSolve_FFT(S,rhs,k_shift,S.const_stress);
+                        if S.exxdivmethod == 0
+                            phi2 = poissonSolve_FFT(S,rhs,k_shift,S.const_stress_2);
+                        end
 
                         Dphi_x = blochGradient(S,k_shift,1)*phi1;
                         Dphi_y = blochGradient(S,k_shift,2)*phi1;
@@ -495,7 +501,9 @@ if S.usefock > 0
                         stress_exx(1,2) = stress_exx(1,2) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_x.*Dphi_y.*S.W));
                         stress_exx(1,3) = stress_exx(1,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_x.*Dphi_z.*S.W));
                         stress_exx(2,3) = stress_exx(2,3) - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*Dcrho_y.*Dphi_z.*S.W));
-                        diag_term = diag_term - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*conj(rhs).*phi2.*S.W));
+                        if S.exxdivmethod == 0
+                            diag_term = diag_term - S.wkpt(k_ind)*S.wkpthf(q_ind)*S.occ_outer(i,q_ind_rd+spin_shift)*S.occ_outer(j,k_ind+spin_shift)*real(sum(S.hyb_mixing.*conj(rhs).*phi2.*S.W));
+                        end
                     end
                 end
             end
@@ -505,11 +513,20 @@ if S.usefock > 0
     stress_exx(2,1) = stress_exx(1,2);
     stress_exx(3,1) = stress_exx(1,3);
     stress_exx(3,2) = stress_exx(2,3);
-    stress_exx = stress_exx/2*S.occfac;
+    stress_exx = stress_exx/2*S.occfac;    
+    
     % convert to cartesian coordinates
     stress_exx = S.grad_T'*stress_exx*S.grad_T;
+    
+    fprintf('\n[\b"exx Stress first in GPa"\n\n\n]\b');
+	disp(stress_exx/(S.Jacb*S.L1*S.L2*S.L3)*2.94210119*(10^4));
+    
+%     trace(stress_exx+diag_term)/S.Eex
+    
     % compute final stress_exx
     stress_exx = 2*stress_exx + (2*diag_term-2*S.Eex)*eye(3); 
+    
+    
     stress = stress + stress_exx;
     
     fprintf('\n[\b"exx Stress in GPa"\n\n\n]\b');
@@ -528,11 +545,13 @@ if S.BCz == 0
 end
 
 stress = stress / cell_measure;
+
+fprintf('\n[\b"Total Stress in GPa"\n\n\n]\b');
+disp(stress*2.94210119*(10^4));
 end
 
 
-
-function [V1,V2] = exx_FFT_stress(S,rhs,k_shift)
+function [V] = poissonSolve_FFT(S,rhs,k_shift,fft_const)
 shift_ind = find(ismembertol(S.k_shift,k_shift,1e-8,'ByRows',true))+0;
 if shift_ind < S.num_shift
     u = rhs .* S.neg_phase(:,shift_ind);
@@ -542,28 +561,16 @@ end
 u = reshape(u,S.Nx,S.Ny,S.Nz);
 u_hat = fftn(u);
 const_by_alpha = zeros(S.Nx,S.Ny,S.Nz);
-const_by_alpha(:) = S.const_stress(shift_ind,:,:,:);
-V1 = ifftn(u_hat.*const_by_alpha);
+const_by_alpha(:) = fft_const(shift_ind,:,:,:);
+V = ifftn(u_hat.*const_by_alpha);
 if shift_ind < S.num_shift
-    V1 = V1(:) .* S.pos_phase(:,shift_ind);
+    V = V(:) .* S.pos_phase(:,shift_ind);
 else
-    V1 = V1(:);
-end
-if S.isgamma
-    V1 = real(V1(:));
+    V = V(:);
 end
 
-if S.exxdivmethod == 0
-    const_by_alpha(:) = S.const_stress_2(shift_ind,:,:,:);
-    V2 = ifftn(u_hat.*const_by_alpha);
-    if shift_ind < S.num_shift
-        V2 = V2(:) .* S.pos_phase(:,shift_ind);
-    else
-        V2 = V2(:);
-    end
-    if S.isgamma
-        V2 = real(V2(:));
-    end
+if S.isgamma
+    V = real(V(:));
 end
 end
 

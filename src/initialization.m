@@ -749,6 +749,8 @@ if S.usefock == 1
         S.hyb_mixing = ones(S.N,1);
     elseif S.xc == 41
         S.hyb_mixing = 0.25*ones(S.N,1);
+        S.hyb_range_fock = -1;
+        S.hyb_range_pbe = -1;
     elseif S.xc == 427
         S.hyb_mixing = 0.25*ones(S.N,1);
         if S.hyb_range_fock < 0
@@ -1824,6 +1826,7 @@ function [S] = Generate_kpts(S)
         
         S.kptgridhf = kptgrid_HF;
         S.tnkpthf   = length(kptgrid_x_hf)*length(kptgrid_y_hf)*length(kptgrid_z_hf);
+        S.nkpthf = [length(kptgrid_x_hf), length(kptgrid_y_hf), length(kptgrid_z_hf)];
         S.wkpthf    = ones(S.tnkpthf,1)/S.tnkpthf;
     end
 end
@@ -1897,7 +1900,7 @@ S.const_by_alpha = zeros(S.num_shift,N1,N2,N3);
 
 if S.exxdivmethod == 0
     if S.Calc_stress == 1
-        S.const_stress_1 = zeros(S.num_shift,N1,N2,N3);
+        S.const_stress = zeros(S.num_shift,N1,N2,N3);
         S.const_stress_2 = zeros(S.num_shift,N1,N2,N3);
     end
     % spherical truncation method by Spencer 
@@ -1926,7 +1929,7 @@ if S.exxdivmethod == 0
             const(iszero) = R_c^4/24;
             S.const_stress(ind,:,:,:) = 4*pi*const./(Gpkmq2.^2);
             
-            % 1/3 factor copied from ABINIT. Not make sense to me.
+            % 1/3 factor copied from ABINIT.
             const = 0.5*x.*sin(x);
             const(iszero) = R_c^2/2;
             S.const_stress_2(ind,:,:,:) = 4*pi*const./Gpkmq2/3;
@@ -1934,6 +1937,9 @@ if S.exxdivmethod == 0
     end
     
 elseif S.exxdivmethod == 1
+    if S.Calc_stress == 1
+        S.const_stress = zeros(S.num_shift,N1,N2,N3);
+    end
     % auxiliary function method by Gygi
     aux = exx_divergence(S);
     for ind = 1:S.num_shift
@@ -1952,17 +1958,36 @@ elseif S.exxdivmethod == 1
         iszero = Gpkmq2 < 1e-4;
         Gpkmq2(iszero) = 1;
         if S.hyb_range_fock > 0
-            Gpkmq2 = 1./Gpkmq2.*( 1 - exp(-0.25/S.hyb_range_fock^2*Gpkmq2) );
-            Gpkmq2(iszero) = aux + 0.25/S.hyb_range_fock^2;
+            const = 1 - exp(-0.25/S.hyb_range_fock^2*Gpkmq2);
+            const(iszero) = aux + 0.25/S.hyb_range_fock^2;
         else
-            Gpkmq2 = 1./Gpkmq2;
-            Gpkmq2(iszero) = aux;
+            const = ones(N1,N2,N3);
+            const(iszero) = aux;
         end
 
-        S.const_by_alpha(ind,:,:,:) = 4*pi.*Gpkmq2;
+        S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
+        
+        if S.Calc_stress == 1
+            if S.hyb_range_fock > 0
+                x = -0.25/S.hyb_range_fock^2*Gpkmq2;
+                const = 1 - exp(x).*(1-x);
+                const(iszero) = (0.25/S.hyb_range_fock^2)^2;
+                S.const_stress(ind,:,:,:) = 4*pi*const./(Gpkmq2.^2);
+            else
+                const = ones(N1,N2,N3);
+                const(iszero) = 0;
+                S.const_stress(ind,:,:,:) = 4*pi*const./(Gpkmq2.^2);
+            end
+            
+            % for consistency of stress formula
+            S.const_stress(ind,:,:,:) = S.const_stress(ind,:,:,:)/4;
+        end
     end
     
 elseif S.exxdivmethod == 2
+    if S.Calc_stress == 1
+        S.const_stress = zeros(S.num_shift,N1,N2,N3);
+    end
     % Simple method by ERFC
     for ind = 1:S.num_shift
         count = 1;
@@ -1983,6 +2008,13 @@ elseif S.exxdivmethod == 2
         const(iszero) = 0.25/S.hyb_range_fock^2;
         
         S.const_by_alpha(ind,:,:,:) = 4*pi*const./Gpkmq2;
+        
+        if S.Calc_stress == 1
+            x = -0.25/S.hyb_range_fock^2*Gpkmq2;
+            const = 1 - exp(x).*(1-x);
+            const(iszero) = 0;
+            S.const_stress(ind,:,:,:) = 4*pi*const./(Gpkmq2.^2);
+        end
     end
 end
 
@@ -2032,16 +2064,26 @@ gmet = S.grad_T * S.grad_T';
 
 % alpha is related to ecut
 ecut = ecut_estimate(S.dx,S.dy,S.dz);
-
 alpha = 10/(ecut*2);
 fprintf(' Ecut estimation is %.2f Ha (%.2f Ry) and alpha in auxiliary function is %.6f\n',ecut, ecut*2, alpha);
 
 sumfGq = 0;
 % Use QE's choice of q vector
 % Actually all q vectors by Monkhorst-pack grid also works
-for khf = 1:S.tnkpthf
-    xq = S.kptgridhf(khf,:)./[2*pi/L1,2*pi/L2,2*pi/L3];
-              
+
+MPG_typ = @(nkpt) (0:nkpt-1); % MP grid points for finite group order
+
+kptgrid_x = (1/S.nkpt(1)) * MPG_typ(S.nkpthf(1));
+kptgrid_y = (1/S.nkpt(2)) * MPG_typ(S.nkpthf(2));
+kptgrid_z = (1/S.nkpt(3)) * MPG_typ(S.nkpthf(3));
+
+[kptgrid_X, kptgrid_Y, kptgrid_Z] = ndgrid(kptgrid_x,kptgrid_y,kptgrid_z);
+kptgrid = [reshape(kptgrid_X,[],1),reshape(kptgrid_Y,[],1),reshape(kptgrid_Z,[],1)];
+    
+for q = 1:S.tnkpthf
+%     xq = S.kptgridhf(khf,:)./[2*pi/L1,2*pi/L2,2*pi/L3];
+    xq = kptgrid(q,:);
+    
     for k3 = [1:floor(N3/2)+1, floor(-N3/2)+2:0]
         for k2 = [1:floor(N2/2)+1, floor(-N2/2)+2:0]
             for k1 = [1:floor(N1/2)+1, floor(-N1/2)+2:0]
@@ -2086,7 +2128,6 @@ end
 
 fprintf(' The constant for zero G is %f\n',c);
 % exx_div = -c*2*4*pi in qe
-
 end
 
 
