@@ -582,9 +582,20 @@ while(~feof(fid1))
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
 		S.ofdft_tol = C_param{1};
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+    elseif(strcmp(str,'OFDFT_KE:'))
+		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.ofdft_ke = C_param{1};
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+        if ~ismember(S.ofdft_ke, [1 2 3])
+            error("ERROR: Kinetic energy option should be 1 or 2 or 3");
+        end
     elseif(strcmp(str,'OFDFT_LAMBDA:'))
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
 		S.ofdft_lambda = C_param{1};
+		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
+    elseif(strcmp(str,'OFDFT_MU:'))
+		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);
+		S.ofdft_mu = C_param{1};
 		textscan(fid1,'%s',1,'delimiter','\n','MultipleDelimsAsOne',0); % skip current line
     elseif(strcmp(str,'NSCENERGY_FLAG:'))
 		C_param = textscan(fid1,'%f',1,'delimiter',' ','MultipleDelimsAsOne',1);

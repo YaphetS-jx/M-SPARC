@@ -1091,6 +1091,8 @@ S.ofdft_lambda = 0.2;
 S.nscenergy_flag = 0;
 S.nsc_nkpt = [1 1 1];
 S.nsc_kptshift = [0 0 0];
+S.ofdft_ke = 1;
+S.ofdft_mu = 1;
 end
 
 
@@ -1765,7 +1767,9 @@ end
 fprintf(fileID,'EXCHANGE_CORRELATION: %s\n',S.XC);
 
 fprintf(fileID,'OFDFT_FLAG: %d\n',S.OFDFTFlag);
+fprintf(fileID,'OFDFT_KE: %d\n',S.ofdft_ke);
 fprintf(fileID,'OFDFT_LAMBDA: %.6f\n',S.ofdft_lambda);
+fprintf(fileID,'OFDFT_MU: %.6f\n',S.ofdft_mu);
 fprintf(fileID,'TOL_OFDFT: %.2E\n',S.ofdft_tol);
 
 fprintf(fileID,'CALC_STRESS: %d\n',S.Calc_stress);

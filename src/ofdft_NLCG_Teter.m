@@ -93,17 +93,89 @@ end
 
 % function to compute (-lambda/2*lap + phi + Vxc + Vk) (x)
 function [F,S] = Hx(S,DL11,DL22,DL33,DG1,DG2,DG3,u)
-% -lambda/2*lap(x)
-F = -0.5*S.ofdft_lambda*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S));
 rho = u.^2;
 S.rho = rho;
+
+% TFvW
+if S.ofdft_ke == 1
+    % -lambda/2*lap(x)
+    F = -0.5*S.ofdft_lambda*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S));
+    % Vk
+    Vk = (5/3)*S.ofdft_Cf*(rho.^(2/3));
+    F = F + Vk.*u;
+
+% PGmu
+elseif S.ofdft_ke == 2
+    % -1/2*lap(x)
+    F = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S));
+    % PGu
+    du_1 = S.grad_1 * u;
+	du_2 = S.grad_2 * u;
+	du_3 = S.grad_3 * u;
+    if S.cell_typ ~= 2
+		gu2 = du_1.*du_1 + du_2.*du_2 + du_3.*du_3;
+	else
+		gu2 = (S.lapc_T(1,1)*du_1.*du_1 + S.lapc_T(2,2)*du_2.*du_2 + S.lapc_T(3,3)*du_3.*du_3 +...
+				 S.lapc_T(1,2)*du_1.*du_2 + S.lapc_T(2,3)*du_2.*du_3 + S.lapc_T(1,3)*du_3.*du_1 ) ; % grad_u . grad_u
+    end
+    t_tf = S.ofdft_Cf*u.^(10/3);
+    s2 = 0.3*gu2./t_tf;
+    expe = exp(-S.ofdft_mu*s2);
+    dtdu = expe./u.*(10/3*t_tf+S.ofdft_mu*gu2);
+    dtdgu = -0.6*S.ofdft_mu*expe;
+    if S.cell_typ ~= 2
+        Vku = dtdu - S.grad_1 * (dtdgu.*du_1) - S.grad_2 * (dtdgu.*du_2) - S.grad_3 * (dtdgu.*du_3);
+    else
+        Vku = dtdu - ( S.lapc_T(1,1)*S.grad_1*(dtdgu.*du_1) + S.lapc_T(2,2)*S.grad_2*(dtdgu.*du_2) + S.lapc_T(3,3)*S.grad_3*(dtdgu.*du_3) +...
+                      S.lapc_T(2,1)*S.grad_1*(dtdgu.*du_2) + S.lapc_T(2,1)*S.grad_2*(dtdgu.*du_1) + S.lapc_T(3,2)*S.grad_2*(dtdgu.*du_3) +...
+                      S.lapc_T(3,2)*S.grad_3*(dtdgu.*du_2) + S.lapc_T(3,1)*S.grad_1*(dtdgu.*du_3) + S.lapc_T(3,1)*S.grad_3*(dtdgu.*du_1) );
+    end
+    Vku = 0.5*Vku;
+    F = F + Vku;
+
+% LKT
+elseif S.ofdft_ke == 3
+    % -1/2*lap(x)
+    F = -0.5*(lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S));
+    % LKT
+    du_1 = S.grad_1 * u;
+	du_2 = S.grad_2 * u;
+	du_3 = S.grad_3 * u;
+    
+    tol = 1E-14;
+    du_1(abs(du_1)<tol) = tol;
+    du_2(abs(du_2)<tol) = tol;
+    du_3(abs(du_3)<tol) = tol;
+    
+    if S.cell_typ ~= 2
+		gu2 = du_1.*du_1 + du_2.*du_2 + du_3.*du_3;
+	else
+		gu2 = (S.lapc_T(1,1)*du_1.*du_1 + S.lapc_T(2,2)*du_2.*du_2 + S.lapc_T(3,3)*du_3.*du_3 +...
+				 S.lapc_T(1,2)*du_1.*du_2 + S.lapc_T(2,3)*du_2.*du_3 + S.lapc_T(1,3)*du_3.*du_1 ) ; % grad_u . grad_u
+    end
+    t_tf = S.ofdft_Cf*u.^(10/3);
+    s2 = 0.3*gu2./t_tf;
+    s = sqrt(s2);
+    x = 1.3*s;
+    dtdu = 5/3*t_tf./u.*sech(x).*(2+x.*tanh(x));
+    dtdgu = -x.*t_tf./gu2.*sech(x).*tanh(x);
+    
+    if S.cell_typ ~= 2
+        Vku = dtdu - S.grad_1 * (dtdgu.*du_1) - S.grad_2 * (dtdgu.*du_2) - S.grad_3 * (dtdgu.*du_3);
+    else
+        Vku = dtdu - ( S.lapc_T(1,1)*S.grad_1*(dtdgu.*du_1) + S.lapc_T(2,2)*S.grad_2*(dtdgu.*du_2) + S.lapc_T(3,3)*S.grad_3*(dtdgu.*du_3) +...
+                      S.lapc_T(2,1)*S.grad_1*(dtdgu.*du_2) + S.lapc_T(2,1)*S.grad_2*(dtdgu.*du_1) + S.lapc_T(3,2)*S.grad_2*(dtdgu.*du_3) +...
+                      S.lapc_T(3,2)*S.grad_3*(dtdgu.*du_2) + S.lapc_T(3,1)*S.grad_1*(dtdgu.*du_3) + S.lapc_T(3,1)*S.grad_3*(dtdgu.*du_1) );
+    end
+    Vku = 0.5*Vku;
+    F = F + Vku;
+end
 % phi
 S = poissonSolve(S, S.poisson_tol, 0);
 % Vxc
 S = exchangeCorrelationPotential(S);
-% Vk
-Vk = (5/3)*S.ofdft_Cf*(rho.^(2/3));
-Veff = S.phi + S.Vxc + Vk;
+
+Veff = S.phi + S.Vxc;
 F = F + Veff.*u;
 
 end
@@ -172,12 +244,63 @@ end
 % option A as in PETSC code
 Eelec = 0.5*sum((S.b+S.rho(:,1)).*S.phi.*S.W);
 
-Et1 = S.ofdft_Cf*sum(rho.^(5/3))*S.dV;
+% TFvW
+if S.ofdft_ke == 1
+    Et1 = S.ofdft_Cf*sum(rho.^(5/3))*S.dV;
+    [DL11,DL22,DL33,DG1,DG2,DG3] = blochLaplacian_1d(S,S.kptgrid(1,:));
+    Hu = lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S);
+    Et2 = -0.5 * dot(u,Hu) * S.dV;
+    Et = Et1 + S.ofdft_lambda * Et2;
 
-[DL11,DL22,DL33,DG1,DG2,DG3] = blochLaplacian_1d(S,S.kptgrid(1,:));
-Hu = lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S);
-Et2 = -0.5 * dot(u,Hu) * S.dV;
-Et = Et1 + S.ofdft_lambda * Et2;
+% PGmu
+elseif S.ofdft_ke == 2
+    du_1 = S.grad_1 * u;
+	du_2 = S.grad_2 * u;
+	du_3 = S.grad_3 * u;
+    if S.cell_typ ~= 2
+		gu2 = du_1.*du_1 + du_2.*du_2 + du_3.*du_3;
+	else
+		gu2 = (S.lapc_T(1,1)*du_1.*du_1 + S.lapc_T(2,2)*du_2.*du_2 + S.lapc_T(3,3)*du_3.*du_3 +...
+				 S.lapc_T(1,2)*du_1.*du_2 + S.lapc_T(2,3)*du_2.*du_3 + S.lapc_T(1,3)*du_3.*du_1 ) ; % grad_u . grad_u
+    end
+    t_tf = S.ofdft_Cf*u.^(10/3);
+    s2 = 0.3*gu2./t_tf;
+    expe = exp(-S.ofdft_mu*s2);
+    Et1 = sum(t_tf.*expe)*S.dV;
+    
+    [DL11,DL22,DL33,DG1,DG2,DG3] = blochLaplacian_1d(S,S.kptgrid(1,:));
+    Hu = lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S);
+    Et2 = -0.5 * dot(u,Hu) * S.dV;
+    Et = Et1 + Et2;
+
+% LKT
+elseif S.ofdft_ke == 3
+    du_1 = S.grad_1 * u;
+	du_2 = S.grad_2 * u;
+	du_3 = S.grad_3 * u;
+    
+    tol = 1E-14;
+    du_1(abs(du_1)<tol) = tol;
+    du_2(abs(du_2)<tol) = tol;
+    du_3(abs(du_3)<tol) = tol;
+    
+    if S.cell_typ ~= 2
+		gu2 = du_1.*du_1 + du_2.*du_2 + du_3.*du_3;
+	else
+		gu2 = (S.lapc_T(1,1)*du_1.*du_1 + S.lapc_T(2,2)*du_2.*du_2 + S.lapc_T(3,3)*du_3.*du_3 +...
+				 S.lapc_T(1,2)*du_1.*du_2 + S.lapc_T(2,3)*du_2.*du_3 + S.lapc_T(1,3)*du_3.*du_1 ) ; % grad_u . grad_u
+    end
+    t_tf = S.ofdft_Cf*u.^(10/3);
+    s2 = 0.3*gu2./t_tf;
+    s = sqrt(s2);
+    x = 1.3*s;
+    Et1 = sum(t_tf.*sech(x))*S.dV;
+    
+    [DL11,DL22,DL33,DG1,DG2,DG3] = blochLaplacian_1d(S,S.kptgrid(1,:));
+    Hu = lapVec(DL11,DL22,DL33,DG1,DG2,DG3,u,S);
+    Et2 = -0.5 * dot(u,Hu) * S.dV;
+    Et = Et1 + Et2;
+end
 
 % Total free energy
 Etot =  Et + Exc + Eelec - S.Eself + S.E_corr;
